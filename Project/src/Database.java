@@ -61,6 +61,7 @@ public class Database {
 
 	public static Database getInstance()
 	{
+		// Coment.
 		if (singleton == null)
 			singleton = new Database();
 		return singleton;
