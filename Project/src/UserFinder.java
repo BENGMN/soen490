@@ -1,5 +1,6 @@
-import java.sql.SQLException;
+package Foundation;
 
+import java.sql.SQLException;
 
 public class UserFinder {
 	// Table name
