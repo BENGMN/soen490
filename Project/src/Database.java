@@ -11,8 +11,15 @@ public class Database {
 	private Statement statement = null;
 	private PreparedStatement preparedStatement = null;
 	private ResultSet resultSet = null;
+	private static Database singleton = null;
 	
-	public Database(){
+	public static String hostname = "localhost";
+	public static String database = "soen490";
+	public static String username = "soen490";
+	public static String password = "123456789";
+	public static int port = 3306;
+
+	private Database(){
 
 	}
 	
@@ -22,8 +29,8 @@ public class Database {
 			Class.forName("com.mysql.jdbc.Driver");
 			// Setup the connection with the DB
 			connect = DriverManager
-					.getConnection("jdbc:mysql://localhost/feedback?"
-							+ "user=sqluser&password=sqluserpw");
+					.getConnection("jdbc:mysql://" + hostname + "/" + database + "?"
+							+ "user=" + username + "&password=" + password);
 			// Statements allow to issue SQL queries to the database
 			statement = connect.createStatement();
 		}
@@ -50,6 +57,13 @@ public class Database {
 		} catch (Exception e) {
 
 		}
+	}
+
+	public static Database getInstance()
+	{
+		if (singleton == null)
+			singleton = new Database();
+		return singleton;
 	}
 
 

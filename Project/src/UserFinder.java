@@ -1,5 +1,3 @@
-package Foundation;
-
 import java.sql.SQLException;
 
 public class UserFinder {
