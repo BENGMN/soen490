@@ -4,21 +4,13 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Properties;
 
 public class Database {
 
 	private Connection connect = null;
-	private PreparedStatement preparedStatement = null;
 	private static Database singleton = null;
 	private Properties prop = new Properties();
-	
-//	public static String hostname = "localhost";
-//	public static String database = "soen490";
-//	public static String username = "soen490";
-//	public static String password = "123456789";
-//	public static int port = 3306;
 
 	private Database() {
 		try {
@@ -52,10 +44,11 @@ public class Database {
 			this.connect();
 		}
 		PreparedStatement statement = connect.prepareStatement(queryString);
-		for (int c = 0; c < objects.length; ++c)
-			statement.setObject(c, objects[c]);
-		ResultSet result = statement.executeQuery();
-		return result;
+		if (objects != null) {
+			for (int c = 0; c < objects.length; ++c)
+				statement.setObject(c, objects[c]);
+		}
+		return statement.executeQuery();
 	}
 	
 	public int update(String queryString, Object[] objects) throws SQLException{
