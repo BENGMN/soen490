@@ -1,52 +1,66 @@
+import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Properties;
 
 public class Database {
 
 	private Connection connect = null;
 	private Statement statement = null;
 	private PreparedStatement preparedStatement = null;
-	private ResultSet resultSet = null;
 	private static Database singleton = null;
+	private Properties prop = new Properties();
 	
-	public static String hostname = "localhost";
-	public static String database = "soen490";
-	public static String username = "soen490";
-	public static String password = "123456789";
-	public static int port = 3306;
+//	public static String hostname = "localhost";
+//	public static String database = "soen490";
+//	public static String username = "soen490";
+//	public static String password = "123456789";
+//	public static int port = 3306;
 
-	private Database(){
-
+	private Database() throws Exception{
+		
+		try {
+            //load a properties file
+ 		prop.load(new FileInputStream("Database.properties"));
+		}
+		catch (Exception e) {
+			throw e;
+		}
 	}
 	
-	public void connect() throws Exception{
+	private void connect() throws Exception{
 		try {
 			// This will load the MySQL driver, each DB has its own driver
 			Class.forName("com.mysql.jdbc.Driver");
 			// Setup the connection with the DB
 			connect = DriverManager
-					.getConnection("jdbc:mysql://" + hostname + "/" + database + "?"
-							+ "user=" + username + "&password=" + password);
+					.getConnection("jdbc:mysql://" + prop.getProperty("hostname") + "/" + prop.getProperty("database") + "?"
+							+ "user=" + prop.getProperty("username") + "&password=" + prop.getProperty("password"));
 			// Statements allow to issue SQL queries to the database
 			statement = connect.createStatement();
 		}
 		catch (Exception e) {
-		throw e;
+			throw e;
 		}
+	}
+	
+	public ResultSet query(String queryString) throws Exception{
+		if(connect == null){
+			this.connect();
+		}
+		ResultSet result = statement.executeQuery(queryString);
+		this.close();
+		return result;
 	}
 	
 	
 	// You need to close the connection
-	public void close() {
+	private void close() {
 		try {
-			if (resultSet != null) {
-				resultSet.close();
-			}
-
 			if (statement != null) {
 				statement.close();
 			}
@@ -59,13 +73,14 @@ public class Database {
 		}
 	}
 
-	public static Database getInstance()
+	public static Database getInstance() throws Exception
 	{
 		// Coment.
 		if (singleton == null)
 			singleton = new Database();
 		return singleton;
 	}
+	
 
 
 //	public void readDataBase() throws Exception {
