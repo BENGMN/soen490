@@ -22,12 +22,6 @@ import java.sql.SQLException;
 public class UserTDG {
 	// Table name
 	private final static String TABLE = "User";
-	// MySQL INSERT command for User
-	private final static String INSERT = "INSERT INTO " + TABLE + " (uid, version, email, password, type) VALUES (?,?,?,?,?);";
-	// MySQL UPDATE command for User
-	private final static String UPDATE = "UPDATE " + TABLE + " AS u SET u.email=?, u.password=?, u.type=?, u.version=u.version+1 WHERE u.uid=? AND u.version=?;";
-	// MySQL DELETE command for User
-	private final static String DELETE = "DELETE FROM " + TABLE + " AS u WHERE u.uid=? AND u.version=?;";
 	
 	// Private constructor
 	private UserTDG() {}
@@ -42,7 +36,9 @@ public class UserTDG {
 	 * @throws SQLException
 	 */
 	public static void insert(long uid, int version, String email, String password, int type) throws SQLException {
-		
+		String query = "INSERT INTO " + TABLE + " (uid, version, email, password, type) VALUES (?,?,?,?,?);";
+		Object[] objects = {uid, version, email, password, type};
+		Database.getInstance().update(query, objects);
 	}
 	
 	/**
@@ -56,7 +52,9 @@ public class UserTDG {
 	 * @throws SQLException
 	 */
 	public static int update(long uid, int version, String email, String password, int type) throws SQLException {
-		
+		String query = "UPDATE " + TABLE + " AS u SET u.email=?, u.password=?, u.type=?, u.version=u.version+1 WHERE u.uid=? AND u.version=?;";
+		Object[] objects = {email, password, type, uid, version};
+		return Database.getInstance().update(query, objects);
 	}
 	
 	/**
@@ -67,6 +65,8 @@ public class UserTDG {
 	 * @throws SQLException
 	 */
 	public static int delete(long uid, int version) throws SQLException {
-		
+		String query = "DELETE FROM " + TABLE + " AS u WHERE u.uid=? AND u.version=?;";
+		Object[] objects = {uid, version};
+		return Database.getInstance().update(query, objects);
 	}
 }

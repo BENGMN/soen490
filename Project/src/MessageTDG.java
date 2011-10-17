@@ -27,23 +27,28 @@ public class MessageTDG {
 	
 	public static ResultSet findAll() throws SQLException {
 		String query = "SELECT * FROM " + table + " ORDER BY name ASC";
-		PreparedStatement ps = conn.prepareStatement(query);
+		return Database.getInstance().query(query, null);
+		/*PreparedStatement ps = conn.prepareStatement(query);
 		ResultSet rs = ps.executeQuery();
-		return rs;
+		return rs;*/
 	}
 
 	public static ResultSet find(Long mid ) throws SQLException {
 		String query = "SELECT * FROM " + table + " where id = ?";
-		PreparedStatement ps = conn.prepareStatement(query);
+		Object objects[] = {mid};
+		return Database.getInstance().query(query, objects);
+		/*PreparedStatement ps = conn.prepareStatement(query);
 		ps.setString(1, mid.toString());
 		ResultSet rs = ps.executeQuery();
-		return rs;
+		return rs;*/
 	}
 
 	public static void insert(Long mid, Long uid, String message,float speed, double latitude , double longitude , java.sql.Date created_at , int user_rating) throws SQLException {
 		
 		String query = "INSERT INTO " + table + " (mid , uid , message , speed , latitude , longitude , created_at , user_rating) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-		PreparedStatement ps = conn.prepareStatement(query);
+		Object[] objects = {mid, uid, message, speed, latitude, longitude, created_at, user_rating};
+		Database.getInstance().update(query, objects);
+		/*PreparedStatement ps = conn.prepareStatement(query);
 		
 		ps.setString(1, mid.toString());
 		ps.setString(2, uid.toString());
@@ -55,13 +60,15 @@ public class MessageTDG {
 		ps.setInt(8, user_rating);
 		
 		ps.executeUpdate();
-		ps.close();
+		ps.close();*/
 		
 	}
 	
 	public static int update(int version, Long mid, Long uid, String message,float speed, double latitude , double longitude , java.sql.Date created_at , int user_rating) throws SQLException {
 		String query = "UPDATE " + table + " SET version = ?, mid = ?, uid = ?, message = ?, speed = ?, latitude = ?, longitude = ?, created_at = ? user_rating = ?  WHERE mid = ? AND version = ?";
-		PreparedStatement ps = conn.prepareStatement(query);
+		Object[] objects = {version+1, mid, uid, message, speed, latitude, longitude, created_at, user_rating, mid, version};
+		return Database.getInstance().update(query, objects);
+		/*PreparedStatement ps = conn.prepareStatement(query);
 		
 		ps.setInt(1, version); 
 		ps.setString(2, mid.toString()); //Is this supposed to be version + 1?
@@ -78,17 +85,20 @@ public class MessageTDG {
 		int count = ps.executeUpdate();
 		
 		ps.close();
-		return count;	
+		
+		return count;*/	
 	}
 
 	public static int delete(Long mid, int version) throws SQLException {
 		String query = "DELETE FROM " + table + " WHERE mid = ? AND version = ?";
-		PreparedStatement ps = conn.prepareStatement(query);
+		Object[] objects = {mid, version};
+		return Database.getInstance().update(query, objects);
+		/*PreparedStatement ps = conn.prepareStatement(query);
 		ps.setString(1, mid.toString());
 		ps.setInt(2, version);
 		int count = ps.executeUpdate();
 		ps.close();
-		return count;
+		return count;*/
 	}
 
 }

@@ -10,7 +10,6 @@ import java.util.Properties;
 public class Database {
 
 	private Connection connect = null;
-	private Statement statement = null;
 	private PreparedStatement preparedStatement = null;
 	private static Database singleton = null;
 	private Properties prop = new Properties();
@@ -21,18 +20,16 @@ public class Database {
 //	public static String password = "123456789";
 //	public static int port = 3306;
 
-	private Database() throws Exception{
-		
+	private Database() {
 		try {
-            //load a properties file
- 		prop.load(new FileInputStream("Database.properties"));
+			prop.load(new FileInputStream("Database.properties"));
 		}
 		catch (Exception e) {
-			throw e;
+			e.printStackTrace();
 		}
 	}
 	
-	private void connect() throws Exception{
+	private void connect() throws SQLException{
 		try {
 			// This will load the MySQL driver, each DB has its own driver
 			Class.forName("com.mysql.jdbc.Driver");
@@ -40,31 +37,41 @@ public class Database {
 			connect = DriverManager
 					.getConnection("jdbc:mysql://" + prop.getProperty("hostname") + "/" + prop.getProperty("database") + "?"
 							+ "user=" + prop.getProperty("username") + "&password=" + prop.getProperty("password"));
-			// Statements allow to issue SQL queries to the database
-			statement = connect.createStatement();
+
 		}
-		catch (Exception e) {
+		catch (SQLException e) {
 			throw e;
+		}
+		catch (ClassNotFoundException e) {
+			
 		}
 	}
 	
-	public ResultSet query(String queryString) throws Exception{
+	public ResultSet query(String queryString, Object[] objects) throws SQLException{
 		if(connect == null){
 			this.connect();
 		}
-		ResultSet result = statement.executeQuery(queryString);
-		this.close();
+		PreparedStatement statement = connect.prepareStatement(queryString);
+		for (int c = 0; c < objects.length; ++c)
+			statement.setObject(c, objects[c]);
+		ResultSet result = statement.executeQuery();
 		return result;
+	}
+	
+	public int update(String queryString, Object[] objects) throws SQLException{
+		if(connect == null){
+			this.connect();
+		}
+		PreparedStatement statement = connect.prepareStatement(queryString);
+		for (int c = 0; c < objects.length; ++c)
+			statement.setObject(c, objects[c]);
+		return statement.executeUpdate();
 	}
 	
 	
 	// You need to close the connection
 	private void close() {
 		try {
-			if (statement != null) {
-				statement.close();
-			}
-
 			if (connect != null) {
 				connect.close();
 			}
@@ -73,9 +80,8 @@ public class Database {
 		}
 	}
 
-	public static Database getInstance() throws Exception
+	public static Database getInstance()
 	{
-		// Coment.
 		if (singleton == null)
 			singleton = new Database();
 		return singleton;

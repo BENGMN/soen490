@@ -1,12 +1,9 @@
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class UserFinder {
 	// Table name
-	private final static String TABLE = "User";
-	
-	// MySQL SELECT command for finding Users by ID 
-	private final static String SELECT_BY_UID = "SELECT u.uid, u.version, u.email, u.password, u.type FROM " + TABLE + " AS u WHERE u.uid=?;";
-	
+	private final static String TABLE = "User";	
 	
 	/**
 	 * Finds a row from the table for User where the User row ID is equal to the passed parameter.
@@ -15,7 +12,9 @@ public class UserFinder {
 	 * @throws SQLException
 	 */
 	public static ResultSet findById(long uid) throws SQLException {
-		
+		Object[] objects = {uid};
+		return Database.getInstance().query("SELECT u.uid, u.version, u.email, u.password, u.type FROM " + TABLE + " AS u WHERE u.uid=?;",
+				objects);
 	}
 	
 	
@@ -25,6 +24,7 @@ public class UserFinder {
 	 * @throws SQLException
 	 */
 	public static ResultSet findAll() throws SQLException {
-		
+		return Database.getInstance().query("SELECT u.uid, u.version, u.email, u.password, u.type FROM " + TABLE + " AS u;",
+				null);
 	}
 }
