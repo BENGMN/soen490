@@ -1,3 +1,20 @@
+/**
+ * SOEN 490
+ * Capstone 2011
+ * Table Data Gateway for the User Domain Object
+ * Team members: 	Sotirios Delimanolis
+ * 			Filipe Martinho
+ * 			Adam Harrison
+ * 			Vahe Chahinian
+ * 			Ben Crudo
+ * 			Anthony Boyer
+ * 
+ * @author Capstone 490 Team Moving Target
+ *
+ */
+
+package foundation;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 

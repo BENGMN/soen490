@@ -13,6 +13,8 @@
  *
  */
 
+package foundation;
+
 import java.sql.SQLException;
 
 //CREATE TABLE User (uid NOT NULL bigint, email NOT NULL varchar(64), 
