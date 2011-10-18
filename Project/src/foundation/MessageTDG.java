@@ -29,7 +29,7 @@ public class MessageTDG {
 	public static ResultSet findAll() throws SQLException {
 		String query = "SELECT * FROM " + table + " ORDER BY name ASC";
 		return Database.getInstance().query(query, null);
-		/*PreparedStatement ps = conn.prepareStatement(query);
+		/*PreparedStatement ps = Database.getInstance().getStatement(query);
 		ResultSet rs = ps.executeQuery();
 		return rs;*/
 	}
@@ -38,7 +38,7 @@ public class MessageTDG {
 		String query = "SELECT * FROM " + table + " where id = ?";
 		Object objects[] = {mid};
 		return Database.getInstance().query(query, objects);
-		/*PreparedStatement ps = conn.prepareStatement(query);
+		/*PreparedStatement ps = Database.getInstance().getStatement(query);
 		ps.setString(1, mid.toString());
 		ResultSet rs = ps.executeQuery();
 		return rs;*/
@@ -49,7 +49,7 @@ public class MessageTDG {
 		String query = "INSERT INTO " + table + " (mid , uid , message , speed , latitude , longitude , created_at , user_rating) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 		Object[] objects = {mid, uid, message, speed, latitude, longitude, created_at, user_rating};
 		Database.getInstance().update(query, objects);
-		/*PreparedStatement ps = conn.prepareStatement(query);
+		/*PreparedStatement ps = Database.getInstance().getStatement(query);
 		
 		ps.setString(1, mid.toString());
 		ps.setString(2, uid.toString());
@@ -69,7 +69,7 @@ public class MessageTDG {
 		String query = "UPDATE " + table + " SET version = ?, mid = ?, uid = ?, message = ?, speed = ?, latitude = ?, longitude = ?, created_at = ? user_rating = ?  WHERE mid = ? AND version = ?";
 		Object[] objects = {version+1, mid, uid, message, speed, latitude, longitude, created_at, user_rating, mid, version};
 		return Database.getInstance().update(query, objects);
-		/*PreparedStatement ps = conn.prepareStatement(query);
+		/*PreparedStatement ps = Database.getInstance().getStatement(query);
 		
 		ps.setInt(1, version); 
 		ps.setString(2, mid.toString()); //Is this supposed to be version + 1?
@@ -94,7 +94,7 @@ public class MessageTDG {
 		String query = "DELETE FROM " + table + " WHERE mid = ? AND version = ?";
 		Object[] objects = {mid, version};
 		return Database.getInstance().update(query, objects);
-		/*PreparedStatement ps = conn.prepareStatement(query);
+		/*PreparedStatement ps = Database.getInstance().getStatement(query);
 		ps.setString(1, mid.toString());
 		ps.setInt(2, version);
 		int count = ps.executeUpdate();

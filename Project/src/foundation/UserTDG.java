@@ -41,6 +41,16 @@ public class UserTDG {
 		String query = "INSERT INTO " + TABLE + " (uid, version, email, password, type) VALUES (?,?,?,?,?);";
 		Object[] objects = {uid, version, email, password, type};
 		Database.getInstance().update(query, objects);
+		/*PreparedStatement ps = Database.getInstance().getStatement(query);
+		
+		ps.setString(1, uid.toString());
+		ps.setInt(2, version);
+		ps.setString(3, email);
+		ps.setString(4, password);
+		ps.setInt(5, type);
+		
+		ps.executeUpdate();
+		ps.close();	*/
 	}
 	
 	/**
@@ -57,6 +67,18 @@ public class UserTDG {
 		String query = "UPDATE " + TABLE + " AS u SET u.email=?, u.password=?, u.type=?, u.version=u.version+1 WHERE u.uid=? AND u.version=?;";
 		Object[] objects = {email, password, type, uid, version};
 		return Database.getInstance().update(query, objects);
+		
+		/*PreparedStatement ps = Database.getInstance().getStatement(query);
+		
+		ps.setString(1, email);
+		ps.setString(2, password);
+		ps.setInt(3, type);
+		ps.setString(4, uid.toString());
+		ps.setInt(5, version);
+		
+		int count = ps.executeUpdate();
+		ps.close();
+		return count; */
 	}
 	
 	/**
@@ -70,5 +92,13 @@ public class UserTDG {
 		String query = "DELETE FROM " + TABLE + " AS u WHERE u.uid=? AND u.version=?;";
 		Object[] objects = {uid, version};
 		return Database.getInstance().update(query, objects);
+		/*PreparedStatement ps = Database.getInstance().getStatement(query);
+
+		ps.setString(1, uid.toString());
+		ps.setInt(2, version);
+		
+		int count = ps.executeUpdate();
+		ps.close();
+		return count;*/
 	}
 }
