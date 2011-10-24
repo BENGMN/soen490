@@ -1,0 +1,67 @@
+/**
+ * SOEN 490
+ * Capstone 2011
+ * Table Data Gateway for the User Domain Object
+ * Team members: 	Sotirios Delimanolis
+ * 			Filipe Martinho
+ * 			Adam Harrison
+ * 			Vahe Chahinian
+ * 			Ben Crudo
+ * 			Anthony Boyer
+ * 
+ * @author Capstone 490 Team Moving Target
+ *
+ */
+
+package application;
+
+import java.io.IOException;
+import java.util.HashMap;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class FrontController extends HttpServlet {
+	private static final long serialVersionUID = -7153670066472721404L;
+	
+	private static FrontController singleton = null;
+	private HashMap<String, FrontCommand> commandMap;
+	
+	private FrontController()
+	{
+		//commandMap.put("Command", new FrontCommand());
+	}
+	
+	public static FrontController getInstance()
+	{
+		if (singleton == null)
+			singleton = new FrontController();
+		return singleton;
+	}
+	
+	private FrontCommand getCommand(String command)
+	{
+		return commandMap.get(command);
+	}
+	
+	private void handleRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+	{
+		String commandString = request.getParameter("command");
+		FrontCommand command = getCommand(commandString);
+		if (command == null)
+			throw new ServletException("Unable to find command: " + commandString);
+		command.execute(request, response);
+	}
+	
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+	{
+		handleRequest(request, response);
+	}
+	
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+	{
+		handleRequest(request, response);
+	}
+}

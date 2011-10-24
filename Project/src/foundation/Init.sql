@@ -1,0 +1,3 @@
+CREATE TABLE User (uid NOT NULL bigint, email NOT NULL varchar(64), password NOT NULL varchar(256), type NOT NULL tinyint, CONSTRAINT pk_uid PRIMARY KEY (uid))
+CREATE TABLE Message (mid NOT NULL bigint, uid NOT NULL bigint, message NOT NULL blob, speed float, latitude NOT NULL double, longitude NOT NULL double, created_at NOT NULL datetime, user_rating NOT NULL int, CONSTRAINT pk_mid PRIMARY KEY(mid), CONSTRAINT fk_uid FOREIGN KEY(uid) REFERENCES User ('uid'))
+CREATE TABLE Server (ip_address NOT NULL varchar(40), type NOT NULL tinyint, CONSTRAINT pk_ip_address PRIMARY KEY (ip_address))
