@@ -2,5 +2,22 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/usr/share/tomcat6/lib/annotations-api.jar"/>
+	<classpathentry kind="lib" path="/usr/share/tomcat6/lib/catalina.jar"/>
+	<classpathentry kind="lib" path="/usr/share/tomcat6/lib/catalina-ant.jar"/>
+	<classpathentry kind="lib" path="/usr/share/tomcat6/lib/catalina-ha.jar"/>
+	<classpathentry kind="lib" path="/usr/share/tomcat6/lib/catalina-tribes.jar"/>
+	<classpathentry kind="lib" path="/usr/share/tomcat6/lib/commons-dbcp.jar"/>
+	<classpathentry kind="lib" path="/usr/share/tomcat6/lib/commons-pool.jar"/>
+	<classpathentry kind="lib" path="/usr/share/tomcat6/lib/el-api.jar"/>
+	<classpathentry kind="lib" path="/usr/share/tomcat6/lib/jasper.jar"/>
+	<classpathentry kind="lib" path="/usr/share/tomcat6/lib/jasper-el.jar"/>
+	<classpathentry kind="lib" path="/usr/share/tomcat6/lib/jasper-jdt.jar"/>
+	<classpathentry kind="lib" path="/usr/share/tomcat6/lib/jsp-api.jar"/>
+	<classpathentry kind="lib" path="/usr/share/tomcat6/lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="/usr/share/tomcat6/lib/tomcat-coyote.jar"/>
+	<classpathentry kind="lib" path="/usr/share/tomcat6/lib/tomcat-i18n-es.jar"/>
+	<classpathentry kind="lib" path="/usr/share/tomcat6/lib/tomcat-i18n-fr.jar"/>
+	<classpathentry kind="lib" path="/usr/share/tomcat6/lib/tomcat-i18n-ja.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

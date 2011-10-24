@@ -90,7 +90,7 @@ public class Database {
 		}
 	}
 	
-	public PreparedStatement getStatement(String query)
+	public PreparedStatement getStatement(String query) throws SQLException
 	{
 		if(connect == null){
 			this.connect();

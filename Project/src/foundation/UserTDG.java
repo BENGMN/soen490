@@ -15,6 +15,7 @@
 
 package foundation;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 //CREATE TABLE User (uid NOT NULL bigint, email NOT NULL varchar(64), 
@@ -27,6 +28,19 @@ public class UserTDG {
 	
 	// Private constructor
 	private UserTDG() {}
+	
+	/**
+	 * Inserts a row into the table for User, where the column row are the passed parameters.
+	 * @param uid User ID
+	 * @return Returns the ResultSet of the query.
+	 * @throws SQLException
+	 */
+	public static ResultSet find(long uid) throws SQLException
+	{
+		Object[] objects = {uid};
+		return Database.getInstance().query("SELECT u.uid, u.version, u.email, u.password, u.type FROM " + TABLE + " AS u WHERE u.uid=?;",
+				objects);
+	}
 	
 	/**
 	 * Inserts a row into the table for User, where the column row are the passed parameters.
