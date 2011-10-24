@@ -34,7 +34,7 @@ public class MessageTDG {
 		return rs;*/
 	}
 
-	public static ResultSet find(Long mid ) throws SQLException {
+	public static ResultSet find(long mid) throws SQLException {
 		String query = "SELECT * FROM " + table + " where id = ?";
 		Object objects[] = {mid};
 		return Database.getInstance().query(query, objects);
@@ -44,7 +44,7 @@ public class MessageTDG {
 		return rs;*/
 	}
 
-	public static void insert(Long mid, Long uid, String message,float speed, double latitude , double longitude , java.sql.Date created_at , int user_rating) throws SQLException {
+	public static void insert(long mid, long uid, String message,float speed, double latitude , double longitude , java.sql.Date created_at , int user_rating) throws SQLException {
 		
 		String query = "INSERT INTO " + table + " (mid , uid , message , speed , latitude , longitude , created_at , user_rating) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 		Object[] objects = {mid, uid, message, speed, latitude, longitude, created_at, user_rating};
@@ -65,7 +65,7 @@ public class MessageTDG {
 		
 	}
 	
-	public static int update(int version, Long mid, Long uid, String message,float speed, double latitude , double longitude , java.sql.Date created_at , int user_rating) throws SQLException {
+	public static int update(int version, long mid, long uid, String message,float speed, double latitude , double longitude , java.sql.Date created_at , int user_rating) throws SQLException {
 		String query = "UPDATE " + table + " SET version = ?, mid = ?, uid = ?, message = ?, speed = ?, latitude = ?, longitude = ?, created_at = ? user_rating = ?  WHERE mid = ? AND version = ?";
 		Object[] objects = {version+1, mid, uid, message, speed, latitude, longitude, created_at, user_rating, mid, version};
 		return Database.getInstance().update(query, objects);
@@ -90,7 +90,7 @@ public class MessageTDG {
 		return count;*/	
 	}
 
-	public static int delete(Long mid, int version) throws SQLException {
+	public static int delete(long mid, int version) throws SQLException {
 		String query = "DELETE FROM " + table + " WHERE mid = ? AND version = ?";
 		Object[] objects = {mid, version};
 		return Database.getInstance().update(query, objects);
