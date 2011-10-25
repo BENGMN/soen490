@@ -28,10 +28,14 @@ public class FrontController extends HttpServlet {
 	
 	private static FrontController singleton = null;
 	private HashMap<String, FrontCommand> commandMap;
+	private UnknownCommand unknownCommand = null;
 	
 	private FrontController()
 	{
-		//commandMap.put("Command", new FrontCommand());
+		commandMap = new HashMap<String, FrontCommand>();
+		unknownCommand = new UnknownCommand();
+		commandMap.put("GetMessages", new GetMessagesCommand());
+		commandMap.put("PutMessage", new PutMessageCommand());
 	}
 	
 	public static FrontController getInstance()
@@ -41,17 +45,18 @@ public class FrontController extends HttpServlet {
 		return singleton;
 	}
 	
-	private FrontCommand getCommand(String command)
+	private FrontCommand getCommand(String commandString)
 	{
-		return commandMap.get(command);
+		FrontCommand command = commandMap.get(commandString);
+		if (command == null)
+			command = unknownCommand;
+		return command;
 	}
 	
 	private void handleRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
 		String commandString = request.getParameter("command");
 		FrontCommand command = getCommand(commandString);
-		if (command == null)
-			throw new ServletException("Unable to find command: " + commandString);
 		command.execute(request, response);
 	}
 	
