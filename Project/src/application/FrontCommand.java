@@ -1,7 +1,7 @@
 /**
  * SOEN 490
  * Capstone 2011
- * Table Data Gateway for the User Domain Object
+ * Front command; simple interface shared by all front commands.
  * Team members: 	Sotirios Delimanolis
  * 			Filipe Martinho
  * 			Adam Harrison

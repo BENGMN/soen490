@@ -1,7 +1,8 @@
 /**
  * SOEN 490
  * Capstone 2011
- * Table Data Gateway for the User Domain Object
+ * Front Controller; acts as an entrypoint for the program.
+ * Delegates to FrontCommands.
  * Team members: 	Sotirios Delimanolis
  * 			Filipe Martinho
  * 			Adam Harrison
@@ -24,7 +25,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class FrontController extends HttpServlet {
-	private static final long serialVersionUID = -7153670066472721404L;
+
+	private static final long serialVersionUID = 8691536805973858130L;
 	
 	private static FrontController singleton = null;
 	private HashMap<String, FrontCommand> commandMap;

@@ -19,5 +19,6 @@
 	<classpathentry kind="lib" path="/usr/share/tomcat6/lib/tomcat-i18n-es.jar"/>
 	<classpathentry kind="lib" path="/usr/share/tomcat6/lib/tomcat-i18n-fr.jar"/>
 	<classpathentry kind="lib" path="/usr/share/tomcat6/lib/tomcat-i18n-ja.jar"/>
+	<classpathentry kind="lib" path="/usr/share/ant/lib/junit.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

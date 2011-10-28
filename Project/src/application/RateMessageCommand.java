@@ -1,7 +1,7 @@
 /**
  * SOEN 490
  * Capstone 2011
- * Get Messages Command; gets messages for a particular user.
+ * Rate message command; allows a user to thumbs up/thumbs down a command.
  * Team members: 	Sotirios Delimanolis
  * 			Filipe Martinho
  * 			Adam Harrison
@@ -18,10 +18,12 @@ package application;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class GetMessagesCommand extends FrontCommand
+public class RateMessageCommand extends FrontCommand
 {
+
 	public void execute(HttpServletRequest request, HttpServletResponse response)
 	{
-		
+
 	}
+
 }

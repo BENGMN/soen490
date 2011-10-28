@@ -111,9 +111,9 @@ public class Message {
 	{
 		return userRating;
 	}
-	
-	public void setUserRating(int userRating) 
-	
+
+	public void setUserRating(int userRating)
+	{
 		this.userRating = userRating;
 	}
 }
