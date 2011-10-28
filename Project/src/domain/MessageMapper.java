@@ -15,14 +15,21 @@
 
 package domain;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 
 import domain.User.UserType;
 import foundation.MessageTDG;
 import foundation.UserTDG;
 
 public class MessageMapper {
+	public static Message[] findInProximity(double longitude, double latitude, double radius)
+	{
+		return null;
+	}
+	
 	public static Message find(long mid)
 	{
 		Message mappedMessage = MessageIdentityMap.getInstance().get(mid);
@@ -33,10 +40,17 @@ public class MessageMapper {
 			ResultSet rs = MessageTDG.find(mid);
 			
 			long rmid = rs.getLong(1);
+			long uid = rs.getLong(2);
 			assert(rmid == mid);
-			int version = rs.getInt(2);
+			String text = rs.getString(3);
+			float speed = rs.getFloat(4);
+			double latitude = rs.getDouble(5);
+			double longitude = rs.getDouble(6);
+			Date createdAt = rs.getDate(7);
+			int userRating = rs.getInt(8);
+			int version = rs.getInt(9);		
 			
-			return new Message(mid, null, "", 0.0f, 0.0, 0.0, "", 0);
+			return new Message(mid, new UserProxy(uid), text, speed, latitude, longitude, createdAt, userRating, version);
 		}
 		catch (SQLException e)
 		{
@@ -45,11 +59,11 @@ public class MessageMapper {
 		return null;
 	}
 	
-	public static int update(User user)
+	public static int update(Message message)
 	{
 		try
 		{
-			return UserTDG.update(user.getUid(), user.getVersion(), user.getEmail(), user.getPassword(), UserType.convertEnum(user.getType()));
+			return MessageTDG.update(message.getVersion(), message.getMid(), message.getOwner().getUid(), message.getText(), message.getSpeed(), message.getLatitude(), message.getLongitude(), message.getCreatedAt(), message.getUserRating());
 		}
 		catch (SQLException e)
 		{
@@ -58,11 +72,11 @@ public class MessageMapper {
 		return -1;
 	}
 	
-	public static int delete(User user)
+	public static int delete(Message message)
 	{
 		try
 		{
-			return UserTDG.delete(user.getUid(), user.getVersion());
+			return MessageTDG.delete(message.getMid(), message.getVersion());
 		}
 		catch (SQLException e)
 		{
@@ -71,11 +85,11 @@ public class MessageMapper {
 		return -1;
 	}
 	
-	public static void insert(User user)
+	public static void insert(Message message)
 	{
 		try
 		{
-			UserTDG.insert(user.getUid(), user.getVersion(), user.getEmail(), user.getPassword(), UserType.convertEnum(user.getType()));
+			MessageTDG.insert(message.getMid(), message.getOwner().getUid(), message.getText(), message.getSpeed(), message.getLatitude(), message.getLongitude(), message.getCreatedAt(), message.getUserRating());
 		}
 		catch (SQLException e)
 		{

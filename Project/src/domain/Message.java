@@ -15,17 +15,26 @@
 
 package domain;
 
-public class Message {
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.sql.Date;
+
+import technical.ISendable;
+
+public class Message implements ISendable {
+	private static final long serialVersionUID = -7430504657407557608L;
+	
 	private long mid;
 	private IUser owner;
 	private String text;
 	private float speed;
 	private double latitude;
 	private double longitude;
-	private String createdAt;
+	private Date createdAt;
 	private int userRating;
+	private int version;
 	
-	public Message(long mid, IUser owner, String text, float speed, double latitude, double longitude, String createdAt, int userRating)
+	public Message(long mid, IUser owner, String text, float speed, double latitude, double longitude, Date createdAt, int userRating, int version)
 	{
 		this.mid = mid;
 		this.owner = owner;
@@ -35,6 +44,7 @@ public class Message {
 		this.longitude = longitude;
 		this.createdAt = createdAt;
 		this.userRating = userRating;
+		this.version = version;
 	}
 	
 	public long getMid()
@@ -97,12 +107,12 @@ public class Message {
 		this.longitude = longitude;
 	}
 	
-	public String getCreatedAt()
+	public Date getCreatedAt()
 	{
 		return createdAt;
 	}
 	
-	public void setCreatedAt(String createdAt)
+	public void setCreatedAt(Date createdAt)
 	{
 		this.createdAt = createdAt;
 	}
@@ -115,5 +125,25 @@ public class Message {
 	public void setUserRating(int userRating)
 	{
 		this.userRating = userRating;
+	}
+	
+	public void setVersion(int version)
+	{
+		this.version = version;
+	}
+	
+	public int getVersion()
+	{
+		return version;
+	}
+	
+	public void writeObject(ObjectOutputStream out)
+	{
+		
+	}
+	
+	public void readObject(ObjectInputStream in)
+	{
+		
 	}
 }

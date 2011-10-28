@@ -24,29 +24,28 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class Database {
-
-	private Connection connect = null;
 	private static Database singleton = null;
 	private Properties prop = new Properties();
 
 	private Database() {
 		try {
-			prop.load(new FileInputStream("Database.properties"));
+			prop.load(new FileInputStream("src/foundation/Database.properties"));
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	private void connect() throws SQLException{
+	private Connection getConnection() throws SQLException
+	{
 		try {
 			// This will load the MySQL driver, each DB has its own driver
 			Class.forName("com.mysql.jdbc.Driver");
 			// Setup the connection with the DB
-			connect = DriverManager
+			Connection connection = DriverManager
 					.getConnection("jdbc:mysql://" + prop.getProperty("hostname") + "/" + prop.getProperty("database") + "?"
 							+ "user=" + prop.getProperty("username") + "&password=" + prop.getProperty("password"));
-
+			return connection;
 		}
 		catch (SQLException e) {
 			throw e;
@@ -54,48 +53,42 @@ public class Database {
 		catch (ClassNotFoundException e) {
 			
 		}
+		return null;
+	}
+	
+	private void freeConnection(Connection connection) throws SQLException
+	{
+		connection.close();
 	}
 	
 	public ResultSet query(String queryString, Object[] objects) throws SQLException{
-		if(connect == null){
-			this.connect();
-		}
-		PreparedStatement statement = connect.prepareStatement(queryString);
+		Connection connection = getConnection();
+		if (connection == null)
+			return null;
+		PreparedStatement statement = connection.prepareStatement(queryString);
 		if (objects != null) {
 			for (int c = 0; c < objects.length; ++c)
 				statement.setObject(c, objects[c]);
 		}
-		return statement.executeQuery();
+		ResultSet rs = statement.executeQuery();
+		freeConnection(connection);
+		return rs;
 	}
 	
 	public int update(String queryString, Object[] objects) throws SQLException{
-		if(connect == null){
-			this.connect();
-		}
-		PreparedStatement statement = connect.prepareStatement(queryString);
+		Connection connection = getConnection();
+		PreparedStatement statement = connection.prepareStatement(queryString);
 		for (int c = 0; c < objects.length; ++c)
 			statement.setObject(c, objects[c]);
-		return statement.executeUpdate();
-	}
-	
-	
-	// You need to close the connection
-	private void close() {
-		try {
-			if (connect != null) {
-				connect.close();
-			}
-		} catch (Exception e) {
-
-		}
+		int result = statement.executeUpdate();
+		freeConnection(connection);
+		return result;
 	}
 	
 	public PreparedStatement getStatement(String query) throws SQLException
 	{
-		if(connect == null){
-			this.connect();
-		}
-		return connect.prepareStatement(query);
+		Connection connection = getConnection();
+		return connection.prepareStatement(query);
 	}
 
 	public static Database getInstance()

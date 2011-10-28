@@ -18,6 +18,7 @@ package foundation;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+
 //CREATE TABLE User (uid NOT NULL bigint, email NOT NULL varchar(64), 
 //password NOT NULL varchar(256), type NOT NULL tinyint, CONSTRAINT pk_uid PRIMARY KEY (uid))
 

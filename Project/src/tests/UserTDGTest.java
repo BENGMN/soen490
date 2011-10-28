@@ -1,8 +1,26 @@
+/**
+ * SOEN 490
+ * Capstone 2011
+ * Test for UserTDG.
+ * Team members: 	Sotirios Delimanolis
+ * 			Filipe Martinho
+ * 			Adam Harrison
+ * 			Vahe Chahinian
+ * 			Ben Crudo
+ * 			Anthony Boyer
+ * 
+ * @author Capstone 490 Team Moving Target
+ *
+ */
+
 package tests;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import foundation.UserTDG;
+
+
 import junit.framework.TestCase;
 
 public class UserTDGTest extends TestCase {
@@ -32,7 +50,7 @@ public class UserTDGTest extends TestCase {
 			assertEquals(rs.getInt("u.version"), version);
 			assertEquals(rs.getInt("u.type"), type);
 		}
-		catch (Exception e) {
+		catch (SQLException e) {
 			fail("Exception failure:" + e);
 		}
 	}
@@ -53,7 +71,7 @@ public class UserTDGTest extends TestCase {
 			assertEquals(rs.getInt("u.version"), version);
 			assertEquals(rs.getInt("u.type"), type);
 		}
-		catch (Exception e) {
+		catch (SQLException e) {
 			fail("Exception failure:" + e);
 		}
 	}
@@ -61,15 +79,12 @@ public class UserTDGTest extends TestCase {
 	private void testDelete()
 	{
 		try {
-			final String email = "example@example.com";
-			final String password = "password";
-			final int type = 1;
 			final int version = 1;
 			assertNotNull(UserTDG.find(uid));
-			assertEquals(UserTDG.delete(uid), 1);
+			assertEquals(UserTDG.delete(uid, version), 1);
 			assertNull(UserTDG.find(uid));
 		}
-		catch (Exception e) {
+		catch (SQLException e) {
 			fail("Exception failure:" + e);
 		}
 	}

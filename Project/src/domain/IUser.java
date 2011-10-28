@@ -15,12 +15,12 @@
 
 package domain;
 
+import technical.ISendable;
 import domain.User.UserType;
 
-public interface IUser {
+public interface IUser extends ISendable {
 
 	public long getUid();
-	public void setUid(long uid);
 	public String getPassword();
 	public void setPassword(String password);
 	public String getEmail();

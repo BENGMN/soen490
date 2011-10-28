@@ -16,10 +16,13 @@
 
 package domain;
 
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import domain.User.UserType;
 
 public class UserProxy implements IUser {
-	
+	private static final long serialVersionUID = 3712990165468088049L;
 	private long uid;
 	private User realUser;
 	
@@ -76,14 +79,19 @@ public class UserProxy implements IUser {
 		getRealUser().setType(type);
 	}
 
-	public void setUid(long uid)
-	{
-		getRealUser().setUid(uid);
-	}
-
 	public void setVersion(int version)
 	{
 		getRealUser().setVersion(version);
+	}
+	
+	public void writeObject(ObjectOutputStream out)
+	{
+		
+	}
+	
+	public void readObject(ObjectInputStream in)
+	{
+		
 	}
 
 }

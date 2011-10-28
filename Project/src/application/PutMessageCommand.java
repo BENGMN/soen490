@@ -15,6 +15,8 @@
 
 package application;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -23,7 +25,23 @@ public class PutMessageCommand extends FrontCommand
 
 	public void execute(HttpServletRequest request, HttpServletResponse response)
 	{
-
+		try
+		{
+			double longitude = Double.parseDouble(request.getParameter("longitude"));
+			double latitude = Double.parseDouble(request.getParameter("latitude"));
+			double speed = Double.parseDouble(request.getParameter("speed"));
+		}
+		catch (Exception e1)
+		{
+			try
+			{
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error: " + e1);
+			}
+			catch (IOException e2)
+			{
+				e1.printStackTrace();
+			}
+		}
 	}
 
 }

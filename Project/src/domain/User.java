@@ -15,9 +15,14 @@
 
 package domain;
 
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 public class User implements IUser {
 	
-	enum UserType {
+	private static final long serialVersionUID = 4373314751734158581L;
+
+	public enum UserType {
 		USER_NORMAL,
 		USER_ADVERTISER;
 		
@@ -55,6 +60,7 @@ public class User implements IUser {
 	{
 		this.uid = uid;
 		this.email = email;
+		this.password = password;
 		this.type = type;
 		this.version = version;
 	}
@@ -64,14 +70,9 @@ public class User implements IUser {
 		return uid;
 	}
 	
-	public void setUid(long uid)
-	{
-		this.uid = uid;
-	}
-	
 	public String getPassword()
 	{
-		return email;
+		return password;
 	}
 	
 	public void setPassword(String password) 
@@ -109,5 +110,13 @@ public class User implements IUser {
 		this.version = version;
 	}
 	
+	public void writeObject(ObjectOutputStream out)
+	{
+		
+	}
 	
+	public void readObject(ObjectInputStream in)
+	{
+		
+	}
 }

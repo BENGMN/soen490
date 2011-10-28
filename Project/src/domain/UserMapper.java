@@ -18,6 +18,7 @@ package domain;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+
 import domain.User;
 import domain.User.UserType;
 import foundation.UserTDG;

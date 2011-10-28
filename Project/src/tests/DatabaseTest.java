@@ -1,3 +1,19 @@
+/**
+ * SOEN 490
+ * Capstone 2011
+ * Test for database class.
+ * Team members: 	Sotirios Delimanolis
+ * 			Filipe Martinho
+ * 			Adam Harrison
+ * 			Vahe Chahinian
+ * 			Ben Crudo
+ * 			Anthony Boyer
+ * 
+ * @author Capstone 490 Team Moving Target
+ *
+ */
+
+
 package tests;
 
 import java.sql.PreparedStatement;
@@ -17,5 +33,11 @@ public class DatabaseTest extends TestCase {
 		{
 			fail("Failed to create table: " + e);
 		}
+	}
+	
+	// Here we test the various tables in the database to see if they're present.
+	public void testDatabaseComposition()
+	{
+		
 	}
 }
