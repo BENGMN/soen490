@@ -51,10 +51,10 @@ public class UserTDG {
 	 * @param type User type as an integer
 	 * @throws SQLException
 	 */
-	public static void insert(long uid, int version, String email, String password, int type) throws SQLException {
+	public static int insert(long uid, int version, String email, String password, int type) throws SQLException {
 		String query = "INSERT INTO " + TABLE + " (uid, version, email, password, type) VALUES (?,?,?,?,?);";
 		Object[] objects = {uid, version, email, password, type};
-		Database.getInstance().update(query, objects);
+		return Database.getInstance().update(query, objects);
 		/*PreparedStatement ps = Database.getInstance().getStatement(query);
 		
 		ps.setString(1, uid.toString());

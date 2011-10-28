@@ -36,8 +36,7 @@ public class MessageMapper {
 			assert(rmid == mid);
 			int version = rs.getInt(2);
 			
-
-			return new Message();
+			return new Message(mid, null, "", 0.0f, 0.0, 0.0, "", 0);
 		}
 		catch (SQLException e)
 		{
