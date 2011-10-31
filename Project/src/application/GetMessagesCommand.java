@@ -37,6 +37,7 @@ public class GetMessagesCommand extends FrontCommand
 			responseStream.write(messages.length);
 			for (int i = 0; i < messages.length; ++i)
 				messages[i].writeObject(responseStream);
+			
 		}
 		catch (Exception e1)
 		{

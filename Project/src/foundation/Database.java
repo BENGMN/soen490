@@ -15,28 +15,54 @@
 
 package foundation;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
+//import java.util.Stack;
+
 public class Database {
 	private static Database singleton = null;
 	private Properties prop = new Properties();
+	//private Stack<Connection> freeConnections = new Stack<Connection>();
+	//private static final long connectionPool = 10;
 
-	private Database() {
-		try {
+	// If we want to pool connections we'd put the code in here; create at startup, and allocate connections on getConnection and freeConnection.
+	private Database()
+	{
+		try
+		{
 			prop.load(new FileInputStream("src/foundation/Database.properties"));
 		}
-		catch (Exception e) {
+		catch (Exception e)
+		{
 			e.printStackTrace();
 		}
 	}
 	
-	private Connection getConnection() throws SQLException
+	public boolean canConnect()
+	{
+		Connection connection = null;
+		try {
+			connection = getConnection();
+			if (connection == null)
+				return false;
+			freeConnection(connection);
+			return true;
+		}
+		catch (Exception e) {
+			return false;
+		}
+	}
+	
+	private synchronized Connection getConnection() throws SQLException
 	{
 		try {
 			// This will load the MySQL driver, each DB has its own driver
@@ -56,12 +82,13 @@ public class Database {
 		return null;
 	}
 	
-	private void freeConnection(Connection connection) throws SQLException
+	private synchronized void freeConnection(Connection connection) throws SQLException
 	{
 		connection.close();
 	}
 	
-	public ResultSet query(String queryString, Object[] objects) throws SQLException{
+	public ResultSet query(String queryString, Object[] objects) throws SQLException
+	{
 		Connection connection = getConnection();
 		if (connection == null)
 			return null;
@@ -75,14 +102,55 @@ public class Database {
 		return rs;
 	}
 	
-	public int update(String queryString, Object[] objects) throws SQLException{
+	public ResultSet query(String queryString) throws SQLException
+	{
+		return query(queryString, null);
+	}
+	
+	public int update(String queryString, Object[] objects) throws SQLException
+	{
 		Connection connection = getConnection();
 		PreparedStatement statement = connection.prepareStatement(queryString);
-		for (int c = 0; c < objects.length; ++c)
-			statement.setObject(c, objects[c]);
+		if (objects != null) {
+			for (int c = 0; c < objects.length; ++c)
+				statement.setObject(c, objects[c]);
+		}
 		int result = statement.executeUpdate();
 		freeConnection(connection);
 		return result;
+	}
+	
+	public int update(String queryString) throws SQLException
+	{
+		return update(queryString, null);
+	}
+	
+	public boolean runFile(String path)
+	{
+		try
+		{
+			BufferedReader fileReader = new BufferedReader(new FileReader(path));
+			String line;
+			while ((line = fileReader.readLine()) != null)
+			{
+				update(line, null);
+			}
+			return true;
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return false;
+		}
+		
+	}
+	
+	public boolean hasTable(String tableName) throws SQLException
+	{
+		Connection connection = getConnection();
+		DatabaseMetaData metaData = connection.getMetaData();
+		ResultSet tables = metaData.getTables(null, null, tableName, null);
+		return tables.next();
 	}
 	
 	public PreparedStatement getStatement(String query) throws SQLException
