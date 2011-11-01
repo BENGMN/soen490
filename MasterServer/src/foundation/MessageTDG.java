@@ -19,6 +19,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Calendar;
+
+import javax.sql.rowset.serial.SerialBlob;
 
 
 public class MessageTDG {
@@ -44,11 +47,11 @@ public class MessageTDG {
 		return rs;*/
 	}
 
-	public static void insert(long mid, long uid, String message,float speed, double latitude , double longitude , java.sql.Date created_at , int user_rating) throws SQLException {
+	public static int insert(int version, long mid, long uid, byte[] message,float speed, double latitude , double longitude , Calendar created_at , int user_rating) throws SQLException {
 		
-		String query = "INSERT INTO " + TABLE + " (mid , uid , message , speed , latitude , longitude , created_at , user_rating) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-		Object[] objects = {mid, uid, message, speed, latitude, longitude, created_at, user_rating};
-		Database.getInstance().update(query, objects);
+		String query = "INSERT INTO " + TABLE + " (version, mid , uid , message , speed , latitude , longitude , created_at , user_rating) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		Object[] objects = {version, mid, uid, new SerialBlob(message), speed, latitude, longitude, new java.sql.Date(created_at.getTime().getTime()), user_rating};
+		return Database.getInstance().update(query, objects);
 		/*PreparedStatement ps = Database.getInstance().getStatement(query);
 		
 		ps.setString(1, mid.toString());
@@ -65,9 +68,9 @@ public class MessageTDG {
 		
 	}
 	
-	public static int update(int version, long mid, long uid, String message,float speed, double latitude , double longitude , java.sql.Date created_at , int user_rating) throws SQLException {
+	public static int update(int version, long mid, long uid, byte[] message,float speed, double latitude , double longitude , Calendar created_at , int user_rating) throws SQLException {
 		String query = "UPDATE " + TABLE + " SET version = ?, mid = ?, uid = ?, message = ?, speed = ?, latitude = ?, longitude = ?, created_at = ? user_rating = ?  WHERE mid = ? AND version = ?";
-		Object[] objects = {version+1, mid, uid, message, speed, latitude, longitude, created_at, user_rating, mid, version};
+		Object[] objects = {version, mid, uid, new SerialBlob(message), speed, latitude, longitude, new java.sql.Date(created_at.getTime().getTime()), user_rating, mid, version};
 		return Database.getInstance().update(query, objects);
 		/*PreparedStatement ps = Database.getInstance().getStatement(query);
 		
