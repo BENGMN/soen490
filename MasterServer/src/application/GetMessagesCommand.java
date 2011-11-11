@@ -33,6 +33,7 @@ public class GetMessagesCommand extends FrontCommand
 		Message messages[] = MessageMapper.findInProximity(longitude, latitude, radius);
 		try
 		{
+			
 			ObjectOutputStream responseStream = new ObjectOutputStream(response.getOutputStream());
 			responseStream.write(messages.length);
 			for (int i = 0; i < messages.length; ++i)

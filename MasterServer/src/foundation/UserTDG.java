@@ -15,32 +15,31 @@
 
 package foundation;
 
-import java.sql.ResultSet;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-
+/**
+ * Foundation class for executing insert/update/delete on Users.
+ * @author Moving Target
+ */
 public class UserTDG {
 	// Table name
-	private final static String TABLE = "User";
-	
+	protected final static String TABLE = "User";
+		
 	// Private constructor
 	private UserTDG() {}
+		
+	private final static String INSERT = 
+		"INSERT INTO " + TABLE + " " +
+		"(uid, " +
+		"version, " +
+		"email, " +
+		"password, " +
+		"type) " + 			
+		"VALUES (?, ?, ?, password(?), ?);";
 	
 	/**
-	 * Inserts a row into the table for User, where the column row are the passed parameters.
-	 * @param uid User ID
-	 * @return Returns the ResultSet of the query.
-	 * @throws SQLException
-	 */
-	public static ResultSet find(long uid) throws SQLException
-	{
-		Object[] objects = {uid};
-		return Database.getInstance().query("SELECT u.uid, u.version, u.email, u.password, u.type FROM " + TABLE + " AS u WHERE u.uid=?;",
-				objects);
-	}
-	
-	/**
-	 * Inserts a row into the table for User, where the column row are the passed parameters.
+	 * Inserts a row into the table for User, where the column row values are the passed parameters.
 	 * @param uid User ID
 	 * @param version User version of object in memory
 	 * @param email User email
@@ -49,20 +48,29 @@ public class UserTDG {
 	 * @throws SQLException
 	 */
 	public static int insert(long uid, int version, String email, String password, int type) throws SQLException {
-		String query = "INSERT INTO " + TABLE + " (uid, version, email, password, type) VALUES (?,?,?,?,?);";
-		Object[] objects = {uid, version, email, password, type};
-		return Database.getInstance().update(query, objects);
-		/*PreparedStatement ps = Database.getInstance().getStatement(query);
+
+		PreparedStatement ps = Database.getInstance().getStatement(INSERT);
 		
-		ps.setString(1, uid.toString());
+		ps.setLong(1, uid);
 		ps.setInt(2, version);
 		ps.setString(3, email);
 		ps.setString(4, password);
 		ps.setInt(5, type);
 		
-		ps.executeUpdate();
-		ps.close();	*/
+		int count = ps.executeUpdate();
+		ps.close();
+		return count;
 	}
+	
+	private final static String UPDATE = 
+		"UPDATE " + TABLE + " " +
+		"AS u SET" + " " +
+		"u.email = ?, " +
+		"u.password = password(?), " +
+		"u.type = ?, " +
+		"u.version = u.version + 1 " +
+		"WHERE u.uid = ? AND u.version = ?;";
+		
 	
 	/**
 	 * Updates a row in the table for User, where the row values are the passed parameters.
@@ -75,22 +83,23 @@ public class UserTDG {
 	 * @throws SQLException
 	 */
 	public static int update(long uid, int version, String email, String password, int type) throws SQLException {
-		String query = "UPDATE " + TABLE + " AS u SET u.email=?, u.password=?, u.type=?, u.version=u.version+1 WHERE u.uid=? AND u.version=?;";
-		Object[] objects = {email, password, type, uid, version};
-		return Database.getInstance().update(query, objects);
 		
-		/*PreparedStatement ps = Database.getInstance().getStatement(query);
+		PreparedStatement ps = Database.getInstance().getStatement(UPDATE);
 		
 		ps.setString(1, email);
 		ps.setString(2, password);
 		ps.setInt(3, type);
-		ps.setString(4, uid.toString());
+		ps.setLong(4, uid);
 		ps.setInt(5, version);
 		
 		int count = ps.executeUpdate();
 		ps.close();
-		return count; */
+		return count; 
 	}
+	
+	private final static String DELETE =
+		"DELETE FROM " + TABLE + " " + 
+		"AS u WHERE u.uid = ? AND u.version = ?;";
 	
 	/**
 	 * Deletes a row from the table for User, where the User ID and version are equal to the passed parameters.
@@ -100,16 +109,13 @@ public class UserTDG {
 	 * @throws SQLException
 	 */
 	public static int delete(long uid, int version) throws SQLException {
-		String query = "DELETE FROM " + TABLE + " AS u WHERE u.uid=? AND u.version=?;";
-		Object[] objects = {uid, version};
-		return Database.getInstance().update(query, objects);
-		/*PreparedStatement ps = Database.getInstance().getStatement(query);
+		PreparedStatement ps = Database.getInstance().getStatement(DELETE);
 
-		ps.setString(1, uid.toString());
+		ps.setLong(1, uid);
 		ps.setInt(2, version);
 		
 		int count = ps.executeUpdate();
 		ps.close();
-		return count;*/
+		return count;
 	}
 }

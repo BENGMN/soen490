@@ -15,9 +15,11 @@
 
 package domain;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.sql.Date;
+import java.util.Calendar;
 
 import technical.ISendable;
 
@@ -26,19 +28,19 @@ public class Message implements ISendable {
 	
 	private long mid;
 	private IUser owner;
-	private String text;
+	private byte[] message;
 	private float speed;
 	private double latitude;
 	private double longitude;
-	private Date createdAt;
+	private Calendar createdAt;
 	private int userRating;
 	private int version;
 	
-	public Message(long mid, IUser owner, String text, float speed, double latitude, double longitude, Date createdAt, int userRating, int version)
+	public Message(long mid, IUser owner, byte[] message, float speed, double latitude, double longitude, Calendar createdAt, int userRating, int version)
 	{
 		this.mid = mid;
 		this.owner = owner;
-		this.text = text;
+		this.message = message;
 		this.speed = speed;
 		this.latitude = latitude;
 		this.longitude = longitude;
@@ -47,83 +49,40 @@ public class Message implements ISendable {
 		this.version = version;
 	}
 	
-	public long getMid()
-	{
+	// Getters and Setters
+	public long getMid() {
 		return mid;
 	}
 	
-	public void setMid(long mid)
-	{
-		this.mid = mid;
-	}
-	
-	public IUser getOwner()
-	{
+	public IUser getOwner() {
 		return owner;
 	}
 	
-	public void setOwner(IUser owner)
-	{
-		this.owner = owner;
+	public byte[] getMessage() {
+		return message;
 	}
 	
-	public String getText()
-	{
-		return text;
-	}
-	
-	public void setText(String text)
-	{
-		this.text = text;
-	}
-	
-	public float getSpeed()
-	{
+	public float getSpeed() {
 		return speed;
 	}
 	
-	public void setSpeed(float speed)
-	{
-		this.speed = speed;
-	}
-	
-	public double getLatitude()
-	{
+	public double getLatitude() {
 		return latitude;
 	}
 	
-	public void setLatitude(double latitude)
-	{
-		this.latitude = latitude;
-	}
-	
-	public double getLongitude()
-	{
+	public double getLongitude() {
 		return longitude;
 	}
 	
-	public void setLongitude(double longitude)
-	{
-		this.longitude = longitude;
-	}
-	
-	public Date getCreatedAt()
-	{
+	public Calendar getCreatedAt() {
 		return createdAt;
 	}
 	
-	public void setCreatedAt(Date createdAt)
-	{
-		this.createdAt = createdAt;
-	}
-	
-	public int getUserRating()
-	{
+	public int getUserRating() {
 		return userRating;
 	}
 
-	public void setUserRating(int userRating)
-	{
+	public void setUserRating(int userRating) {
 		this.userRating = userRating;
 	}
 	
@@ -137,13 +96,20 @@ public class Message implements ISendable {
 		return version;
 	}
 	
-	public void writeObject(ObjectOutputStream out)
+	/* Temporarily out
+	
+	public void writeObject(ObjectOutputStream out) throws IOException
 	{
+		out.writeObject(mid);
+		out.writeObject(owner.getEmail());
 		
 	}
 	
 	public void readObject(ObjectInputStream in)
 	{
-		
+		byte[] response;
+		int index;
+		Integer.
 	}
+	*/
 }

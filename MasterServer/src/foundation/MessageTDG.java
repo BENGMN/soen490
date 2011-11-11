@@ -2,7 +2,8 @@
  * SOEN 490
  * Capstone 2011
  * Table Data Gateway for the User Domain Object
- * Team members: 	Sotirios Delimanolis
+ * Team members: 	
+ * 			Sotirios Delimanolis
  * 			Filipe Martinho
  * 			Adam Harrison
  * 			Vahe Chahinian
@@ -15,94 +16,109 @@
 
 package foundation;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
-
 import javax.sql.rowset.serial.SerialBlob;
 
-
+/**
+ * Foundation class for executing insert/delete/update operations on Message table
+ * @author Moving Target
+ *
+ */
 public class MessageTDG {
 
 	
 	public static final String TABLE = "Group";
+
+	private final static String INSERT =
+			"INSERT INTO " + TABLE + 
+			"(mid, " +
+			"uid, " +
+			"message, " +
+			"speed, " +
+			"latitude, " +
+			"longitude, " +
+			"created_at, " +
+			"user_rating, " +
+			"version) " +
+			"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
 	
-	public static ResultSet findAll() throws SQLException {
-		String query = "SELECT m.mid, m.uid, m.message, m.speed, m.latitude, m.longitude, m.created_at, m.user_rating, m.version, FROM " + TABLE + " AS m";
-		return Database.getInstance().query(query, null);
-		/*PreparedStatement ps = Database.getInstance().getStatement(query);
-		ResultSet rs = ps.executeQuery();
-		return rs;*/
-	}
-
-	public static ResultSet find(long mid) throws SQLException {
-		String query = "SELECT m.mid, m.uid, m.message, m.speed, m.latitude, m.longitude, m.created_at, m.user_rating, m.version FROM " + TABLE + " AS m WHERE m.mid=?";
-		Object objects[] = {mid};
-		return Database.getInstance().query(query, objects);
-		/*PreparedStatement ps = Database.getInstance().getStatement(query);
-		ps.setString(1, mid.toString());
-		ResultSet rs = ps.executeQuery();
-		return rs;*/
-	}
-
-	public static int insert(int version, long mid, long uid, byte[] message,float speed, double latitude , double longitude , Calendar created_at , int user_rating) throws SQLException {
+	/**
+	 * Inserts a row into the table for Message, where the column row values are the passed parameters.
+	 * @param mid Message id
+	 * @param uid User id
+	 * @param version Message version
+	 * @param message Message contents
+	 * @param speed Message speed 
+	 * @param latitude Message latitude of location
+	 * @param longitude Message longitude of location
+	 * @param created_at Message date created
+	 * @param user_rating Message rating
+	 * @return Returns 1 if the insert succeeded. 
+	 * @throws SQLException
+	 */
+	public static int insert(long mid, long uid, int version, byte[] message, float speed, double latitude , double longitude , Calendar created_at , int user_rating) throws SQLException {
+		PreparedStatement ps = Database.getInstance().getStatement(INSERT);
 		
-		String query = "INSERT INTO " + TABLE + " (version, mid , uid , message , speed , latitude , longitude , created_at , user_rating) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-		Object[] objects = {version, mid, uid, new SerialBlob(message), speed, latitude, longitude, new java.sql.Date(created_at.getTime().getTime()), user_rating};
-		return Database.getInstance().update(query, objects);
-		/*PreparedStatement ps = Database.getInstance().getStatement(query);
-		
-		ps.setString(1, mid.toString());
-		ps.setString(2, uid.toString());
-		ps.setString(3, message);
+		ps.setLong(1, mid);
+		ps.setLong(2, uid);
+		ps.setBlob(3, new SerialBlob(message));
 		ps.setFloat(4, speed);
 		ps.setDouble(5, latitude);
 		ps.setDouble(6, longitude);
-		ps.setDate(7, created_at);
+		ps.setDate(7, new java.sql.Date(created_at.getTime().getTime()));
 		ps.setInt(8, user_rating);
+		ps.setInt(9, version);
 		
-		ps.executeUpdate();
-		ps.close();*/
-		
+		int count = ps.executeUpdate();
+		ps.close();
+		return count;
 	}
 	
-	public static int update(int version, long mid, long uid, byte[] message,float speed, double latitude , double longitude , Calendar created_at , int user_rating) throws SQLException {
-		String query = "UPDATE " + TABLE + " SET version = ?, mid = ?, uid = ?, message = ?, speed = ?, latitude = ?, longitude = ?, created_at = ? user_rating = ?  WHERE mid = ? AND version = ?";
-		Object[] objects = {version, mid, uid, new SerialBlob(message), speed, latitude, longitude, new java.sql.Date(created_at.getTime().getTime()), user_rating, mid, version};
-		return Database.getInstance().update(query, objects);
-		/*PreparedStatement ps = Database.getInstance().getStatement(query);
+	private final static String UPDATE = 
+		"UPDATE " + TABLE + " " +
+		"user_rating = ?  " +
+		"WHERE mid = ?";
+	
+	/**
+	 * Not much use for this, since we always want to increment or decrement the user rating by 1.
+	 * Updates a row in the table for Message, changing only the user rating
+	 * @param mid Message id
+	 * @param user_rating Message rating
+	 * @return Returns the number of rows updated, should be 1.
+	 * @throws SQLException
+	 */
+	public static int update(long mid, int user_rating) throws SQLException {
+		PreparedStatement ps = Database.getInstance().getStatement(UPDATE);
 		
-		ps.setInt(1, version); 
-		ps.setString(2, mid.toString()); //Is this supposed to be version + 1?
-		ps.setString(3, uid.toString());
-		ps.setString(4, message);
-		ps.setFloat(5, speed);
-		ps.setDouble(6, latitude);
-		ps.setDouble(7, longitude);
-		ps.setDate(8, created_at);
-		ps.setInt(9, user_rating);	
-		ps.setString(10, mid.toString());
-		ps.setInt(11, version);
+		ps.setInt(1, user_rating);
+		ps.setLong(2, mid);
 		
 		int count = ps.executeUpdate();
-		
 		ps.close();
-		
-		return count;*/	
+		return count;	
 	}
 
+	private final static String DELETE = 
+		"DELETE FROM " + TABLE + " WHERE mid = ? AND version = ?";
+	
+	/**
+	 * Deletes a message from the Message table.
+	 * @param mid Message id
+	 * @param version Message version
+	 * @return Returns 1 if the operation was successful, 0 if it no rows were affected.
+	 * @throws SQLException
+	 */
 	public static int delete(long mid, int version) throws SQLException {
-		String query = "DELETE FROM " + TABLE + " WHERE mid = ? AND version = ?";
-		Object[] objects = {mid, version};
-		return Database.getInstance().update(query, objects);
-		/*PreparedStatement ps = Database.getInstance().getStatement(query);
-		ps.setString(1, mid.toString());
+		PreparedStatement ps = Database.getInstance().getStatement(DELETE);
+		
+		ps.setLong(1, mid);
 		ps.setInt(2, version);
+		
 		int count = ps.executeUpdate();
 		ps.close();
-		return count;*/
+		return count;
 	}
 
 }

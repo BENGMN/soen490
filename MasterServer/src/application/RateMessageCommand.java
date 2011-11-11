@@ -32,7 +32,9 @@ public class RateMessageCommand extends FrontCommand
 		{
 			long mid = Long.parseLong(request.getParameter("mid"));
 			Message message = MessageMapper.find(mid);
-			message.setUserRating(message.getUserRating()+1);
+			synchronized(message) {
+				message.setUserRating(message.getUserRating()+1);
+			}
 			MessageMapper.update(message);
 		}
 		catch (Exception e1)
