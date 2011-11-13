@@ -1,0 +1,28 @@
+Here are the instructions that GitHub provides you with in order to create a new repository.
+
+Note: replace the name John Doe with your actual GitHub user name. Also replace the email and don't forget to name your app.
+
+Global setup:
+
+Download and install Git
+  git config --global user.name "John Doe"
+  git config --global user.email john.doe@gmail.com
+        
+
+Next steps:
+
+mkdir Name-Your-App
+  cd Name-Your-App
+  git init
+  touch README
+  git add README
+  git commit -m 'first commit'
+  git remote add origin git@github.com:BENGMN/soen490.git
+  git push -u origin master
+      
+
+Existing Git Repo?
+
+cd existing_git_repo
+  git remote add origin git@github.com:BENGMN/soen490.git
+  git push -u origin master
