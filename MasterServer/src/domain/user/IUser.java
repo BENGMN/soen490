@@ -15,9 +15,9 @@
 
 package domain.user;
 
-import technical.ISendable;
+import technical.IServerSendable;
 
-public interface IUser extends ISendable {
+public interface IUser extends IServerSendable {
 
 	public long getUid();
 	public String getPassword();

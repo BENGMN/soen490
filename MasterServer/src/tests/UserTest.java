@@ -16,6 +16,7 @@
 package tests;
 
 import domain.user.User;
+import domain.user.UserType;
 import junit.framework.TestCase;
 
 public class UserTest extends TestCase {
@@ -25,7 +26,7 @@ public class UserTest extends TestCase {
 	{
 		final String email = "example@example.com";
 		final String password = "password";
-		final User.UserType userType = User.UserType.USER_NORMAL;
+		final UserType userType = UserType.USER_NORMAL;
 		final int version = 1;
 		User user = new User(uid, email, password, userType, version);
 		assertEquals(user.getUid(), uid);
@@ -39,7 +40,7 @@ public class UserTest extends TestCase {
 	{
 		final String email = "example@example.com";
 		final String password = "password";
-		final User.UserType userType = User.UserType.USER_NORMAL;
+		final UserType userType = UserType.USER_NORMAL;
 		final int version = 1;
 		User user = new User(uid, "", "", null, 0);
 		user.setEmail(email);

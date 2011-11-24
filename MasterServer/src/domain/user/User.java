@@ -15,6 +15,7 @@
 
 package domain.user;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
@@ -91,5 +92,13 @@ public class User implements IUser {
 	public void readObject(ObjectInputStream in)
 	{
 		
+	}
+
+	public void writeServer(ObjectOutputStream out) throws IOException {
+		// TODO Not implemented as of yet.
+	}
+
+	public void readServer(ObjectInputStream in) throws IOException {
+		// TODO Not implemented as of yet.
 	}
 }

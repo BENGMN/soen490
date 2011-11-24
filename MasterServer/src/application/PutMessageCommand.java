@@ -30,6 +30,7 @@ public class PutMessageCommand extends FrontCommand
 			double longitude = Double.parseDouble(request.getParameter("longitude"));
 			double latitude = Double.parseDouble(request.getParameter("latitude"));
 			float speed = Float.parseFloat(request.getParameter("speed"));
+			String message = request.getParameter("message");
 			
 		}
 		catch (Exception e1)

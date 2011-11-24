@@ -18,6 +18,7 @@ package tests;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import foundation.UserFinder;
 import foundation.UserTDG;
 
 
@@ -41,9 +42,9 @@ public class UserTDGTest extends TestCase {
 			final String password = "password";
 			final int type = 1;
 			final int version = 1;
-			assertNull(UserTDG.find(uid));
+			assertNull(UserFinder.find(uid));
 			assertEquals(UserTDG.insert(uid, version, email, password, type), 1);
-			ResultSet rs = UserTDG.find(uid);
+			ResultSet rs = UserFinder.find(uid);
 			assertEquals(rs.getLong("u.uid"), uid);
 			assertEquals(rs.getString("u.email"), email);
 			assertEquals(rs.getString("u.password"), password);
@@ -62,9 +63,9 @@ public class UserTDGTest extends TestCase {
 			final String password = "password2";
 			final int type = 0;
 			final int version = 2;
-			assertNotNull(UserTDG.find(uid));
+			assertNotNull(UserFinder.find(uid));
 			assertEquals(UserTDG.update(uid, version, email, password, type), 1);
-			ResultSet rs = UserTDG.find(uid);
+			ResultSet rs = UserFinder.find(uid);
 			assertEquals(rs.getLong("u.uid"), uid);
 			assertEquals(rs.getString("u.email"), email);
 			assertEquals(rs.getString("u.password"), password);
@@ -80,9 +81,9 @@ public class UserTDGTest extends TestCase {
 	{
 		try {
 			final int version = 1;
-			assertNotNull(UserTDG.find(uid));
+			assertNotNull(UserFinder.find(uid));
 			assertEquals(UserTDG.delete(uid, version), 1);
-			assertNull(UserTDG.find(uid));
+			assertNull(UserFinder.find(uid));
 		}
 		catch (SQLException e) {
 			fail("Exception failure:" + e);

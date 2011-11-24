@@ -28,20 +28,25 @@ import java.util.List;
  * @author Moving Target
  */
 public class MessageInputMapper {
-	public static Message[] findInProximity(double longitude, double latitude, double radius){
-		return null;
+	public static List<Message> findInProximity(double longitude, double latitude, double radius) throws SQLException {
+		ResultSet rs = MessageFinder.findInProximity(longitude, latitude, radius);
+		List<Message> messages = new LinkedList<Message>();
+		while (rs.next()) {
+			messages.add(getMessage(rs));
+		}
+		return messages;
 	}
 	
-	
-	
-	/*
-	 * TODO FIX DATA TYPE FOR LATITUDE AND LONGITUDE
-	 */
 	private static Message getMessage(ResultSet rs) throws SQLException {
 		Calendar date = Calendar.getInstance();
 		date.setTime(rs.getDate("m.created_at"));
 		
-		Message message = MessageFactory.createNew(rs.getLong("m.mid"),
+		long mid = rs.getLong("m.mid");
+		Message message = MessageIdentityMap.getUniqueInstance().get(mid);
+		if (message != null)
+			return message;
+		
+		message = MessageFactory.createNew(mid,
 								 rs.getLong("m.uid"),
 								 rs.getBytes("m.message"),
 								 rs.getFloat("m.speed"),

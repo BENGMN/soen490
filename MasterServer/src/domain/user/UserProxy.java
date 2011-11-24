@@ -16,6 +16,8 @@
 
 package domain.user;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class UserProxy implements IUser {
@@ -69,9 +71,13 @@ public class UserProxy implements IUser {
 	public void setVersion(int version) {
 		getRealUser().setVersion(version);
 	}
-	
-	public void writeObject(ObjectOutputStream out) {
-		
+
+	public void writeServer(ObjectOutputStream out) throws IOException {
+		getRealUser().writeServer(out);
 	}
 
+	@Override
+	public void readServer(ObjectInputStream in) throws IOException {
+		getRealUser().readServer(in);
+	}
 }

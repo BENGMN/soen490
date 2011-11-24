@@ -15,6 +15,8 @@
 
 package domain.message;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -22,23 +24,28 @@ import java.sql.Date;
 import java.util.Calendar;
 
 import domain.user.IUser;
+import domain.user.User;
+import domain.user.UserMapper;
+import foundation.UserFinder;
 
-import technical.ISendable;
+import technical.IClientSendable;
+import technical.IServerSendable;
+import technical.UnrecognizedUserException;
 
-public class Message implements ISendable {
+public class Message implements IServerSendable, IClientSendable {
 	private static final long serialVersionUID = -7430504657407557608L;
 	
 	private long mid;
 	private IUser owner;
 	private byte[] message;
-	private double speed;
+	private float speed;
 	private double latitude;
 	private double longitude;
 	private Calendar createdAt;
 	private int userRating;
 	private int version;
 	
-	public Message(long mid, IUser owner, byte[] message, double speed, double latitude, double longitude, Calendar createdAt, int userRating, int version)
+	public Message(long mid, IUser owner, byte[] message, float speed, double latitude, double longitude, Calendar createdAt, int userRating, int version)
 	{
 		this.mid = mid;
 		this.owner = owner;
@@ -64,7 +71,7 @@ public class Message implements ISendable {
 		return message;
 	}
 	
-	public double getSpeed() {
+	public float getSpeed() {
 		return speed;
 	}
 	
@@ -96,20 +103,25 @@ public class Message implements ISendable {
 		return version;
 	}
 	
-	/* Temporarily out
-	
-	public void writeObject(ObjectOutputStream out) throws IOException
+	public void writeServer(ObjectOutputStream out) throws IOException
 	{
-		out.writeObject(mid);
-		out.writeObject(owner.getEmail());
-		
+		// Not needed for now, as we only have one server.
 	}
 	
-	public void readObject(ObjectInputStream in)
+	public void readServer(ObjectInputStream in) throws IOException
 	{
-		byte[] response;
-		int index;
-		Integer.
+		// Not needed for now, as we only have one server.
 	}
-	*/
+	
+	public void writeClient(DataOutputStream out) throws IOException
+	{
+		out.writeLong(mid);
+		out.writeInt(getOwner().getEmail().length());
+		out.write(getOwner().getEmail().getBytes());
+		for (int C = 0; C < Calendar.FIELD_COUNT; ++C)
+			out.writeInt(getCreatedAt().get(C));
+		out.writeDouble(getLongitude());
+		out.writeDouble(getLatitude());
+		out.writeInt(getUserRating());
+	}
 }

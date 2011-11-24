@@ -21,7 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import domain.message.Message;
-import domain.message.MessageMapper;
+import domain.message.MessageInputMapper;
+import domain.message.MessageOutputMapper;
 
 public class RateMessageCommand extends FrontCommand
 {
@@ -31,11 +32,11 @@ public class RateMessageCommand extends FrontCommand
 		try
 		{
 			long mid = Long.parseLong(request.getParameter("mid"));
-			Message message = MessageMapper.find(mid);
+			Message message = MessageInputMapper.find(mid);
 			synchronized(message) {
 				message.setUserRating(message.getUserRating()+1);
 			}
-			MessageMapper.update(message);
+			MessageOutputMapper.update(message);
 		}
 		catch (Exception e1)
 		{

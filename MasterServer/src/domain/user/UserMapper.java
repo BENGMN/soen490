@@ -42,6 +42,23 @@ public class UserMapper {
 		return null;
 	}
 	
+	public static User findByEmail(String email) {		
+		try	{
+			ResultSet rs = UserFinder.find(email);
+			long uid = rs.getLong(1);
+			User mappedUser = UserIdentityMap.getInstance().get(uid);
+			if (mappedUser != null)
+				return mappedUser;
+			int version = rs.getInt(2);
+			String password = rs.getString(4);
+			UserType type = UserType.convertInt(rs.getInt(5));
+			return new User(uid, email, password, type, version);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public static int update(User user) {
 		try	{
 			return UserTDG.update(user.getUid(), user.getVersion(), user.getEmail(), user.getPassword(), UserType.convertEnum(user.getType()));

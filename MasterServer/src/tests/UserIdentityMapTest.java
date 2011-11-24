@@ -17,6 +17,7 @@ package tests;
 
 import domain.user.User;
 import domain.user.UserIdentityMap;
+import domain.user.UserType;
 import junit.framework.TestCase;
 
 public class UserIdentityMapTest extends TestCase {
@@ -25,7 +26,7 @@ public class UserIdentityMapTest extends TestCase {
 	{
 		UserIdentityMap map = UserIdentityMap.getInstance();
 		final long uid = 2L;
-		User user = new User(uid, "", "", User.UserType.USER_NORMAL, 0);
+		User user = new User(uid, "", "", UserType.USER_NORMAL, 0);
 		assertNull(map.get(uid));
 		map.put(uid, user);
 		assertNotNull(map.get(uid));
