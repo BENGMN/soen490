@@ -15,16 +15,12 @@
 
 package tests;
 
-import application.UnknownCommand;
 import junit.framework.TestCase;
 
 public class UnknownCommandTest extends TestCase {
 
 	public void testUnknownCommand()
 	{
-		UnknownCommand command = new UnknownCommand();
-		HttpServletRequest request = new HttpServletRequest();
-		HttpServletResponse response = new HttpServletResponse();
-		command.execute(request, response)
+		
 	}
 }

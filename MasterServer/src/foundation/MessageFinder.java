@@ -34,7 +34,7 @@ public class MessageFinder {
 			"m.longitude, " +
 			"m.created_at, " +
 			"m.user_rating, " +
-			"m.version, " +
+			"m.version " +
 			"FROM " + MessageTDG.TABLE + " AS m";
 		
 		/**
@@ -58,7 +58,7 @@ public class MessageFinder {
 			"m.longitude, " +
 			"m.created_at, " +
 			"m.user_rating, " +
-			"m.version, " +
+			"m.version " +
 			"FROM " + MessageTDG.TABLE + " AS m " +
 			"WHERE m.mid = ?;";
 		

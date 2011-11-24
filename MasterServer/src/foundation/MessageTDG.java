@@ -29,7 +29,7 @@ import javax.sql.rowset.serial.SerialBlob;
 public class MessageTDG {
 
 	
-	public static final String TABLE = "Group";
+	public static final String TABLE = "Message";
 
 	private final static String INSERT =
 			"INSERT INTO " + TABLE + 
@@ -120,5 +120,40 @@ public class MessageTDG {
 		ps.close();
 		return count;
 	}
+	
+	private final static String CREATE_TABLE =
+		"CREATE TABLE " + TABLE + " " +
+		"(mid bigint NOT NULL, " +
+		"uid bigint NOT NULL, " +
+		"message blob NOT NULL, " +
+		"speed float, " +
+		"latitude double NOT NULL, " +
+		"longitude double NOT NULL, " +
+		"created_at datetime NOT NULL, " +
+		"user_rating int NOT NULL, " +
+		"version int NOT NULL, " +
+		"CONSTRAINT pk_mid PRIMARY KEY(mid), " +
+		"CONSTRAINT fk_uid FOREIGN KEY(uid) REFERENCES User (uid));";
+	
+	/**
+	 * Creates the table Message in the database.
+	 * @throws SQLException 
+	 */
+	public static void create() throws SQLException {
+		PreparedStatement ps = Database.getInstance().getStatement(CREATE_TABLE);
 
+		ps.executeUpdate();
+	}
+	
+	private final static String DROP_TABLE =
+		"DROP TABLE " + TABLE + ";";	
+
+	/**
+	 * Drops the table Message from the database.
+	 * @throws SQLException
+	 */
+	public static void drop() throws SQLException {
+		PreparedStatement ps = Database.getInstance().getStatement(DROP_TABLE);
+		ps.executeUpdate();
+	}
 }

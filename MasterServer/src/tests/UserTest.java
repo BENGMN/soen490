@@ -15,7 +15,7 @@
 
 package tests;
 
-import domain.User;
+import domain.user.User;
 import junit.framework.TestCase;
 
 public class UserTest extends TestCase {

@@ -20,8 +20,8 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import domain.Message;
-import domain.MessageMapper;
+import domain.message.Message;
+import domain.message.MessageMapper;
 
 public class RateMessageCommand extends FrontCommand
 {

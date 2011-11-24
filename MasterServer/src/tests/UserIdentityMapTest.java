@@ -15,8 +15,8 @@
 
 package tests;
 
-import domain.User;
-import domain.UserIdentityMap;
+import domain.user.User;
+import domain.user.UserIdentityMap;
 import junit.framework.TestCase;
 
 public class UserIdentityMapTest extends TestCase {
