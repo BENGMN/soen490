@@ -28,6 +28,15 @@ import java.util.List;
  * @author Moving Target
  */
 public class MessageInputMapper {
+	
+	/**
+	 * Finds all messages within a particular proximity, then maps them to objects.
+	 * @param longitude
+	 * @param latitude
+	 * @param radius
+	 * @return a list of message objects approximately within the radius.
+	 * @throws SQLException
+	 */
 	public static List<Message> findInProximity(double longitude, double latitude, double radius) throws SQLException {
 		ResultSet rs = MessageFinder.findInProximity(longitude, latitude, radius);
 		List<Message> messages = new LinkedList<Message>();
@@ -37,6 +46,12 @@ public class MessageInputMapper {
 		return messages;
 	}
 	
+	/**
+	 * Internal use of getMessage; checks map.
+	 * @param rs
+	 * @return Message
+	 * @throws SQLException
+	 */
 	private static Message getMessage(ResultSet rs) throws SQLException {
 		Calendar date = Calendar.getInstance();
 		date.setTime(rs.getDate("m.created_at"));
@@ -79,9 +94,10 @@ public class MessageInputMapper {
 		
 	}
 
-	
-	/*
-	 * TODO CHECK IDENTITY MAP FOR MESSAGE WITH ID AND LOAD IT IF PRESENT
+	/**
+	 * Finds all. Obviously.
+	 * @return list
+	 * @throws SQLException
 	 */
 	public static List<Message> findAll() throws SQLException {
 		List<Message> messages = new LinkedList<Message>();

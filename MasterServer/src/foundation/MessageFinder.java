@@ -93,7 +93,7 @@ public class MessageFinder {
 		public static ResultSet findInProximity(double longitude, double latitude, double radius) throws SQLException {
 			PreparedStatement ps = Database.getInstance().getStatement(SELECT_BY_RADIUS);
 			// Specified in paper; this is bascically a calculation based on meters; one degree is roughly 110400 meters.
-			final double metersPerLatitude = 110400;
+			final double metersPerLatitude = 110400.0;
 			final double metersPerLongitude = Math.cos(latitude)*metersPerLatitude;
 			// We take calculate the half-size of the square's side from this radius.
 			final double squareHalfSize = Math.sqrt(radius*radius / 2.0); 

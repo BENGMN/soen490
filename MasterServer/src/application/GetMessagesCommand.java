@@ -31,7 +31,6 @@ import domain.message.MessageInputMapper;
 
 public class GetMessagesCommand extends FrontCommand {
 		
-	private final double EARTH_RADIUS_METERS = 6378137;
 	private final double DEFAULT_USER_RADIUS_METERS = 500;
 	
 	public GetMessagesCommand() {}
@@ -65,6 +64,7 @@ public class GetMessagesCommand extends FrontCommand {
 				e2.printStackTrace();
 			}
 		}
+		response.setStatus(HttpServletResponse.SC_OK);
 	}
 	
 	/**
@@ -81,6 +81,7 @@ public class GetMessagesCommand extends FrontCommand {
 		// R = radius of sphere
 		List<Message> messagesInProximity = new LinkedList<Message>();
 		for(Message m: messages) {
+			final double EARTH_RADIUS_METERS = 6378137.0;
 			Double distance = EARTH_RADIUS_METERS * Math.acos(Math.sin(Math.toRadians(latitude)) * Math.sin(Math.toRadians(m.getLatitude()) + Math.cos(Math.toRadians(latitude)) * Math.cos(Math.toRadians(m.getLatitude()) * Math.cos(Math.toRadians(longitude) - Math.toRadians(m.getLongitude())))));
 			if (distance <= radius)
 				messagesInProximity.add(m);			

@@ -37,6 +37,7 @@ public class RateMessageCommand extends FrontCommand
 				message.setUserRating(message.getUserRating()+1);
 			}
 			MessageOutputMapper.update(message);
+			response.setStatus(HttpServletResponse.SC_ACCEPTED);
 		}
 		catch (Exception e1)
 		{
