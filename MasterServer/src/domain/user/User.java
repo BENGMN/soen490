@@ -15,9 +15,15 @@
 
 package domain.user;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+
+import org.msgpack.MessagePack;
+import org.msgpack.packer.Packer;
+import org.msgpack.unpacker.Unpacker;
 
 
 public class User implements IUser {
@@ -84,21 +90,27 @@ public class User implements IUser {
 		this.version = version;
 	}
 	
-	public void writeObject(ObjectOutputStream out)
+	public void writeClient(DataOutputStream out) throws IOException
 	{
-		
-	}
-	
-	public void readObject(ObjectInputStream in)
-	{
-		
+		Packer packer = (new MessagePack()).createPacker(out);
+		packer.write(getEmail());
 	}
 
-	public void writeServer(ObjectOutputStream out) throws IOException {
-		// TODO Not implemented as of yet.
+	public void writeServer(DataOutputStream out) throws IOException {
+		Packer packer = (new MessagePack()).createPacker(out);
+		packer.write(uid);
+		packer.write(email);
+		packer.write(password);
+		packer.write(type);
+		packer.write(version);
 	}
 
-	public void readServer(ObjectInputStream in) throws IOException {
-		// TODO Not implemented as of yet.
+	public void readServer(DataInputStream in) throws IOException {
+		Unpacker unpacker = (new MessagePack()).createUnpacker(in);
+		uid = unpacker.readLong();
+		email = unpacker.readString();
+		password = unpacker.readString();
+		type = unpacker.read(UserType.class);
+		version = unpacker.readInt();
 	}
 }

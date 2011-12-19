@@ -26,17 +26,20 @@ import java.util.List;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import technical.ServerConfiguration;
 import domain.message.Message;
 import domain.message.MessageInputMapper;
 
-public class GetMessagesCommand extends FrontCommand {
+public class GetMessagesCommand extends RegionalCommand {
 		
 	private final double DEFAULT_USER_RADIUS_METERS = 500;
 	
 	public GetMessagesCommand() {}
 	
-	public void execute(HttpServletRequest request, HttpServletResponse response) {
-		
+	public boolean execute(HttpServletRequest request, HttpServletResponse response) {
+		if (!super.execute(request, response))
+			return false;
 		double longitude = Float.parseFloat(request.getParameter("longitude"));
 		double latitude = Float.parseFloat(request.getParameter("latitude"));
 		
@@ -52,11 +55,7 @@ public class GetMessagesCommand extends FrontCommand {
 		messages = filterByProximity(messages, longitude, latitude, radius);
 		
 		try {
-			DataOutputStream responseStream = new DataOutputStream(response.getOutputStream());
-			responseStream.writeLong(messages.size());
-			for (Message message : messages)
-				message.writeClient(responseStream);
-			
+			Message.writeListClient(messages, new DataOutputStream(response.getOutputStream()));
 		} catch (Exception e1) {
 			try	{
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error: " + e1);
@@ -65,6 +64,7 @@ public class GetMessagesCommand extends FrontCommand {
 			}
 		}
 		response.setStatus(HttpServletResponse.SC_OK);
+		return true;
 	}
 	
 	/**

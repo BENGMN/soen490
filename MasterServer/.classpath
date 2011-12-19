@@ -22,6 +22,7 @@
 	<classpathentry kind="lib" path="/usr/share/ant/lib/junit.jar"/>
 	<classpathentry kind="lib" path="/usr/share/java/mysql-connector-java.jar"/>
 	<classpathentry kind="lib" path="/usr/share/java/mysql-connector-java-5.1.16.jar"/>
+	<classpathentry kind="lib" path="lib/msgpack-0.6.4-SNAPSHOT.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

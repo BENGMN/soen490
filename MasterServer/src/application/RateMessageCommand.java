@@ -24,11 +24,13 @@ import domain.message.Message;
 import domain.message.MessageInputMapper;
 import domain.message.MessageOutputMapper;
 
-public class RateMessageCommand extends FrontCommand
+public class RateMessageCommand extends RegionalCommand
 {
 
-	public void execute(HttpServletRequest request, HttpServletResponse response)
+	public boolean execute(HttpServletRequest request, HttpServletResponse response)
 	{
+		if (!super.execute(request, response))
+			return false;
 		try
 		{
 			long mid = Long.parseLong(request.getParameter("mid"));
@@ -38,6 +40,7 @@ public class RateMessageCommand extends FrontCommand
 			}
 			MessageOutputMapper.update(message);
 			response.setStatus(HttpServletResponse.SC_ACCEPTED);
+			return true;
 		}
 		catch (Exception e1)
 		{
@@ -50,5 +53,6 @@ public class RateMessageCommand extends FrontCommand
 				e1.printStackTrace();
 			}
 		}
+		return false;
 	}
 }

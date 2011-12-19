@@ -19,5 +19,5 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 abstract class FrontCommand {
-	abstract public void execute(HttpServletRequest request, HttpServletResponse response);
+	abstract public boolean execute(HttpServletRequest request, HttpServletResponse response);
 }

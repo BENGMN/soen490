@@ -15,6 +15,7 @@
 
 package domain.message;
 
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -22,10 +23,16 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.sql.Date;
 import java.util.Calendar;
+import java.util.List;
+
+import org.msgpack.MessagePack;
+import org.msgpack.packer.Packer;
+import org.msgpack.unpacker.Unpacker;
 
 import domain.user.IUser;
 import domain.user.User;
 import domain.user.UserMapper;
+import domain.user.UserProxy;
 import foundation.UserFinder;
 
 import technical.IClientSendable;
@@ -105,23 +112,51 @@ public class Message implements IServerSendable, IClientSendable {
 	
 	public void writeServer(ObjectOutputStream out) throws IOException
 	{
-		// Not needed for now, as we only have one server.
+		Packer packer = (new MessagePack()).createPacker(out);
+		packer.write(mid);
+		packer.write(getOwner().getUid());
+		packer.write(message);
+		packer.write(speed);
+		packer.write(getCreatedAt());
+		packer.write(getLongitude());
+		packer.write(getLatitude());
+		packer.write(getUserRating());
+		packer.write(version);
 	}
 	
-	public void readServer(ObjectInputStream in) throws IOException
+	public void readServer(DataInputStream in) throws IOException
 	{
-		// Not needed for now, as we only have one server.
+		Unpacker unpacker = (new MessagePack()).createUnpacker(in);
+		mid = unpacker.readLong();
+		owner = new UserProxy(unpacker.readLong());
+		message = unpacker.readByteArray();
+		speed = unpacker.readFloat();
+		createdAt = unpacker.read(Calendar.class);
+		longitude = unpacker.readDouble();
+		latitude = unpacker.readDouble();
+		userRating = unpacker.readInt();
+		version = unpacker.readInt();
+	}
+	
+	// Allowing us to use MessagePack in our domain layer, outside of our application layer.
+	public static void writeListClient(List<Message> messages, DataOutputStream out) throws IOException
+	{
+		Packer packer = (new MessagePack()).createPacker(out);		
+		packer.write(messages.size());
+		for (Message message : messages)
+			message.writeClient(out);
 	}
 	
 	public void writeClient(DataOutputStream out) throws IOException
 	{
-		out.writeLong(mid);
-		out.writeInt(getOwner().getEmail().length());
-		out.write(getOwner().getEmail().getBytes());
-		for (int C = 0; C < Calendar.FIELD_COUNT; ++C)
-			out.writeInt(getCreatedAt().get(C));
-		out.writeDouble(getLongitude());
-		out.writeDouble(getLatitude());
-		out.writeInt(getUserRating());
+		Packer packer = (new MessagePack()).createPacker(out);
+		packer.write(mid);
+		packer.write(getOwner().getEmail());
+		packer.write(message);
+		packer.write(speed);
+		packer.write(getCreatedAt());
+		packer.write(getLongitude());
+		packer.write(getLatitude());
+		packer.write(getUserRating());
 	}
 }

@@ -38,6 +38,7 @@ public class FrontController extends HttpServlet {
 		unknownCommand = new UnknownCommand();
 		commandMap.put("GetMessages", new GetMessagesCommand());
 		commandMap.put("PutMessage", new PutMessageCommand());
+		commandMap.put("RateMessage", new RateMessageCommand());
 	}
 	
 	public static FrontController getInstance()
