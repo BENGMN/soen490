@@ -25,5 +25,5 @@ public class RegionalConfiguration extends ServerConfiguration {
 		return (longitude >= minLongitude && longitude < maxLongitude &&
 				latitude >= minLatitude && latitude < maxLatitude);
 	}
-	}
+	
 }

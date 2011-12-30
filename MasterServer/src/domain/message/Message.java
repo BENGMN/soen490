@@ -110,7 +110,7 @@ public class Message implements IServerSendable, IClientSendable {
 		return version;
 	}
 	
-	public void writeServer(ObjectOutputStream out) throws IOException
+	public void writeServer(DataOutputStream out) throws IOException
 	{
 		Packer packer = (new MessagePack()).createPacker(out);
 		packer.write(mid);

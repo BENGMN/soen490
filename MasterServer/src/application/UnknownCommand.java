@@ -22,15 +22,16 @@ import javax.servlet.http.HttpServletResponse;
 
 public class UnknownCommand extends FrontCommand
 {
-	public void execute(HttpServletRequest request, HttpServletResponse response)
+	public boolean execute(HttpServletRequest request, HttpServletResponse response)
 	{
 		try
 		{
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unknown Command");
+			return true;
 		}
 		catch (IOException e)
 		{
-			
+			return false;
 		}
 	}
 }
