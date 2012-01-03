@@ -15,10 +15,11 @@
 
 package tests.unittests;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class UnknownCommandTest extends TestCase {
+public class UnknownCommandTest {
 
+	@Test
 	public void testUnknownCommand()
 	{
 		

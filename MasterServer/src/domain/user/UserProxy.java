@@ -21,7 +21,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 public class UserProxy implements IUser {
-	private static final long serialVersionUID = 3712990165468088049L;
 	private long uid;
 	private User realUser;
 	

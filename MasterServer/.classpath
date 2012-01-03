@@ -27,5 +27,6 @@
 	<classpathentry kind="lib" path="lib/tomcat-i18n-fr.jar"/>
 	<classpathentry kind="lib" path="lib/tomcat-i18n-ja.jar"/>
 	<classpathentry kind="lib" path="lib/junit4.jar"/>
+	<classpathentry kind="lib" path="lib/hamcrest-all-1.3.0RC2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

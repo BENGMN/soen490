@@ -17,24 +17,22 @@ package tests.unittests;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import javax.sql.rowset.serial.SerialBlob;
+import org.junit.Test;
 
 import foundation.Database;
 import foundation.MessageFinder;
 import foundation.MessageTDG;
-import foundation.UserFinder;
-import foundation.UserTDG;
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
 
-public class MessageTDGTest extends TestCase {
+public class MessageTDGTest {
 
 	static long mid = 158749857935L;
 	static long uid = 158749857934L;
 	
+	@Test
 	public void testFunctionality() throws SQLException
 	{
 		create();
@@ -92,9 +90,9 @@ public class MessageTDGTest extends TestCase {
 				assertEquals(b[i], message[i]);
 			}
 			
-			assertEquals(rs.getFloat("m.speed"), speed);
-			assertEquals(rs.getDouble("m.latitude"), latitude);
-			assertEquals(rs.getDouble("m.longitude"), longitude);
+			assertEquals(rs.getFloat("m.speed"), speed, 0.0001f);
+			assertEquals(rs.getDouble("m.latitude"), latitude, 0.0000001);
+			assertEquals(rs.getDouble("m.longitude"), longitude, 0.0000001);
 			java.sql.Date d = rs.getDate("m.created_at");
 			
 			if (d.getTime() == created_at.getTime().getTime())
@@ -130,10 +128,10 @@ public class MessageTDGTest extends TestCase {
 			for (int i = 0; i < message.length; i++) {
 				assertEquals(b[i], message[i]);
 			}
-			assertEquals(rs.getFloat("m.speed"), speed);
-			assertEquals(rs.getDouble("m.latitude"), latitude);
-			assertEquals(rs.getDouble("m.longitude"), longitude);
-			//assertEquals(rs.getDate("m.created_at"), (new java.sql.Date(created_at.getTime().getTime())).getTime());
+			assertEquals(rs.getFloat("m.speed"), speed, 0.001f);
+			assertEquals(rs.getDouble("m.latitude"), latitude, 0.0000001);
+			assertEquals(rs.getDouble("m.longitude"), longitude, 0.0000001);
+			assertEquals(rs.getDate("m.created_at"), (new java.sql.Date(created_at.getTime().getTime())).getTime());
 			assertEquals(rs.getInt("m.user_rating"), user_rating);
 		}
 		catch (SQLException e) {

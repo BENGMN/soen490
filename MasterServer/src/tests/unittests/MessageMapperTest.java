@@ -15,9 +15,11 @@
 
 package tests.unittests;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class MessageMapperTest extends TestCase {
+public class MessageMapperTest {
+	
+	@Test
 	public void testFunctionality()
 	{
 		

@@ -15,13 +15,17 @@
 
 package tests.unittests;
 
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
 import domain.user.User;
 import domain.user.UserIdentityMap;
 import domain.user.UserType;
-import junit.framework.TestCase;
 
-public class UserIdentityMapTest extends TestCase {
+public class UserIdentityMapTest {
 	
+	@Test
 	public void testMap()
 	{
 		UserIdentityMap map = UserIdentityMap.getInstance();

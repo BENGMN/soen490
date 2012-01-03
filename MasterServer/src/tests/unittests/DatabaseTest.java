@@ -15,26 +15,26 @@
 
 
 package tests.unittests;
-
+import static org.junit.Assert.*;
 import java.sql.SQLException;
 
-import foundation.Database;
-import foundation.MessageTDG;
-import foundation.UserTDG;
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class DatabaseTest extends TestCase {
+import foundation.Database;
+
+public class DatabaseTest {
+	@Test
 	public void testConnection()
 	{
 		assertTrue(Database.getInstance().canConnect());
 	}
 	
+	@Test
 	public void testTables()
 	{
 		partTestCreateTable();
 		partTestDeleteTable();
 	}
-	
 	
 	private void partTestCreateTable()
 	{

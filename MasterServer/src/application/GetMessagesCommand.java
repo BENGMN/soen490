@@ -15,19 +15,15 @@
 
 package application;
 
-import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import technical.ServerConfiguration;
 import domain.message.Message;
 import domain.message.MessageInputMapper;
 

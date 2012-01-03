@@ -157,14 +157,4 @@ public class MessageTDG {
 		PreparedStatement ps = Database.getInstance().getStatement(DROP_TABLE);
 		ps.executeUpdate();
 	}
-	
-	/**
-	 * Returns us a unique id that's not in use from the table. Needs to be mitigated when we migrate to multiple servers later.
-	 * @return long mid
-	 * @throws SQLException
-	 */
-	
-	public static long getUniqueId() throws SQLException {
-		return 0;
-	}
 }

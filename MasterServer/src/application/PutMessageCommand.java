@@ -28,7 +28,6 @@ import domain.message.MessageFactory;
 import domain.message.MessageOutputMapper;
 import domain.user.User;
 import domain.user.UserMapper;
-import foundation.MessageTDG;
 
 public class PutMessageCommand extends RegionalCommand
 {
@@ -49,7 +48,7 @@ public class PutMessageCommand extends RegionalCommand
 		{
 			if (user == null)
 				throw new UnrecognizedUserException();
-			Message message = MessageFactory.createNew(MessageTDG.getUniqueId(), user.getUid(), data, speed, latitude, longitude, Calendar.getInstance(), 0, 0);
+			Message message = MessageFactory.createNew(user.getUid(), data, speed, latitude, longitude, Calendar.getInstance(), 0);
 			MessageOutputMapper.insert(message);
 			response.setStatus(HttpServletResponse.SC_ACCEPTED);
 			return true;

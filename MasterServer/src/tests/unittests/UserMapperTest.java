@@ -15,29 +15,34 @@
 
 package tests.unittests;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class UserMapperTest extends TestCase {
+public class UserMapperTest {
+	@Test
 	public void testFunctionality()
 	{
 		
 	}
 	
+	@Test
 	public void testFind()
 	{
 		
 	}
 	
+	@Test
 	public void testInsert()
 	{
 		
 	}
 	
+	@Test
 	public void testUpdate()
 	{
 		
 	}
 	
+	@Test
 	public void testDelete()
 	{
 		

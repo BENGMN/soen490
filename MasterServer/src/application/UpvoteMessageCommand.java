@@ -24,7 +24,7 @@ import domain.message.Message;
 import domain.message.MessageInputMapper;
 import domain.message.MessageOutputMapper;
 
-public class RateMessageCommand extends RegionalCommand
+public class UpvoteMessageCommand extends RegionalCommand
 {
 
 	public boolean execute(HttpServletRequest request, HttpServletResponse response)

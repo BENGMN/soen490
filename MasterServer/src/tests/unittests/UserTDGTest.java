@@ -16,6 +16,7 @@
 package tests.unittests;
 
 import java.sql.ResultSet;
+import static org.junit.Assert.*;
 import java.sql.SQLException;
 
 import org.junit.Test;
@@ -24,10 +25,7 @@ import foundation.Database;
 import foundation.UserFinder;
 import foundation.UserTDG;
 
-
-import junit.framework.TestCase;
-
-public class UserTDGTest extends TestCase {
+public class UserTDGTest {
 	
 	static long uid = 158749857934L;
 	

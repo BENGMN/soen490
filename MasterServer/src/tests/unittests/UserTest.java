@@ -15,13 +15,17 @@
 
 package tests.unittests;
 
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
 import domain.user.User;
 import domain.user.UserType;
-import junit.framework.TestCase;
 
-public class UserTest extends TestCase {
+public class UserTest {
 	final long uid = 3425635465657L;
 	
+	@Test
 	public void testGetters()
 	{
 		final String email = "example@example.com";
@@ -36,6 +40,7 @@ public class UserTest extends TestCase {
 		assertEquals(user.getType(), userType);
 	}
 	
+	@Test
 	public void testSetters()
 	{
 		final String email = "example@example.com";
