@@ -19,6 +19,8 @@ package tests;
 import java.sql.SQLException;
 
 import foundation.Database;
+import foundation.MessageTDG;
+import foundation.UserTDG;
 import junit.framework.TestCase;
 
 public class DatabaseTest extends TestCase {
@@ -59,22 +61,6 @@ public class DatabaseTest extends TestCase {
 		catch (SQLException e)
 		{
 			fail("Failed to delete table: " + e);
-		}
-	}
-	
-	// Here we test the various tables in the database to see if they're present.
-	public void testDatabaseComposition()
-	{
-		try
-		{
-			// This should be expanded to check the schemas too.
-			assertTrue(Database.getInstance().hasTable("User"));
-			assertTrue(Database.getInstance().hasTable("Message"));
-			assertTrue(Database.getInstance().hasTable("Server"));
-		}
-		catch (SQLException e)
-		{
-			fail("Database not properly structued: " + e);
 		}
 	}
 }

@@ -30,7 +30,7 @@ public class MessageOutputMapper {
 	 * @throws SQLException
 	 */
 	public static int update(Message message) throws SQLException {
-		return MessageTDG.update(message.getMid(), message.getUserRating());
+		return MessageTDG.update(message.getMid(), message.getUserRating(), message.getVersion());
 	}
 	
 	/**

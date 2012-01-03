@@ -23,6 +23,7 @@ import java.sql.SQLException;
 
 import javax.sql.rowset.serial.SerialBlob;
 
+import foundation.Database;
 import foundation.MessageFinder;
 import foundation.MessageTDG;
 import foundation.UserFinder;
@@ -36,30 +37,53 @@ public class MessageTDGTest extends TestCase {
 	
 	public void testFunctionality() throws SQLException
 	{
-		testInsert();
-		//testUpdate();
-		//testDelete();
+		create();
+		insert();
+		update();
+		delete();
+		drop();
 	}
-
-	private void testInsert() throws SQLException
+	
+	private void create()
 	{
 		try {
+			assertFalse(Database.getInstance().hasTable("Message"));
 			MessageTDG.create();
+			// This should be expanded to check the schemas too. Probably.
+			assertTrue(Database.getInstance().hasTable("Message"));
+		}
+		catch (SQLException E) {
+			fail("Exception Failure: " + E);
+		}
+	}
+	
+	private void drop()
+	{
+		try {
+			assertTrue(Database.getInstance().hasTable("Message"));
+			MessageTDG.drop();
+			// This should be expanded to check the schemas too. Probably.
+			assertFalse(Database.getInstance().hasTable("Message"));
+		}
+		catch (SQLException E) {
+			fail("Exception Failure: " + E);
+		}
+	}
+
+	private void insert() throws SQLException
+	{
+		try {
 			final byte [] message = {1,2,3,4,5,6};
 			final float speed = 5.5f;
 			final double latitude = 29.221;
 			final double longitude = 35.134;
 			final Calendar created_at = new GregorianCalendar(2011, 10, 31, 16, 19, 51);
 			final int user_rating = 6;
-			final int version = 1;
-			ResultSet rs = MessageFinder.find(mid);
-			if(rs.next())
-				fail();
-				
-			//assertNull(UserFinder.find(uid));
+			final int version = 1;				
+			assertFalse(MessageFinder.find(mid).next());
 			assertEquals(MessageTDG.insert(mid, uid, version, message, speed, latitude, longitude, created_at, user_rating), 1);
-			rs = MessageFinder.find(mid);
-			rs.next();
+			ResultSet rs = MessageFinder.find(mid);
+			assertTrue(rs.next());
 			assertEquals(rs.getLong("m.mid"), mid);
 			assertEquals(rs.getLong("m.uid"), uid);
 			
@@ -77,65 +101,57 @@ public class MessageTDGTest extends TestCase {
 				assertTrue(true);
 			
 			assertEquals(rs.getInt("m.user_rating"), user_rating);
-			MessageTDG.drop();
 		}
 		catch (SQLException e) {
-			MessageTDG.drop();
 			fail("Exception failure:" + e);
 			
 		}
 	}
 	
-	/*
-	private void testUpdate() throws SQLException
+	
+	private void update() throws SQLException
 	{
 		
 		try {
-			MessageTDG.create();
-			final byte [] message = {6,5,4,3,2,1};
-			final float speed = 6.5f;
-			final double latitude = 39.221;
-			final double longitude = 25.134;
-			final Calendar created_at = new GregorianCalendar(2011, 11, 29, 14, 51, 11);
-			final int user_rating = 4;
-			final int version = 2;
-			assertNull(MessageFinder.find(mid));
-			//assertNull(UserFinder.find(uid));
-			assertEquals(MessageTDG.insert(mid, uid, version, message, speed, latitude, longitude, created_at, user_rating), 1);
+			final byte [] message = {1,2,3,4,5,6};
+			final float speed = 5.5f;
+			final double latitude = 29.221;
+			final double longitude = 35.134;
+			final Calendar created_at = new GregorianCalendar(2011, 10, 31, 16, 19, 51);
+			final int user_rating = 7;
+			final int version = 1;
+			assertEquals(1, MessageTDG.update(mid, user_rating, version));
 			ResultSet rs = MessageFinder.find(mid);
+			assertTrue(rs.next());
 			assertEquals(rs.getLong("m.version"), version+1);
 			assertEquals(rs.getLong("m.mid"), mid);
 			assertEquals(rs.getLong("m.uid"), uid);
-			assertEquals(rs.getBytes("m.message"), new SerialBlob(message));
+			byte[] b = rs.getBytes("m.message");
+			for (int i = 0; i < message.length; i++) {
+				assertEquals(b[i], message[i]);
+			}
 			assertEquals(rs.getFloat("m.speed"), speed);
 			assertEquals(rs.getDouble("m.latitude"), latitude);
 			assertEquals(rs.getDouble("m.longitude"), longitude);
-			assertEquals(rs.getDate("m.created_at"), created_at.getTime().getTime());
+			//assertEquals(rs.getDate("m.created_at"), (new java.sql.Date(created_at.getTime().getTime())).getTime());
 			assertEquals(rs.getInt("m.user_rating"), user_rating);
-			MessageTDG.drop();
 		}
 		catch (SQLException e) {
-			MessageTDG.drop();
 			fail("Exception failure:" + e);
 			
 		}
 	}
 	
-	private void testDelete() throws SQLException
+	private void delete() throws SQLException
 	{
-		
 		try {
-			MessageTDG.create();
-			final int version = 1;
-			assertNotNull(MessageFinder.find(mid));
-			assertEquals(MessageTDG.delete(mid, version), 1);
-			assertNull(MessageFinder.find(mid));
-			MessageTDG.drop();
+			final int version = 2;
+			assertTrue(MessageFinder.find(mid).next());
+			assertEquals(1, MessageTDG.delete(mid, version));
+			assertFalse(MessageFinder.find(mid).next());
 		}
 		catch (SQLException e) {
-			MessageTDG.drop();
 			fail("Exception failure:" + e);
 		}
-	}*/
-
+	}
 }

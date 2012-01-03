@@ -78,8 +78,8 @@ public class MessageTDG {
 	
 	private final static String UPDATE = 
 		"UPDATE " + TABLE + " " +
-		"user_rating = ?  " +
-		"WHERE mid = ?";
+		"SET user_rating = ?, version = version + 1  " +
+		"WHERE mid = ? AND version = ?";
 	
 	/**
 	 * Not much use for this, since we always want to increment or decrement the user rating by 1.
@@ -89,11 +89,12 @@ public class MessageTDG {
 	 * @return Returns the number of rows updated, should be 1.
 	 * @throws SQLException
 	 */
-	public static int update(long mid, int user_rating) throws SQLException {
+	public static int update(long mid, int user_rating, int version) throws SQLException {
 		PreparedStatement ps = Database.getInstance().getStatement(UPDATE);
 		
 		ps.setInt(1, user_rating);
 		ps.setLong(2, mid);
+		ps.setLong(3, version);
 		
 		int count = ps.executeUpdate();
 		ps.close();

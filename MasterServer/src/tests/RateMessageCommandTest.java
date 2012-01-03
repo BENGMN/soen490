@@ -18,5 +18,8 @@ package tests;
 import junit.framework.TestCase;
 
 public class RateMessageCommandTest extends TestCase {
-
+	public void testFunctionality()
+	{
+		
+	}
 }
