@@ -1,7 +1,7 @@
 /**
  * SOEN 490
  * Capstone 2011
- * Test for MessageMapper.
+ * Test for UserMapperTest.
  * Team members: 	Sotirios Delimanolis
  * 			Filipe Martinho
  * 			Adam Harrison
@@ -13,14 +13,37 @@
  *
  */
 
-package tests.unittests;
+package tests;
 
 import org.junit.Test;
 
-public class MessageMapperTest {
-	
+public class UserMapperTest {
 	@Test
 	public void testFunctionality()
+	{
+		
+	}
+	
+	@Test
+	public void testFind()
+	{
+		
+	}
+	
+	@Test
+	public void testInsert()
+	{
+		
+	}
+	
+	@Test
+	public void testUpdate()
+	{
+		
+	}
+	
+	@Test
+	public void testDelete()
 	{
 		
 	}

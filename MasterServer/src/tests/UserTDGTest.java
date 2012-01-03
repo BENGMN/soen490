@@ -13,7 +13,7 @@
  *
  */
 
-package tests.unittests;
+package tests;
 
 import java.sql.ResultSet;
 import static org.junit.Assert.*;

@@ -61,7 +61,8 @@ public class FrontController extends HttpServlet {
 	{
 		String commandString = request.getParameter("command");
 		FrontCommand command = getCommand(commandString);
-		command.execute(request, response);
+		if (command.responsible(request, response))
+			command.execute(request, response);
 	}
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

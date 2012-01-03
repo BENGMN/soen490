@@ -14,7 +14,7 @@
  */
 
 
-package tests.unittests;
+package tests;
 import static org.junit.Assert.*;
 import java.sql.SQLException;
 

@@ -15,7 +15,7 @@ import technical.ServerConfiguration;
  *
  */
 public abstract class RegionalCommand extends FrontCommand {
-	public boolean execute(HttpServletRequest request, HttpServletResponse response)
+	public boolean responsible(HttpServletRequest request, HttpServletResponse response)
 	{
 		double longitude = Double.parseDouble(request.getParameter("longitude"));
 		double latitude = Double.parseDouble(request.getParameter("latitude"));

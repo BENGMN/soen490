@@ -1,7 +1,7 @@
 /**
  * SOEN 490
  * Capstone 2011
- * Test for UserProxy.
+ * Test for front controller class.
  * Team members: 	Sotirios Delimanolis
  * 			Filipe Martinho
  * 			Adam Harrison
@@ -13,14 +13,16 @@
  *
  */
 
-package tests.unittests;
+
+package tests;
 
 import org.junit.Test;
 
-public class UserProxyTest {
+
+public class FrontControllerTest {
 	
 	@Test
-	public void testFunctionality()
+	public void testFrontController()
 	{
 		
 	}

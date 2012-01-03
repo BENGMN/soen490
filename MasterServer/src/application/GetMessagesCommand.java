@@ -33,9 +33,7 @@ public class GetMessagesCommand extends RegionalCommand {
 	
 	public GetMessagesCommand() {}
 	
-	public boolean execute(HttpServletRequest request, HttpServletResponse response) {
-		if (!super.execute(request, response))
-			return false;
+	public void execute(HttpServletRequest request, HttpServletResponse response) {
 		double longitude = Float.parseFloat(request.getParameter("longitude"));
 		double latitude = Float.parseFloat(request.getParameter("latitude"));
 		
@@ -60,7 +58,6 @@ public class GetMessagesCommand extends RegionalCommand {
 			}
 		}
 		response.setStatus(HttpServletResponse.SC_OK);
-		return true;
 	}
 	
 	/**

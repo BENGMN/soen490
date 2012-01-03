@@ -32,10 +32,8 @@ import domain.user.UserMapper;
 public class PutMessageCommand extends RegionalCommand
 {
 
-	public boolean execute(HttpServletRequest request, HttpServletResponse response)
+	public void execute(HttpServletRequest request, HttpServletResponse response)
 	{
-		if (!super.execute(request, response))
-			return false;
 		double longitude = Double.parseDouble(request.getParameter("longitude"));
 		double latitude = Double.parseDouble(request.getParameter("latitude"));
 		float speed = Float.parseFloat(request.getParameter("speed"));
@@ -51,7 +49,6 @@ public class PutMessageCommand extends RegionalCommand
 			Message message = MessageFactory.createNew(user.getUid(), data, speed, latitude, longitude, Calendar.getInstance(), 0);
 			MessageOutputMapper.insert(message);
 			response.setStatus(HttpServletResponse.SC_ACCEPTED);
-			return true;
 		}
 		catch (Exception e1)
 		{
@@ -61,7 +58,6 @@ public class PutMessageCommand extends RegionalCommand
 			catch (IOException e2) {
 				e1.printStackTrace();
 			}
-			return false;
 		}
 	}
 

@@ -13,7 +13,7 @@
  *
  */
 
-package tests.unittests;
+package tests;
 
 import static org.junit.Assert.*;
 
@@ -27,8 +27,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import tests.MockHttpServletRequest;
-import tests.MockHttpServletResponse;
 
 import application.DownvoteMessageCommand;
 import application.UpvoteMessageCommand;

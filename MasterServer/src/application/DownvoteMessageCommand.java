@@ -27,10 +27,8 @@ import domain.message.MessageOutputMapper;
 public class DownvoteMessageCommand extends RegionalCommand
 {
 
-	public boolean execute(HttpServletRequest request, HttpServletResponse response)
+	public void execute(HttpServletRequest request, HttpServletResponse response)
 	{
-		if (!super.execute(request, response))
-			return false;
 		try
 		{
 			long mid = Long.parseLong(request.getParameter("mid"));
@@ -40,7 +38,6 @@ public class DownvoteMessageCommand extends RegionalCommand
 			}
 			MessageOutputMapper.update(message);
 			response.setStatus(HttpServletResponse.SC_ACCEPTED);
-			return true;
 		}
 		catch (Exception e1)
 		{
@@ -53,6 +50,5 @@ public class DownvoteMessageCommand extends RegionalCommand
 				e1.printStackTrace();
 			}
 		}
-		return false;
 	}
 }

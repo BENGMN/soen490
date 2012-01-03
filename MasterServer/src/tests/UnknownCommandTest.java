@@ -1,7 +1,7 @@
 /**
  * SOEN 490
  * Capstone 2011
- * Test for Messsage domain object.
+ * Test for UnknownCommand.
  * Team members: 	Sotirios Delimanolis
  * 			Filipe Martinho
  * 			Adam Harrison
@@ -13,17 +13,14 @@
  *
  */
 
-package tests.unittests;
+package tests;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class MessageTest extends TestCase {
-	public void testGetters()
-	{
-		
-	}
-	
-	public void testSetters()
+public class UnknownCommandTest {
+
+	@Test
+	public void testUnknownCommand()
 	{
 		
 	}
