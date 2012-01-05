@@ -15,14 +15,17 @@
 
 package tests;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class MessageTest extends TestCase {
+public class MessageTest {
+	
+	@Test
 	public void testGetters()
 	{
 		
 	}
 	
+	@Test
 	public void testSetters()
 	{
 		

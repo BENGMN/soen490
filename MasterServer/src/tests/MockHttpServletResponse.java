@@ -159,13 +159,13 @@ public class MockHttpServletResponse implements HttpServletResponse {
 	@Override
 	public void sendError(int arg0) throws IOException {
 		// TODO Auto-generated method stub
-
+		setStatus(arg0);
 	}
 
 	@Override
 	public void sendError(int arg0, String arg1) throws IOException {
 		// TODO Auto-generated method stub
-
+		setStatus(arg0);
 	}
 
 	@Override
@@ -201,7 +201,7 @@ public class MockHttpServletResponse implements HttpServletResponse {
 	@Override
 	public void setStatus(int arg0, String arg1) {
 		// TODO Auto-generated method stub
-
+		setStatus(arg0);
 	}
 	
 	public int getStatus() {

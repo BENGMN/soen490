@@ -17,12 +17,17 @@
 package application;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.HashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import foundation.Database;
+import foundation.MessageTDG;
+import foundation.UserTDG;
 
 public class FrontController extends HttpServlet {
 
@@ -71,5 +76,18 @@ public class FrontController extends HttpServlet {
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		handleRequest(request, response);
+	}
+	
+	// Overridden to make sure that we have a database.
+	public void init() throws ServletException {
+		try {
+			if (Database.getInstance().hasTable(MessageTDG.TABLE))
+				MessageTDG.create();
+			if (Database.getInstance().hasTable(UserTDG.TABLE))
+				UserTDG.create();
+		}
+		catch (SQLException E) {
+			throw new ServletException(E.toString());
+		}
 	}
 }
