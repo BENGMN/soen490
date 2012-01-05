@@ -24,7 +24,7 @@ import java.sql.SQLException;
  */
 public class UserTDG {
 	// Table name
-	protected final static String TABLE = "User";
+	public final static String TABLE = "User";
 		
 	// Private constructor
 	private UserTDG() {}

@@ -1,10 +1,14 @@
 package technical;
 
+import java.util.List;
+
 public class RegionalConfiguration extends ServerConfiguration {
 	double minLatitude;
 	double maxLatitude;
 	double minLongitude;
 	double maxLongitude;
+	
+	List<MasterConfiguration> masterServers;
 	
 	RegionalConfiguration(String hostname, int port, double minLatitude, double maxLatitude, double minLongitude, double maxLongitude)
 	{

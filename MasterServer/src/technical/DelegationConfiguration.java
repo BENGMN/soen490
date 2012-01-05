@@ -2,6 +2,7 @@ package technical;
 
 public class DelegationConfiguration extends ServerConfiguration {
 
+	
 	DelegationConfiguration(String hostname, int port) {
 		super(hostname, port);
 	}
