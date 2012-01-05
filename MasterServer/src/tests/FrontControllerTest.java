@@ -16,9 +16,12 @@
 
 package tests;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class FrontControllerTest extends TestCase {
+
+public class FrontControllerTest {
+	
+	@Test
 	public void testFrontController()
 	{
 		

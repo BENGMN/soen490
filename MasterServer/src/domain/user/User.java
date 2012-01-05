@@ -18,8 +18,6 @@ package domain.user;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 
 import org.msgpack.MessagePack;
 import org.msgpack.packer.Packer;
@@ -27,8 +25,6 @@ import org.msgpack.unpacker.Unpacker;
 
 
 public class User implements IUser {
-	
-	private static final long serialVersionUID = 4373314751734158581L;
 	
 	private long uid;
 	private String email;

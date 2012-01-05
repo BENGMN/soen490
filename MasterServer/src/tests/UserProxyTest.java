@@ -15,8 +15,13 @@
 
 package tests;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class UserProxyTest extends TestCase {
+public class UserProxyTest {
 	
+	@Test
+	public void testFunctionality()
+	{
+		
+	}
 }

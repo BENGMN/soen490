@@ -28,15 +28,12 @@ import domain.message.MessageFactory;
 import domain.message.MessageOutputMapper;
 import domain.user.User;
 import domain.user.UserMapper;
-import foundation.MessageTDG;
 
 public class PutMessageCommand extends RegionalCommand
 {
 
-	public boolean execute(HttpServletRequest request, HttpServletResponse response)
+	public void execute(HttpServletRequest request, HttpServletResponse response)
 	{
-		if (!super.execute(request, response))
-			return false;
 		double longitude = Double.parseDouble(request.getParameter("longitude"));
 		double latitude = Double.parseDouble(request.getParameter("latitude"));
 		float speed = Float.parseFloat(request.getParameter("speed"));
@@ -49,10 +46,9 @@ public class PutMessageCommand extends RegionalCommand
 		{
 			if (user == null)
 				throw new UnrecognizedUserException();
-			Message message = MessageFactory.createNew(MessageTDG.getUniqueId(), user.getUid(), data, speed, latitude, longitude, Calendar.getInstance(), 0, 0);
+			Message message = MessageFactory.createNew(user.getUid(), data, speed, latitude, longitude, Calendar.getInstance(), 0);
 			MessageOutputMapper.insert(message);
 			response.setStatus(HttpServletResponse.SC_ACCEPTED);
-			return true;
 		}
 		catch (Exception e1)
 		{
@@ -62,7 +58,6 @@ public class PutMessageCommand extends RegionalCommand
 			catch (IOException e2) {
 				e1.printStackTrace();
 			}
-			return false;
 		}
 	}
 

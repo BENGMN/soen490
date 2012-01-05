@@ -36,7 +36,7 @@ public class UserTDG {
 		"email, " +
 		"password, " +
 		"type) " + 			
-		"VALUES (?, ?, ?, password(?), ?);";
+		"VALUES (?, ?, ?, ?, ?);";
 	
 	/**
 	 * Inserts a row into the table for User, where the column row values are the passed parameters.
@@ -66,7 +66,7 @@ public class UserTDG {
 		"UPDATE " + TABLE + " " +
 		"AS u SET" + " " +
 		"u.email = ?, " +
-		"u.password = password(?), " +
+		"u.password = ?, " +
 		"u.type = ?, " +
 		"u.version = u.version + 1 " +
 		"WHERE u.uid = ? AND u.version = ?;";
@@ -99,7 +99,7 @@ public class UserTDG {
 	
 	private final static String DELETE =
 		"DELETE FROM " + TABLE + " " + 
-		"AS u WHERE u.uid = ? AND u.version = ?;";
+		"WHERE uid = ? AND version = ?;";
 	
 	/**
 	 * Deletes a row from the table for User, where the User ID and version are equal to the passed parameters.
@@ -117,5 +117,30 @@ public class UserTDG {
 		int count = ps.executeUpdate();
 		ps.close();
 		return count;
+	}
+	
+	private final static String CREATE_TABLE =
+			"CREATE TABLE User (uid bigint NOT NULL, email varchar(64) NOT NULL, password varchar(256) NOT NULL, type tinyint NOT NULL, version int NOT NULL, CONSTRAINT pk_uid PRIMARY KEY (uid));";
+		
+	/**
+	 * Creates the table User in the database.
+	 * @throws SQLException 
+	 */
+	public static void create() throws SQLException {
+		PreparedStatement ps = Database.getInstance().getStatement(CREATE_TABLE);
+
+		ps.executeUpdate();
+	}
+	
+	private final static String DROP_TABLE =
+		"DROP TABLE " + TABLE + ";";	
+
+	/**
+	 * Drops the table User from the database.
+	 * @throws SQLException
+	 */
+	public static void drop() throws SQLException {
+		PreparedStatement ps = Database.getInstance().getStatement(DROP_TABLE);
+		ps.executeUpdate();
 	}
 }

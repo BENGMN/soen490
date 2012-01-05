@@ -108,4 +108,20 @@ public class MessageFinder {
 			ResultSet rs = ps.executeQuery();
 			return rs;
 		}
+		
+		private final static String SELECT_UNIQUE_ID =
+				"SELECT m.mid FROM " + MessageTDG.TABLE + " AS m ORDER BY m.mid DESC LIMIT 1";
+		
+		/**
+		 * Retrieves a unique ID from the table, that is available.
+		 * @return Returns a unique ID that is not shared by any user in the database.
+		 * @throws SQLException
+		 */
+		public static long findUniqueId() throws SQLException { 
+			PreparedStatement ps = Database.getInstance().getStatement(SELECT_UNIQUE_ID);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next())
+				return rs.getLong(0) + 1;
+			return 0;
+		}
 }

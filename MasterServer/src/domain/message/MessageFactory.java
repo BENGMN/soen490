@@ -1,23 +1,31 @@
 package domain.message;
 
+import java.sql.SQLException;
 import java.util.Calendar;
 
 import domain.user.IUser;
 import domain.user.UserProxy;
+import foundation.MessageFinder;
+import foundation.UserFinder;
 
 public class MessageFactory {
 
-	public static Message createNew(long mid, long uid, byte[] message, float speed, double latitude, 
-			double longitude, Calendar createdDate, int userRating, int version) {
+	public static Message createNew(long uid, byte[] message, float speed, double latitude, 
+			double longitude, Calendar createdDate, int userRating) {
 		
 		// Create a user proxy
 		IUser user = new UserProxy(uid);
-		
 		// Create a message object, passing the proxy as the owner
-		Message msg = new Message(mid, user,message, speed, latitude, longitude, createdDate, userRating, version);
+		Message msg = null;
+		try {
+			msg = new Message(MessageFinder.findUniqueId(), user,message, speed, latitude, longitude, createdDate, userRating, 1);
+		}
+		catch (SQLException E) {
+			E.printStackTrace();
+		}
 		
 		// Put the new message in the identity map
-		MessageIdentityMap.getUniqueInstance().put(mid, msg);
+		MessageIdentityMap.getUniqueInstance().put(msg.getMid(), msg);
 		
 		return msg;
 	}
@@ -29,7 +37,7 @@ public class MessageFactory {
 		IUser user = new UserProxy(uid);
 		
 		// Create a message object, passing the proxy as the owner
-		Message msg = new Message(mid, user,message, speed, latitude, longitude, createdDate, userRating, version);
+		Message msg = new Message(mid, user, message, speed, latitude, longitude, createdDate, userRating, version);
 		
 		// Put the loaded message in the identity map
 		MessageIdentityMap.getUniqueInstance().put(mid, msg);

@@ -61,7 +61,7 @@ public class MessageInputMapper {
 		if (message != null)
 			return message;
 		
-		message = MessageFactory.createNew(mid,
+		message = MessageFactory.createClean(mid,
 								 rs.getLong("m.uid"),
 								 rs.getBytes("m.message"),
 								 rs.getFloat("m.speed"),

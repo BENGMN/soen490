@@ -78,8 +78,8 @@ public class MessageTDG {
 	
 	private final static String UPDATE = 
 		"UPDATE " + TABLE + " " +
-		"user_rating = ?  " +
-		"WHERE mid = ?";
+		"SET user_rating = ?, version = version + 1  " +
+		"WHERE mid = ? AND version = ?";
 	
 	/**
 	 * Not much use for this, since we always want to increment or decrement the user rating by 1.
@@ -89,11 +89,12 @@ public class MessageTDG {
 	 * @return Returns the number of rows updated, should be 1.
 	 * @throws SQLException
 	 */
-	public static int update(long mid, int user_rating) throws SQLException {
+	public static int update(long mid, int user_rating, int version) throws SQLException {
 		PreparedStatement ps = Database.getInstance().getStatement(UPDATE);
 		
 		ps.setInt(1, user_rating);
 		ps.setLong(2, mid);
+		ps.setLong(3, version);
 		
 		int count = ps.executeUpdate();
 		ps.close();
@@ -155,15 +156,5 @@ public class MessageTDG {
 	public static void drop() throws SQLException {
 		PreparedStatement ps = Database.getInstance().getStatement(DROP_TABLE);
 		ps.executeUpdate();
-	}
-	
-	/**
-	 * Returns us a unique id that's not in use from the table. Needs to be mitigated when we migrate to multiple servers later.
-	 * @return long mid
-	 * @throws SQLException
-	 */
-	
-	public static long getUniqueId() throws SQLException {
-		return 0;
 	}
 }

@@ -15,24 +15,26 @@
 
 
 package tests;
-
+import static org.junit.Assert.*;
 import java.sql.SQLException;
 
-import foundation.Database;
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class DatabaseTest extends TestCase {
+import foundation.Database;
+
+public class DatabaseTest {
+	@Test
 	public void testConnection()
 	{
 		assertTrue(Database.getInstance().canConnect());
 	}
 	
+	@Test
 	public void testTables()
 	{
 		partTestCreateTable();
 		partTestDeleteTable();
 	}
-	
 	
 	private void partTestCreateTable()
 	{
@@ -59,22 +61,6 @@ public class DatabaseTest extends TestCase {
 		catch (SQLException e)
 		{
 			fail("Failed to delete table: " + e);
-		}
-	}
-	
-	// Here we test the various tables in the database to see if they're present.
-	public void testDatabaseComposition()
-	{
-		try
-		{
-			// This should be expanded to check the schemas too.
-			assertTrue(Database.getInstance().hasTable("User"));
-			assertTrue(Database.getInstance().hasTable("Message"));
-			assertTrue(Database.getInstance().hasTable("Server"));
-		}
-		catch (SQLException e)
-		{
-			fail("Database not properly structued: " + e);
 		}
 	}
 }
