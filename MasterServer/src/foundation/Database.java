@@ -165,4 +165,25 @@ public class Database {
 			singleton = new Database();
 		return singleton;
 	}
+	
+	public void createDatabase() throws SQLException
+	{
+		if (!hasTable(UserTDG.TABLE))
+			UserTDG.create();
+		if (!hasTable(MessageTDG.TABLE))
+			MessageTDG.create();
+	}
+	
+	public void dropDatabase() throws SQLException
+	{
+		if (hasTable(UserTDG.TABLE))
+			UserTDG.drop();
+		if (hasTable(MessageTDG.TABLE))
+			MessageTDG.drop();
+	}
+	
+	public boolean isDatabaseCreated() throws SQLException
+	{
+		return hasTable(UserTDG.TABLE) && hasTable(MessageTDG.TABLE); 
+	}
 }

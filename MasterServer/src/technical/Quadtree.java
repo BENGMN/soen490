@@ -2,10 +2,14 @@ package technical;
 
 import java.util.ArrayList;
 
+/*Servers oversee a quadrant. If one of their quadrants are split further then they oversee 
+ * the empty quadrants while the new server oversees its own quadrant in the same way.
+ */
 public class Quadtree<T extends Location> {	
 	public class QuadtreeNode
 	{
 		QuadtreeNode parent;
+		QuadtreeNode grandParent;
 		ArrayList<QuadtreeNode> children = null;
 		T item = null;
 		double latitude;
@@ -23,6 +27,13 @@ public class Quadtree<T extends Location> {
 			item = null;
 		}
 		
+		public QuadtreeNode(QuadtreeNode parent, double latitude, double longitude, double latitudeRange, double longitudeRange, T item)
+		{
+			this(parent, latitude, longitude, latitudeRange, longitudeRange);
+			this.item = item;
+		}
+		
+
 		private int getQuadrant(double latitude, double longitude)
 		{
 			return ((latitude < this.latitude) ? 0 : 1) + ((longitude < this.longitude) ? 2 : 0);
@@ -57,9 +68,12 @@ public class Quadtree<T extends Location> {
 		public void addItem(T item)
 		{
 			if (children == null) {
-				if (this.item != null)
+				if (this.item != null) {
 					split();
-				addItem(item);
+					addItem(item);
+				}
+				else
+					this.item = item;
 			}
 			else {
 				int quadrant = getQuadrant(item.getLatitude(), item.getLongitude());
@@ -84,7 +98,6 @@ public class Quadtree<T extends Location> {
 			assert(children == null);
 			assert(item != null);
 			children = new ArrayList<QuadtreeNode>(4);
-			addItem(item);
 		}
 		
 		public void merge()
