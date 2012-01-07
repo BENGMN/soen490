@@ -30,13 +30,17 @@ public class UserTDGTest {
 	static long uid = 158749857934L;
 	
 	@Test
-	public void testFunctionality()
+	public void testFunctionality() throws SQLException
 	{
-		create();
+		// We put this in here, so that the tests don't disturb the database if it's already present.
+		boolean previousDatabase = Database.getInstance().isDatabaseCreated();
+		if (!previousDatabase)
+			Database.getInstance().createDatabase();
 		insert();
 		update();
 		delete();
-		drop();
+		if (!previousDatabase)
+			Database.getInstance().dropDatabase();
 	}
 	
 	private void create()

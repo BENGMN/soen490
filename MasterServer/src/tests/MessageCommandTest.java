@@ -33,33 +33,27 @@ import application.UpvoteMessageCommand;
 
 import domain.message.Message;
 import domain.message.MessageFactory;
+import foundation.Database;
 import foundation.MessageTDG;
 import foundation.UserTDG;
 
 public class MessageCommandTest {
-
+	
+	boolean previousDatabase = false;
+	
 	@Before
-	public void createTables()
+	public void createTables() throws SQLException
 	{
-		try {
-			MessageTDG.create();
-			UserTDG.create();
-		}
-		catch (SQLException E) {
-			E.printStackTrace();
-		}
+		previousDatabase = Database.getInstance().isDatabaseCreated();
+		if (!previousDatabase)
+			Database.getInstance().createDatabase();
 	}
 	
 	@After
-	public void dropTables()
+	public void dropTables() throws SQLException
 	{
-		try {
-			MessageTDG.drop();
-			UserTDG.drop();
-		}
-		catch (SQLException E) {
-			E.printStackTrace();
-		}
+		if (!previousDatabase)
+			Database.getInstance().dropDatabase();
 	}
 	
 	@Test

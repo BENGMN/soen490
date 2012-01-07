@@ -1,29 +1,45 @@
 package technical;
 
-import java.util.HashMap;
+import java.util.List;
 
 public class MasterConfiguration extends ServerConfiguration {
-
-	static int defaultPort = 8080;
+	double minLatitude;
+	double maxLatitude;
+	double minLongitude;
+	double maxLongitude;
 	
-	HashMap<String, MasterConfiguration> masterServers;
-	HashMap<String, RegionalConfiguration> regionalServers;
-	HashMap<String, DelegationConfiguration> delegationServers;
+	MasterConfiguration parent;
+	MasterConfiguration grandParent;
+	List<MasterConfiguration> children;
 	
-	MasterConfiguration(String hostname) {
-		super(hostname, defaultPort);
-	}
-	
-	MasterConfiguration(String hostname, int port) {
+	MasterConfiguration(String hostname, int port, double minLatitude, double maxLatitude, double minLongitude, double maxLongitude)
+	{
 		super(hostname, port);
+		this.minLatitude = minLatitude;
+		this.maxLatitude = minLatitude;
+		this.minLongitude = minLongitude;
+		this.maxLongitude = maxLongitude;
 	}
-
-	public EServerType getType() {
+	
+	public EServerType getType()
+	{
 		return EServerType.SERVER_MASTER;
 	}
-
-	public boolean isResponsible(double latitude, double longitude) {
-		return true;
+	
+	public boolean isResponsible(double longitude, double latitude)
+	{
+		boolean responsible = true;
+		if (longitude >= minLongitude && longitude < maxLongitude &&
+				latitude >= minLatitude && latitude < maxLatitude){
+			for(MasterConfiguration child : children){
+				if(longitude >= child.minLongitude && longitude < child.maxLongitude &&
+						latitude >= child.minLatitude && latitude < child.maxLatitude){
+					responsible = false;
+					break;
+				}
+			}
+		}
+		return responsible;
 	}
-
+	
 }

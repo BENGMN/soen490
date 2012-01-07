@@ -48,7 +48,7 @@ public class UserProxy implements IUser {
 	}
 
 	public long getUid() {
-		return getRealUser().getUid();
+		return uid;
 	}
 
 	public int getVersion() {

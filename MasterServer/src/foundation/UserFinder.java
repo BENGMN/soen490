@@ -108,7 +108,7 @@ public class UserFinder {
 		PreparedStatement ps = Database.getInstance().getStatement(SELECT_UNIQUE_ID);
 		ResultSet rs = ps.executeQuery();
 		if (rs.next())
-			return rs.getLong(0) + 1;
+			return rs.getLong(1) + 1;
 		return 0;
 	}
 }

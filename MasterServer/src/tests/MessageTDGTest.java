@@ -35,39 +35,16 @@ public class MessageTDGTest {
 	@Test
 	public void testFunctionality() throws SQLException
 	{
-		create();
+		boolean previousDatabase = Database.getInstance().isDatabaseCreated();
+		if (!previousDatabase)
+			Database.getInstance().createDatabase();
 		insert();
 		update();
 		delete();
-		drop();
+		if (!previousDatabase)
+			Database.getInstance().dropDatabase();
 	}
 	
-	private void create()
-	{
-		try {
-			assertFalse(Database.getInstance().hasTable("Message"));
-			MessageTDG.create();
-			// This should be expanded to check the schemas too. Probably.
-			assertTrue(Database.getInstance().hasTable("Message"));
-		}
-		catch (SQLException E) {
-			fail("Exception Failure: " + E);
-		}
-	}
-	
-	private void drop()
-	{
-		try {
-			assertTrue(Database.getInstance().hasTable("Message"));
-			MessageTDG.drop();
-			// This should be expanded to check the schemas too. Probably.
-			assertFalse(Database.getInstance().hasTable("Message"));
-		}
-		catch (SQLException E) {
-			fail("Exception Failure: " + E);
-		}
-	}
-
 	private void insert() throws SQLException
 	{
 		try {
