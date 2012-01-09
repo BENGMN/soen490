@@ -17,7 +17,7 @@ package domain.message;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Calendar;
+import java.sql.Timestamp;
 import java.util.LinkedList;
 
 import foundation.MessageFinder;
@@ -55,8 +55,7 @@ public class MessageInputMapper {
 	 * @throws SQLException
 	 */
 	private static Message getMessage(ResultSet rs) throws SQLException {
-		Calendar date = Calendar.getInstance();
-		date.setTime(rs.getDate("m.created_at"));
+		Timestamp date = rs.getTimestamp("m.created_at");
 		
 		long mid = rs.getLong("m.mid");
 		Message message = MessageIdentityMap.getUniqueInstance().get(mid);

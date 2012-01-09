@@ -29,11 +29,17 @@ public class MessageOutputMapper {
 	 * @return the number of rows updated (1 for success, 0 for failure)
 	 * @throws SQLException
 	 */
-	public static int update(Message message) throws SQLException {
-		int updated = MessageTDG.update(message.getMid(), message.getUserRating(), message.getVersion());
-		if (updated > 0)
-			message.setVersion(message.getVersion()+1);
-		return updated;
+	public static int update(Message message) {
+		try {
+			int updated = MessageTDG.update(message.getMid(), message.getUserRating(), message.getVersion());
+			if (updated > 0)
+				message.setVersion(message.getVersion()+1);
+			return updated;
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return -1;
 	}
 	
 	/**
@@ -42,9 +48,15 @@ public class MessageOutputMapper {
 	 * @return the number of rows updated (1 for success, 0 for failure) 
 	 * @throws SQLException
 	 */
-	public static int delete(Message message) throws SQLException {
-		MessageIdentityMap.getUniqueInstance().put(message.getMid(), null);
-		return MessageTDG.delete(message.getMid(), message.getVersion());
+	public static int delete(Message message) {
+		try {
+			MessageIdentityMap.getUniqueInstance().put(message.getMid(), null);
+			return MessageTDG.delete(message.getMid(), message.getVersion());
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return -1;
 	}
 	
 	/**
@@ -52,7 +64,12 @@ public class MessageOutputMapper {
 	 * @param message Message
 	 * @throws SQLException
 	 */
-	public static void insert(Message message) throws SQLException {
-		MessageTDG.insert(message.getMid(), message.getOwner().getUid(), message.getVersion(), message.getMessage(), message.getSpeed(), message.getLatitude(), message.getLongitude(), message.getCreatedAt(), message.getUserRating());
+	public static void insert(Message message) {
+		try {
+			MessageTDG.insert(message.getMid(), message.getOwner().getUid(), message.getVersion(), message.getMessage(), message.getSpeed(), message.getLatitude(), message.getLongitude(), message.getCreatedAt(), message.getUserRating());
+		}
+		catch (SQLException e){
+			e.printStackTrace();
+		}
 	}
 }

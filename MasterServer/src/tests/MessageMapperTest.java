@@ -16,6 +16,7 @@
 package tests;
 
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -53,7 +54,7 @@ public class MessageMapperTest {
 		final float speed = 10.0f;
 		final double latitude = 20.0;
 		final double longitude = 10.0;
-		Calendar createdDate = new GregorianCalendar(2011, 9, 10);
+		Timestamp createdDate = new Timestamp(new GregorianCalendar(2011, 9, 10).getTimeInMillis());
 		final int userRating = -1;
 		assertNull(MessageInputMapper.find(mid));
 		Message newMessage = MessageFactory.createClean(mid, uid, array, speed, latitude, longitude, createdDate, userRating, 1);
@@ -70,7 +71,7 @@ public class MessageMapperTest {
 		final float speed = 10.0f;
 		final double latitude = 20.0;
 		final double longitude = 10.0;
-		Calendar createdDate = new GregorianCalendar(2011, 9, 10);
+		Timestamp createdDate = new Timestamp(new GregorianCalendar(2011, 9, 10).getTimeInMillis());
 		final int userRating = -1;
 		assertArrayEquals(array, oldMessage.getMessage());
 		assertEquals(speed, oldMessage.getSpeed(), 0.00001);

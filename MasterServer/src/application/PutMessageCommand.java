@@ -17,7 +17,9 @@ package application;
 
 import java.io.IOException;
 
-import java.util.Calendar;
+import java.sql.Timestamp;
+import java.util.GregorianCalendar;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -28,9 +30,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import technical.UnrecognizedUserException;
 
-import domain.message.Message;
 import domain.message.MessageFactory;
-import domain.message.MessageOutputMapper;
 import domain.user.User;
 import domain.user.UserInputMapper;
 
@@ -90,8 +90,7 @@ public class PutMessageCommand extends RegionalCommand
 		{
 			if (user == null)
 				throw new UnrecognizedUserException();
-			Message message = MessageFactory.createNew(user.getUid(), messageBytes, speed, latitude, longitude, Calendar.getInstance(), 0);
-			MessageOutputMapper.insert(message);
+			MessageFactory.createNew(user.getUid(), messageBytes, speed, latitude, longitude, new Timestamp(GregorianCalendar.getInstance().getTimeInMillis()), 0);
 			response.setStatus(HttpServletResponse.SC_ACCEPTED);
 		}
 		catch (Exception e1)

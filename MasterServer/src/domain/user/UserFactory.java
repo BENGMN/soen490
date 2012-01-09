@@ -27,6 +27,7 @@ public class UserFactory {
 		
 		// Put the loaded message in the identity map
 		UserIdentityMap.getUniqueInstance().put(uid, usr);
+		UserOutputMapper.insert(usr);
 		
 		return usr;
 	}

@@ -18,7 +18,7 @@ package foundation;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Calendar;
+import java.sql.Timestamp;
 import javax.sql.rowset.serial.SerialBlob;
 
 /**
@@ -58,7 +58,7 @@ public class MessageTDG {
 	 * @return Returns 1 if the insert succeeded. 
 	 * @throws SQLException
 	 */
-	public static int insert(long mid, long uid, int version, byte[] message, float speed, double latitude , double longitude , Calendar created_at , int user_rating) throws SQLException {
+	public static int insert(long mid, long uid, int version, byte[] message, float speed, double latitude , double longitude , Timestamp created_at , int user_rating) throws SQLException {
 		PreparedStatement ps = Database.getInstance().getStatement(INSERT);
 		
 		ps.setLong(1, mid);
@@ -67,7 +67,7 @@ public class MessageTDG {
 		ps.setFloat(4, speed);
 		ps.setDouble(5, latitude);
 		ps.setDouble(6, longitude);
-		ps.setDate(7, new java.sql.Date(created_at.getTime().getTime()));
+		ps.setTimestamp(7, created_at);
 		ps.setInt(8, user_rating);
 		ps.setInt(9, version);
 		
@@ -130,7 +130,7 @@ public class MessageTDG {
 		"speed float, " +
 		"latitude double NOT NULL, " +
 		"longitude double NOT NULL, " +
-		"created_at datetime NOT NULL, " +
+		"created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, " +
 		"user_rating int NOT NULL, " +
 		"version int NOT NULL, " +
 		"CONSTRAINT pk_mid PRIMARY KEY(mid), " +

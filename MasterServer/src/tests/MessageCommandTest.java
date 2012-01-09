@@ -17,12 +17,14 @@ package tests;
 
 import static org.junit.Assert.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.Calendar;
+import java.sql.Timestamp;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
@@ -37,9 +39,12 @@ import org.springframework.mock.web.MockMultipartHttpServletRequest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.msgpack.MessagePack;
+import org.msgpack.unpacker.Unpacker;
 
 
 import application.DownvoteMessageCommand;
+import application.GetMessagesCommand;
 import application.PutMessageCommand;
 import application.UpvoteMessageCommand;
 
@@ -75,7 +80,45 @@ public class MessageCommandTest {
 	@Test
 	public void getCommand()
 	{
-		
+		final double longitude = 10.0;
+		final double latitude = 30.0;
+		final float speed = 20.0f;
+		final Timestamp createdDate = new Timestamp(GregorianCalendar.getInstance().getTimeInMillis());
+		final int userRating = 2;
+		final byte[] bytes = {0,1,2,3,4,5,6,7,8,9};
+		final String email = "example@example.com";
+		final String password = "capstone";
+		final UserType type = UserType.USER_NORMAL;
+		User user = UserFactory.createNew(email, password, type);
+		Message message = MessageFactory.createNew(user.getUid(), bytes, speed, latitude, longitude, createdDate, userRating);
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		MockHttpServletResponse response = new MockHttpServletResponse();
+		request.setParameter("longitude", Double.toString(longitude));
+		request.setParameter("latitude", Double.toString(latitude));
+		request.setParameter("speed", Float.toString(speed));
+		GetMessagesCommand getMessageCommand = new GetMessagesCommand();
+		getMessageCommand.execute(request, response);
+		assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+		byte[] responseBytes = response.getContentAsByteArray();
+		MessagePack pack = new MessagePack();
+		Unpacker unpacker = pack.createUnpacker(new ByteArrayInputStream(responseBytes));
+		try {
+			int messageCount = unpacker.readInt();
+			assertEquals(1, messageCount);
+			assertEquals(message.getMid(), unpacker.readLong());
+			assertEquals(message.getOwner().getEmail(), unpacker.readString());
+			assertArrayEquals(message.getMessage(), unpacker.readByteArray());
+			assertEquals(message.getSpeed(), unpacker.readFloat(), 0.0001);
+			assertEquals(message.getCreatedAt().getTime(), unpacker.readLong());
+			assertEquals(message.getLongitude(), unpacker.readDouble(), 0.000001);
+			assertEquals(message.getLatitude(), unpacker.readDouble(), 0.000001);
+			assertEquals(message.getUserRating(), unpacker.readInt());
+		}
+		catch (IOException e) {
+			fail("Exception failure: " + e);
+		}
+		UserOutputMapper.delete(user);
+		MessageOutputMapper.delete(message);		
 	}
 	
 	@Test
@@ -84,7 +127,7 @@ public class MessageCommandTest {
 		String fileName = "test.amr";
 		File file = new File(fileName);
 		int fileSize = (int)file.length();
-		byte[] fileBytes = new byte[fileSize];;
+		byte[] fileBytes = new byte[fileSize];
 		try {
 			assertEquals(fileSize, new FileInputStream(fileName).read(fileBytes));
 		}
@@ -118,13 +161,8 @@ public class MessageCommandTest {
 		assertEquals(1, messages.size());
 		Message message = messages.get(0);
 		assertArrayEquals(message.getMessage(), fileBytes);
-		try {
-			MessageOutputMapper.delete(message);
-			UserOutputMapper.delete(user);
-		}
-		catch (SQLException e) {
-			fail("Exception failure: " + e);
-		}
+		assertEquals(1, MessageOutputMapper.delete(message));
+		assertEquals(1, UserOutputMapper.delete(user));
 	}
 	
 	private static final String BOUNDARY = "AaB03x";
@@ -166,7 +204,7 @@ public class MessageCommandTest {
 		final float speed = 10.0f;
 		final double latitude = 20.0;
 		final double longitude = 20.0;
-		Calendar createdDate = new GregorianCalendar(2011, 10, 10);
+		Timestamp createdDate = new Timestamp(GregorianCalendar.getInstance().getTimeInMillis());
 		final int userRating = 0;
 		Message message = MessageFactory.createNew(0, bytes, speed, latitude, longitude, createdDate, userRating);
 		UpvoteMessageCommand rateMessageCommand = new UpvoteMessageCommand();
@@ -187,7 +225,7 @@ public class MessageCommandTest {
 		final float speed = 10.0f;
 		final double latitude = 20.0;
 		final double longitude = 20.0;
-		Calendar createdDate = new GregorianCalendar(2011, 10, 10);
+		Timestamp createdDate = new Timestamp(GregorianCalendar.getInstance().getTimeInMillis());
 		final int userRating = 0;
 		Message message = MessageFactory.createNew(0, bytes, speed, latitude, longitude, createdDate, userRating);
 		DownvoteMessageCommand rateMessageCommand = new DownvoteMessageCommand();
