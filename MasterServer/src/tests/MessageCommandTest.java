@@ -17,11 +17,20 @@ package tests;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockMultipartHttpServletRequest;
 
 import org.junit.After;
 import org.junit.Before;
@@ -29,13 +38,14 @@ import org.junit.Test;
 
 
 import application.DownvoteMessageCommand;
+import application.PutMessageCommand;
 import application.UpvoteMessageCommand;
 
 import domain.message.Message;
 import domain.message.MessageFactory;
+import domain.user.UserFactory;
+import domain.user.UserType;
 import foundation.Database;
-import foundation.MessageTDG;
-import foundation.UserTDG;
 
 public class MessageCommandTest {
 	
@@ -63,9 +73,58 @@ public class MessageCommandTest {
 	}
 	
 	@Test
-	public void putCommand()
+	public void putCommand() throws IOException
+	{		
+		String fileName = "test.amr";
+		File file = new File(fileName);
+		int fileSize = (int)file.length();
+		byte[] fileBytes = new byte[fileSize];;
+		try {
+			assertEquals(fileSize, new FileInputStream(fileName).read(fileBytes));
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			fail();
+		}
+		String email = "example@example.com";
+		String password = "capstone";
+		UserFactory.createNew(email, password, UserType.USER_NORMAL);
+		MockHttpServletResponse response = new MockHttpServletResponse();
+		MockHttpServletRequest request = new MockMultipartHttpServletRequest();
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("longitude", "20.0");
+		parameters.put("latitude", "20.0");
+		parameters.put("speed", "20.0");
+		parameters.put("email", email);
+		String contentArray = createContent("bin", fileBytes, parameters);
+		request.setContentType("multipart/form-data; boundary=" + BOUNDARY);
+		request.setContent(contentArray.getBytes());
+		PutMessageCommand putMessageCommand = new PutMessageCommand();
+		putMessageCommand.execute(request, response);
+		assertEquals(HttpServletResponse.SC_ACCEPTED, response.getStatus());
+	}
+	
+	private static final String BOUNDARY = "AaB03x";
+	private static final String ENDLINE = "\r\n";
+	
+	private String createContent(String fileName, byte[] fileBytes, Map<String, String> parameters) throws IOException
 	{
-		
+		StringBuilder writer = new StringBuilder();
+		for(Map.Entry<String, String> e : parameters.entrySet()) {
+			writer.append("--" + BOUNDARY + ENDLINE);
+			writer.append("Content-Disposition: form-data; name=\"" + e.getKey() + "\"" + ENDLINE);
+			writer.append(ENDLINE);
+			writer.append(e.getValue() + ENDLINE);
+		}
+        writer.append("--" + BOUNDARY + ENDLINE);
+        writer.append("Content-Disposition: form-data; ");
+        writer.append("name=\"bin\"; filename=\"" + fileName + "\"" + ENDLINE);
+        writer.append("Content-Type: application/octet-stream" + ENDLINE);
+        writer.append("Content-Transfer-Encoding: binary" + ENDLINE);
+        writer.append(ENDLINE);
+        writer.append(fileBytes + ENDLINE);
+        writer.append("--" + BOUNDARY + "--");
+        return writer.toString();
 	}
 	
 	@Test

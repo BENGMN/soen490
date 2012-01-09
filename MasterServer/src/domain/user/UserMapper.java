@@ -23,7 +23,7 @@ import foundation.UserTDG;
 public class UserMapper {
 	
 	public static User find(long uid) {
-		User mappedUser = UserIdentityMap.getInstance().get(uid);
+		User mappedUser = UserIdentityMap.getUniqueInstance().get(uid);
 		if (mappedUser != null)
 			return mappedUser;
 		
@@ -44,9 +44,9 @@ public class UserMapper {
 	
 	public static User findByEmail(String email) {		
 		try	{
-			ResultSet rs = UserFinder.find(email);
+			ResultSet rs = UserFinder.find(email); rs.next();
 			long uid = rs.getLong(1);
-			User mappedUser = UserIdentityMap.getInstance().get(uid);
+			User mappedUser = UserIdentityMap.getUniqueInstance().get(uid);
 			if (mappedUser != null)
 				return mappedUser;
 			int version = rs.getInt(2);

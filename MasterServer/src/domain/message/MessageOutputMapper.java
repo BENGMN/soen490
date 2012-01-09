@@ -30,7 +30,10 @@ public class MessageOutputMapper {
 	 * @throws SQLException
 	 */
 	public static int update(Message message) throws SQLException {
-		return MessageTDG.update(message.getMid(), message.getUserRating(), message.getVersion());
+		int updated = MessageTDG.update(message.getMid(), message.getUserRating(), message.getVersion());
+		if (updated > 0)
+			message.setVersion(message.getVersion()+1);
+		return updated;
 	}
 	
 	/**
@@ -40,6 +43,7 @@ public class MessageOutputMapper {
 	 * @throws SQLException
 	 */
 	public static int delete(Message message) throws SQLException {
+		MessageIdentityMap.getUniqueInstance().put(message.getMid(), null);
 		return MessageTDG.delete(message.getMid(), message.getVersion());
 	}
 	
