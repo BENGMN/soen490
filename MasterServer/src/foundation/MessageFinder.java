@@ -76,6 +76,16 @@ public class MessageFinder {
 			return rs;
 		}
 		
+		private static final String SELECT_BY_EMAIL =
+				"SELECT * FROM " + MessageTDG.TABLE + " AS m WHERE m.uid = ?;";
+		
+		public static ResultSet findByUser(long uid) throws SQLException {
+			PreparedStatement ps = Database.getInstance().getStatement(SELECT_BY_EMAIL);
+			ps.setLong(1, uid);
+			ResultSet rs = ps.executeQuery();
+			return rs;
+		}
+		
 		/**
 		 * 
 		 * @param longitude

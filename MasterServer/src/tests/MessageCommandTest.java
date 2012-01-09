@@ -17,13 +17,15 @@ package tests;
 
 import static org.junit.Assert.*;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -43,7 +45,11 @@ import application.UpvoteMessageCommand;
 
 import domain.message.Message;
 import domain.message.MessageFactory;
+import domain.message.MessageInputMapper;
+import domain.message.MessageOutputMapper;
+import domain.user.User;
 import domain.user.UserFactory;
+import domain.user.UserOutputMapper;
 import domain.user.UserType;
 import foundation.Database;
 
@@ -73,7 +79,7 @@ public class MessageCommandTest {
 	}
 	
 	@Test
-	public void putCommand() throws IOException
+	public void putCommand()
 	{		
 		String fileName = "test.amr";
 		File file = new File(fileName);
@@ -88,7 +94,7 @@ public class MessageCommandTest {
 		}
 		String email = "example@example.com";
 		String password = "capstone";
-		UserFactory.createNew(email, password, UserType.USER_NORMAL);
+		User user = UserFactory.createNew(email, password, UserType.USER_NORMAL);
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		MockHttpServletRequest request = new MockMultipartHttpServletRequest();
 		Map<String, String> parameters = new HashMap<String, String>();
@@ -96,20 +102,38 @@ public class MessageCommandTest {
 		parameters.put("latitude", "20.0");
 		parameters.put("speed", "20.0");
 		parameters.put("email", email);
-		String contentArray = createContent("bin", fileBytes, parameters);
-		request.setContentType("multipart/form-data; boundary=" + BOUNDARY);
-		request.setContent(contentArray.getBytes());
+		byte[] contentArray = createContent("bin", fileBytes, parameters);
+		request.setContentType("multipart/mixed; boundary=" + BOUNDARY);
+		request.setContent(contentArray);
 		PutMessageCommand putMessageCommand = new PutMessageCommand();
 		putMessageCommand.execute(request, response);
 		assertEquals(HttpServletResponse.SC_ACCEPTED, response.getStatus());
+		List<Message> messages = null;
+		try {
+			messages = MessageInputMapper.findByUser(user);
+		}
+		catch (SQLException e) {
+			fail("Exception failure: " + e);
+		}
+		assertEquals(1, messages.size());
+		Message message = messages.get(0);
+		assertArrayEquals(message.getMessage(), fileBytes);
+		try {
+			MessageOutputMapper.delete(message);
+			UserOutputMapper.delete(user);
+		}
+		catch (SQLException e) {
+			fail("Exception failure: " + e);
+		}
 	}
 	
 	private static final String BOUNDARY = "AaB03x";
 	private static final String ENDLINE = "\r\n";
 	
-	private String createContent(String fileName, byte[] fileBytes, Map<String, String> parameters) throws IOException
+	private byte[] createContent(String fileName, byte[] fileBytes, Map<String, String> parameters)
 	{
-		StringBuilder writer = new StringBuilder();
+		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		PrintWriter writer = new PrintWriter(byteArrayOutputStream);
 		for(Map.Entry<String, String> e : parameters.entrySet()) {
 			writer.append("--" + BOUNDARY + ENDLINE);
 			writer.append("Content-Disposition: form-data; name=\"" + e.getKey() + "\"" + ENDLINE);
@@ -122,9 +146,17 @@ public class MessageCommandTest {
         writer.append("Content-Type: application/octet-stream" + ENDLINE);
         writer.append("Content-Transfer-Encoding: binary" + ENDLINE);
         writer.append(ENDLINE);
-        writer.append(fileBytes + ENDLINE);
+        writer.flush();
+        try {
+        	byteArrayOutputStream.write(fileBytes);
+        }
+        catch (Exception e) {
+        	fail("Exception failure: " + e);
+        }
+        writer.append(ENDLINE);
         writer.append("--" + BOUNDARY + "--");
-        return writer.toString();
+        writer.flush();
+        return byteArrayOutputStream.toByteArray();
 	}
 	
 	@Test

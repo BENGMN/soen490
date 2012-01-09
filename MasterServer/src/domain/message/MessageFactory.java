@@ -6,7 +6,6 @@ import java.util.Calendar;
 import domain.user.IUser;
 import domain.user.UserProxy;
 import foundation.MessageFinder;
-import foundation.UserFinder;
 
 public class MessageFactory {
 

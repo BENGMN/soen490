@@ -18,15 +18,9 @@ package application;
 import java.io.IOException;
 
 import java.util.Calendar;
-import java.util.Iterator;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.fileupload.FileItemIterator;
-import org.apache.commons.fileupload.FileItemStream;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.omg.CORBA.portable.InputStream;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.MultipartResolver;
@@ -38,7 +32,7 @@ import domain.message.Message;
 import domain.message.MessageFactory;
 import domain.message.MessageOutputMapper;
 import domain.user.User;
-import domain.user.UserMapper;
+import domain.user.UserInputMapper;
 
 public class PutMessageCommand extends RegionalCommand
 {
@@ -91,7 +85,7 @@ public class PutMessageCommand extends RegionalCommand
 		// They told us to keep the user system light; this is about as light as it gets; we're not authenticating, just passing in the email as a parameter.
 		// TODO Will obviously have to change this in future, but will work for now.
 		String email = multipartRequest.getParameter("email");
-		User user = UserMapper.findByEmail(email);
+		User user = UserInputMapper.findByEmail(email);
 		try
 		{
 			if (user == null)

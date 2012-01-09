@@ -16,7 +16,7 @@ public class UserFactory {
 		
 		// Put the new message in the identity map
 		UserIdentityMap.getUniqueInstance().put(usr.getUid(), usr);
-		UserMapper.insert(usr);
+		UserOutputMapper.insert(usr);
 		
 		return usr;
 	}

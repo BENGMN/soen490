@@ -15,13 +15,9 @@
 
 package domain.message;
 
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.sql.Date;
 import java.util.Calendar;
 import java.util.List;
 
@@ -30,18 +26,12 @@ import org.msgpack.packer.Packer;
 import org.msgpack.unpacker.Unpacker;
 
 import domain.user.IUser;
-import domain.user.User;
-import domain.user.UserMapper;
 import domain.user.UserProxy;
-import foundation.UserFinder;
 
 import technical.IClientSendable;
 import technical.IServerSendable;
-import technical.UnrecognizedUserException;
 
-public class Message implements IServerSendable, IClientSendable {
-	private static final long serialVersionUID = -7430504657407557608L;
-	
+public class Message implements IServerSendable, IClientSendable {	
 	private long mid;
 	private IUser owner;
 	private byte[] message;

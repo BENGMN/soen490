@@ -92,7 +92,7 @@ public class MessageTDGTest {
 			final float speed = 5.5f;
 			final double latitude = 29.221;
 			final double longitude = 35.134;
-			final Calendar created_at = new GregorianCalendar(2011, 10, 31, 16, 19, 51);
+			//final Calendar created_at = new GregorianCalendar(2011, 10, 31, 16, 19, 51);
 			final int user_rating = 7;
 			final int version = 1;
 			assertEquals(1, MessageTDG.update(mid, user_rating, version));

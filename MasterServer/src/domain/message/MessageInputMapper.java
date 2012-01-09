@@ -23,6 +23,8 @@ import java.util.LinkedList;
 import foundation.MessageFinder;
 import java.util.List;
 
+import domain.user.IUser;
+
 /**
  * Message input mapper
  * @author Moving Target
@@ -92,6 +94,16 @@ public class MessageInputMapper {
 		
 		return message;
 		
+	}
+	
+	public static List<Message> findByUser(IUser user) throws SQLException {
+		List<Message> messages = new LinkedList<Message>();
+		ResultSet rs = MessageFinder.findByUser(user.getUid());
+		while(rs.next()) {
+			Message m = getMessage(rs);
+			messages.add(m);
+		}
+		return messages;
 	}
 
 	/**
