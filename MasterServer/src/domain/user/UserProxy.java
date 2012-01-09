@@ -30,8 +30,8 @@ public class UserProxy implements IUser {
 	}
 	
 	private User getRealUser() 	{
-		if (realUser != null)
-			realUser = UserMapper.find(uid);
+		if (realUser == null)
+			realUser = UserInputMapper.find(uid);
 		return realUser;
 	}
 	

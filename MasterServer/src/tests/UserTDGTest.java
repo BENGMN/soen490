@@ -43,32 +43,6 @@ public class UserTDGTest {
 			Database.getInstance().dropDatabase();
 	}
 	
-	private void create()
-	{
-		try {
-			assertFalse(Database.getInstance().hasTable("User"));
-			UserTDG.create();
-			// This should be expanded to check the schemas too. Probably.
-			assertTrue(Database.getInstance().hasTable("User"));
-		}
-		catch (SQLException E) {
-			fail("Exception Failure: " + E);
-		}
-	}
-	
-	private void drop()
-	{
-		try {
-			assertTrue(Database.getInstance().hasTable("User"));
-			UserTDG.drop();
-			// This should be expanded to check the schemas too. Probably.
-			assertFalse(Database.getInstance().hasTable("User"));
-		}
-		catch (SQLException E) {
-			fail("Exception Failure: " + E);
-		}
-	}
-
 	private void insert()
 	{
 		try {

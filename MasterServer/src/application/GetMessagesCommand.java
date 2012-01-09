@@ -18,7 +18,6 @@ package application;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,8 +33,8 @@ public class GetMessagesCommand extends RegionalCommand {
 	public GetMessagesCommand() {}
 	
 	public void execute(HttpServletRequest request, HttpServletResponse response) {
-		double longitude = Float.parseFloat(request.getParameter("longitude"));
-		double latitude = Float.parseFloat(request.getParameter("latitude"));
+		double longitude = Double.parseDouble(request.getParameter("longitude"));
+		double latitude = Double.parseDouble(request.getParameter("latitude"));
 		
 		double radius = DEFAULT_USER_RADIUS_METERS;
 		
@@ -46,13 +45,14 @@ public class GetMessagesCommand extends RegionalCommand {
 			// TODO do some error handling
 			e.printStackTrace();
 		}
-		messages = filterByProximity(messages, longitude, latitude, radius);
+		//messages = filterByProximity(messages, longitude, latitude, radius);
 		
 		try {
 			Message.writeListClient(messages, new DataOutputStream(response.getOutputStream()));
 		} catch (Exception e1) {
 			try	{
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error: " + e1);
+				return;
 			} catch (IOException e2) {
 				e2.printStackTrace();
 			}
@@ -68,7 +68,7 @@ public class GetMessagesCommand extends RegionalCommand {
 	 * @param radius Bounding radius
 	 */
 	
-	private List<Message> filterByProximity(List<Message> messages, double longitude, double latitude, double radius) {
+	/*private List<Message> filterByProximity(List<Message> messages, double longitude, double latitude, double radius) {
 		// Haversine 
 		// dist = arccos(sin(lat1) · sin(lat2) + cos(lat1) · cos(lat2) · cos(lon1 - lon2)) · R
 		// R = radius of sphere
@@ -80,7 +80,7 @@ public class GetMessagesCommand extends RegionalCommand {
 				messagesInProximity.add(m);			
 		}
 		return messagesInProximity;
-	}
+	}*/
 	
 	// Longitude delta degrees: 0.007397276 = 500 meters
 	// Latitude delta degrees: 0.00450269 = 500 meters

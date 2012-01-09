@@ -38,7 +38,7 @@ public class UserIdentityMap {
 		userMap.put(uid, user);
 	}
 	
-	public static UserIdentityMap getInstance()
+	public static UserIdentityMap getUniqueInstance()
 	{
 		if (singleton == null)
 			singleton = new UserIdentityMap();

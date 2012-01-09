@@ -76,6 +76,16 @@ public class MessageFinder {
 			return rs;
 		}
 		
+		private static final String SELECT_BY_EMAIL =
+				"SELECT * FROM " + MessageTDG.TABLE + " AS m WHERE m.uid = ?;";
+		
+		public static ResultSet findByUser(long uid) throws SQLException {
+			PreparedStatement ps = Database.getInstance().getStatement(SELECT_BY_EMAIL);
+			ps.setLong(1, uid);
+			ResultSet rs = ps.executeQuery();
+			return rs;
+		}
+		
 		/**
 		 * 
 		 * @param longitude
@@ -97,10 +107,10 @@ public class MessageFinder {
 			final double metersPerLongitude = Math.cos(latitude)*metersPerLatitude;
 			// We take calculate the half-size of the square's side from this radius.
 			final double squareHalfSize = Math.sqrt(radius*radius / 2.0); 
-			double lon1 = longitude - squareHalfSize * metersPerLongitude;
-			double lon2 = longitude + squareHalfSize * metersPerLongitude;
-			double lat1 = latitude - squareHalfSize * metersPerLatitude;
-			double lat2 = latitude + squareHalfSize * metersPerLatitude;
+			double lon1 = longitude - squareHalfSize / metersPerLongitude;
+			double lon2 = longitude + squareHalfSize / metersPerLongitude;
+			double lat1 = latitude - squareHalfSize / metersPerLatitude;
+			double lat2 = latitude + squareHalfSize / metersPerLatitude;
 			ps.setDouble(1, lon1);
 			ps.setDouble(2, lon2);
 			ps.setDouble(3, lat1);

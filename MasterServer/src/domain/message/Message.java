@@ -15,14 +15,10 @@
 
 package domain.message;
 
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.sql.Date;
-import java.util.Calendar;
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.msgpack.MessagePack;
@@ -30,29 +26,23 @@ import org.msgpack.packer.Packer;
 import org.msgpack.unpacker.Unpacker;
 
 import domain.user.IUser;
-import domain.user.User;
-import domain.user.UserMapper;
 import domain.user.UserProxy;
-import foundation.UserFinder;
 
 import technical.IClientSendable;
 import technical.IServerSendable;
-import technical.UnrecognizedUserException;
 
-public class Message implements IServerSendable, IClientSendable {
-	private static final long serialVersionUID = -7430504657407557608L;
-	
+public class Message implements IServerSendable, IClientSendable {	
 	private long mid;
 	private IUser owner;
 	private byte[] message;
 	private float speed;
 	private double latitude;
 	private double longitude;
-	private Calendar createdAt;
+	private Timestamp createdAt;
 	private int userRating;
 	private int version;
 	
-	public Message(long mid, IUser owner, byte[] message, float speed, double latitude, double longitude, Calendar createdAt, int userRating, int version)
+	public Message(long mid, IUser owner, byte[] message, float speed, double latitude, double longitude, Timestamp createdAt, int userRating, int version)
 	{
 		this.mid = mid;
 		this.owner = owner;
@@ -90,7 +80,7 @@ public class Message implements IServerSendable, IClientSendable {
 		return longitude;
 	}
 	
-	public Calendar getCreatedAt() {
+	public Timestamp getCreatedAt() {
 		return createdAt;
 	}
 	
@@ -131,7 +121,7 @@ public class Message implements IServerSendable, IClientSendable {
 		owner = new UserProxy(unpacker.readLong());
 		message = unpacker.readByteArray();
 		speed = unpacker.readFloat();
-		createdAt = unpacker.read(Calendar.class);
+		createdAt = unpacker.read(Timestamp.class);
 		longitude = unpacker.readDouble();
 		latitude = unpacker.readDouble();
 		userRating = unpacker.readInt();
@@ -149,12 +139,13 @@ public class Message implements IServerSendable, IClientSendable {
 	
 	public void writeClient(DataOutputStream out) throws IOException
 	{
-		Packer packer = (new MessagePack()).createPacker(out);
+		MessagePack pack = new MessagePack();
+		Packer packer = pack.createPacker(out);
 		packer.write(mid);
 		packer.write(getOwner().getEmail());
 		packer.write(message);
 		packer.write(speed);
-		packer.write(getCreatedAt());
+		packer.write(getCreatedAt().getTime());
 		packer.write(getLongitude());
 		packer.write(getLatitude());
 		packer.write(getUserRating());

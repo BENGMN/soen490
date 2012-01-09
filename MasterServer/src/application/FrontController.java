@@ -26,8 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import foundation.Database;
-import foundation.MessageTDG;
-import foundation.UserTDG;
 
 public class FrontController extends HttpServlet {
 
@@ -81,10 +79,8 @@ public class FrontController extends HttpServlet {
 	// Overridden to make sure that we have a database.
 	public void init() throws ServletException {
 		try {
-			if (Database.getInstance().hasTable(MessageTDG.TABLE))
-				MessageTDG.create();
-			if (Database.getInstance().hasTable(UserTDG.TABLE))
-				UserTDG.create();
+			if (!Database.getInstance().isDatabaseCreated())
+				Database.getInstance().createDatabase();
 		}
 		catch (SQLException E) {
 			throw new ServletException(E.toString());

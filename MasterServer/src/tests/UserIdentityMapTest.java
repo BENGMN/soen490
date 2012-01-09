@@ -28,7 +28,7 @@ public class UserIdentityMapTest {
 	@Test
 	public void testMap()
 	{
-		UserIdentityMap map = UserIdentityMap.getInstance();
+		UserIdentityMap map = UserIdentityMap.getUniqueInstance();
 		final long uid = 2L;
 		User user = new User(uid, "", "", UserType.USER_NORMAL, 0);
 		assertNull(map.get(uid));
