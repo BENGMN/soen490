@@ -17,6 +17,7 @@ package foundation;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
@@ -32,6 +33,7 @@ import java.util.Properties;
 public class Database {
 	private static Database singleton = null;
 	private Properties prop = new Properties();
+	public static final ThreadLocal<Connection> threadConnection = new ThreadLocal<Connection>();
 	//private Stack<Connection> freeConnections = new Stack<Connection>();
 	//private static final long connectionPool = 10;
 
@@ -50,27 +52,53 @@ public class Database {
 		freeConnection(connection);
 		return true;
 	}
-	
-	private synchronized Connection getConnection() throws SQLException
+	//Simply connects to the database using the correct credentials and returns a connection object.
+	private Connection connect() throws SQLException
 	{
-		String driverLoadingString = "jdbc:mysql://" + prop.getProperty("hostname") + "/" + prop.getProperty("database") + "?"
-				+ "user=" + prop.getProperty("username") + "&password=" + prop.getProperty("password");
 		try {
 			// This will load the MySQL driver, each DB has its own driver
 			Class.forName("com.mysql.jdbc.Driver");
 			// Setup the connection with the DB
 			Connection connection = DriverManager
-					.getConnection(driverLoadingString);
+					.getConnection("jdbc:mysql://" + prop.getProperty("hostname") + "/" + prop.getProperty("database") + "?"
+							+ "user=" + prop.getProperty("username") + "&password=" + prop.getProperty("password"));
 			return connection;
 		}
-		catch (ClassNotFoundException e) {
-			throw new SQLException(e);
+		catch (SQLException e) 
+		{
+			
+			throw e;
+			
 		}
+		catch (ClassNotFoundException e) 
+		{
+			
+			e.printStackTrace();
+		
+		} 
+		
+		return null;
+		
+	}
+	//This function returns a singleton threadlocal connection. 
+	private Connection getConnection() throws SQLException
+	{
+		
+		if(threadConnection.get() == null)
+		{
+			Connection connection = connect();
+			threadConnection.set(connection);
+			return threadConnection.get();
+		}
+		else
+			return threadConnection.get();
+		
 	}
 	
-	private synchronized void freeConnection(Connection connection) throws SQLException
+	private void freeConnection(Connection connection) throws SQLException
 	{
 		connection.close();
+		threadConnection.remove();
 	}
 	
 	public ResultSet query(String queryString, Object[] objects) throws SQLException
