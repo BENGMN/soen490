@@ -17,6 +17,9 @@ package tests;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
+import java.sql.SQLException;
+
 import javax.servlet.http.HttpServletResponse;
 
 
@@ -29,7 +32,7 @@ import application.UnknownCommand;
 public class UnknownCommandTest {
 
 	@Test
-	public void testUnknownCommand()
+	public void testUnknownCommand() throws IOException, SQLException
 	{
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		MockHttpServletResponse response = new MockHttpServletResponse();
