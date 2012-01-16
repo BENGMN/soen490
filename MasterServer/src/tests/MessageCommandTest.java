@@ -47,6 +47,7 @@ import technical.UnrecognizedUserException;
 
 import application.DownvoteMessageCommand;
 import application.GetMessagesCommand;
+import application.ParameterException;
 import application.PutMessageCommand;
 import application.UpvoteMessageCommand;
 
@@ -120,7 +121,7 @@ public class MessageCommandTest {
 	}
 	
 	@Test
-	public void putCommand() throws SQLException, IOException, UnrecognizedUserException
+	public void putCommand() throws SQLException, IOException, UnrecognizedUserException, ParameterException
 	{		
 		String fileName = "test.amr";
 		File file = new File(fileName);
@@ -201,7 +202,7 @@ public class MessageCommandTest {
 	}
 	
 	@Test
-	public void downvoteCommand() throws SQLException, IOException
+	public void downvoteCommand() throws SQLException, IOException, ParameterException
 	{
 		final byte[] bytes = new byte[10];
 		final float speed = 10.0f;

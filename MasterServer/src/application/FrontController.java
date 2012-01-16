@@ -66,16 +66,18 @@ public class FrontController extends HttpServlet {
 		String commandString = request.getParameter("command");
 		FrontCommand command = getCommand(commandString);
 		try {
-			if (command.responsible(request, response)) {
-				try {
+			try {
+				if (command.responsible(request, response))
 					command.execute(request, response);
-				}
-				catch (SQLException e) {
-					response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
-				}
-				catch (IOException e) {
-					response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
-				}
+			}
+			catch (SQLException e) {
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+			}
+			catch (IOException e) {
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+			}
+			catch (ParameterException e) {
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.toString());
 			}
 		}
 		catch (Exception e) {

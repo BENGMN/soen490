@@ -28,8 +28,10 @@ import domain.message.MessageOutputMapper;
 public class DownvoteMessageCommand extends RegionalCommand
 {
 
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException
+	public void execute(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException, ParameterException
 	{
+		if (request.getParameter("mid") == null)
+			throw new ParameterException("Must pass in the mid to downvote.");
 		long mid = Long.parseLong(request.getParameter("mid"));
 		Message message = MessageInputMapper.find(mid);
 		synchronized(message) {
