@@ -16,6 +16,7 @@
 
 package foundation;
 
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -43,7 +44,7 @@ public class MessageFinder {
 		 * m.mid, m.uid, m.message, m.speed, m.latitude, m.longitude, m.created_at, m.user_rating, m.version
 		 * @throws SQLException
 		 */
-		public static ResultSet findAll() throws SQLException {
+		public static ResultSet findAll() throws SQLException, IOException {
 			PreparedStatement ps = Database.getInstance().getStatement(SELECT_ALL);
 			ResultSet rs = ps.executeQuery();
 			return rs;
@@ -69,7 +70,7 @@ public class MessageFinder {
 		 * m.mid, m.uid, m.message, m.speed, m.latitude, m.longitude, m.created_at, m.user_rating, m.version
 		 * @throws SQLException
 		 */
-		public static ResultSet find(long mid) throws SQLException {
+		public static ResultSet find(long mid) throws SQLException, IOException {
 			PreparedStatement ps = Database.getInstance().getStatement(SELECT);
 			ps.setLong(1, mid);
 			ResultSet rs = ps.executeQuery();
@@ -79,7 +80,7 @@ public class MessageFinder {
 		private static final String SELECT_BY_EMAIL =
 				"SELECT * FROM " + MessageTDG.TABLE + " AS m WHERE m.uid = ?;";
 		
-		public static ResultSet findByUser(long uid) throws SQLException {
+		public static ResultSet findByUser(long uid) throws SQLException, IOException {
 			PreparedStatement ps = Database.getInstance().getStatement(SELECT_BY_EMAIL);
 			ps.setLong(1, uid);
 			ResultSet rs = ps.executeQuery();
@@ -100,7 +101,7 @@ public class MessageFinder {
 				"SELECT m.mid, m.uid, m.message, m.speed, m.latitude, m.longitude, m.created_at, m.user_rating, m.version " +
 				"FROM " + MessageTDG.TABLE + " AS m " + "WHERE m.longitude BETWEEN ? AND ? AND m.latitude BETWEEN ? AND ?;";
 		
-		public static ResultSet findInProximity(double longitude, double latitude, double radius) throws SQLException {
+		public static ResultSet findInProximity(double longitude, double latitude, double radius) throws SQLException, IOException {
 			PreparedStatement ps = Database.getInstance().getStatement(SELECT_BY_RADIUS);
 			// Specified in paper; this is bascically a calculation based on meters; one degree is roughly 110400 meters.
 			final double metersPerLatitude = 110400.0;
@@ -127,7 +128,7 @@ public class MessageFinder {
 		 * @return Returns a unique ID that is not shared by any user in the database.
 		 * @throws SQLException
 		 */
-		public static long findUniqueId() throws SQLException { 
+		public static long findUniqueId() throws SQLException, IOException { 
 			PreparedStatement ps = Database.getInstance().getStatement(SELECT_UNIQUE_ID);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next())

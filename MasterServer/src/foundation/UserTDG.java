@@ -15,6 +15,7 @@
 
 package foundation;
 
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -47,7 +48,7 @@ public class UserTDG {
 	 * @param type User type as an integer
 	 * @throws SQLException
 	 */
-	public static int insert(long uid, int version, String email, String password, int type) throws SQLException {
+	public static int insert(long uid, int version, String email, String password, int type) throws SQLException, IOException {
 
 		PreparedStatement ps = Database.getInstance().getStatement(INSERT);
 		
@@ -82,7 +83,7 @@ public class UserTDG {
 	 * @return Returns the number of rows affected by the update.
 	 * @throws SQLException
 	 */
-	public static int update(long uid, int version, String email, String password, int type) throws SQLException {
+	public static int update(long uid, int version, String email, String password, int type) throws SQLException, IOException {
 		
 		PreparedStatement ps = Database.getInstance().getStatement(UPDATE);
 		
@@ -108,7 +109,7 @@ public class UserTDG {
 	 * @return Returns the number of rows affected by the delete.
 	 * @throws SQLException
 	 */
-	public static int delete(long uid, int version) throws SQLException {
+	public static int delete(long uid, int version) throws SQLException, IOException {
 		PreparedStatement ps = Database.getInstance().getStatement(DELETE);
 
 		ps.setLong(1, uid);
@@ -126,7 +127,7 @@ public class UserTDG {
 	 * Creates the table User in the database.
 	 * @throws SQLException 
 	 */
-	public static void create() throws SQLException {
+	public static void create() throws SQLException, IOException {
 		PreparedStatement ps = Database.getInstance().getStatement(CREATE_TABLE);
 
 		ps.executeUpdate();
@@ -139,7 +140,7 @@ public class UserTDG {
 	 * Drops the table User from the database.
 	 * @throws SQLException
 	 */
-	public static void drop() throws SQLException {
+	public static void drop() throws SQLException, IOException {
 		PreparedStatement ps = Database.getInstance().getStatement(DROP_TABLE);
 		ps.executeUpdate();
 	}

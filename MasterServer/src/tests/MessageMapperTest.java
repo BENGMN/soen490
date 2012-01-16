@@ -15,6 +15,7 @@
 
 package tests;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -36,7 +37,7 @@ public class MessageMapperTest {
 	static long uid = 158749857934L;
 	
 	@Test
-	public void testFunctionality() throws SQLException
+	public void testFunctionality() throws SQLException, IOException
 	{
 		boolean previousDatabase = Database.getInstance().isDatabaseCreated();
 		if (!previousDatabase)
@@ -48,7 +49,7 @@ public class MessageMapperTest {
 			Database.getInstance().dropDatabase();
 	}
 	
-	private void create() throws SQLException
+	private void create() throws SQLException, IOException
 	{
 		final byte array[] = {0,1,2,3,4,5};
 		final float speed = 10.0f;
@@ -63,7 +64,7 @@ public class MessageMapperTest {
 		assertEquals(newMessage, oldMessage);
 	}
 	
-	private void update() throws SQLException
+	private void update() throws SQLException, IOException
 	{
 		Message oldMessage = MessageInputMapper.find(mid);
 		assertNotNull(oldMessage);
@@ -94,7 +95,7 @@ public class MessageMapperTest {
 		//assertEquals(2, oldMessage.getVersion());
 	}
 	
-	private void delete() throws SQLException
+	private void delete() throws SQLException, IOException
 	{
 		Message oldMessage = MessageInputMapper.find(mid);
 		assertNotNull(oldMessage);

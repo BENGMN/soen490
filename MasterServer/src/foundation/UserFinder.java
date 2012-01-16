@@ -16,6 +16,7 @@
 
 package foundation;
 
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -36,7 +37,7 @@ public class UserFinder {
 	 * @return Returns the ResultSet containing the user information as u.uid, u.version, u.email, u.password, u.type.
 	 * @throws SQLException
 	 */
-	public static ResultSet find(long uid) throws SQLException {
+	public static ResultSet find(long uid) throws SQLException, IOException {
 		PreparedStatement ps = Database.getInstance().getStatement(SELECT);
 		ps.setLong(1, uid);
 		ResultSet rs = ps.executeQuery();		
@@ -55,7 +56,7 @@ public class UserFinder {
 	 * @return Returns the ResultSet containing the user information as u.uid, u.version, u.email, u.password, u.type.
 	 * @throws SQLException
 	 */
-	public static ResultSet find(String email, String password) throws SQLException {
+	public static ResultSet find(String email, String password) throws SQLException, IOException {
 		PreparedStatement ps = Database.getInstance().getStatement(SELECT_BY_EMAIL_AND_PASSWORD);
 		ps.setString(1, email);
 		ps.setString(2, password);
@@ -74,7 +75,7 @@ public class UserFinder {
 	 * @return Returns the ResultSet containing the user information as u.uid, u.version, u.email, u.password, u.type.
 	 * @throws SQLException
 	 */
-	public static ResultSet find(String email) throws SQLException {
+	public static ResultSet find(String email) throws SQLException, IOException {
 		PreparedStatement ps = Database.getInstance().getStatement(SELECT_BY_EMAIL);
 		ps.setString(1, email);
 		ResultSet rs = ps.executeQuery();
@@ -90,7 +91,7 @@ public class UserFinder {
 	 * @return Returns the ResultSet containing the user information as u.uid, u.version, u.email, u.password, u.type.
 	 * @throws SQLException
 	 */
-	public static ResultSet findAll() throws SQLException {
+	public static ResultSet findAll() throws SQLException, IOException {
 		PreparedStatement ps = Database.getInstance().getStatement(SELECT_ALL);
 		ResultSet rs = ps.executeQuery();
 		return rs;		
@@ -104,7 +105,7 @@ public class UserFinder {
 	 * @return Returns a unique ID that is not shared by any user in the database.
 	 * @throws SQLException
 	 */
-	public static long findUniqueId() throws SQLException { 
+	public static long findUniqueId() throws SQLException, IOException { 
 		PreparedStatement ps = Database.getInstance().getStatement(SELECT_UNIQUE_ID);
 		ResultSet rs = ps.executeQuery();
 		if (rs.next())

@@ -15,12 +15,13 @@
 
 package domain.user;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import foundation.UserTDG;
 
 public class UserOutputMapper {
 	
-	public static int update(User user) {
+	public static int update(User user) throws IOException {
 		try	{
 			return UserTDG.update(user.getUid(), user.getVersion(), user.getEmail(), user.getPassword(), UserType.convertEnum(user.getType()));
 		} catch (SQLException e) {
@@ -29,7 +30,7 @@ public class UserOutputMapper {
 		return -1;
 	}
 	
-	public static int delete(User user)	{
+	public static int delete(User user) throws IOException	{
 		try	{
 			return UserTDG.delete(user.getUid(), user.getVersion());
 		} catch (SQLException e) {
@@ -38,7 +39,7 @@ public class UserOutputMapper {
 		return -1;
 	}
 	
-	public static void insert(User user)
+	public static void insert(User user) throws IOException
 	{
 		try	{
 			UserTDG.insert(user.getUid(), user.getVersion(), user.getEmail(), user.getPassword(), UserType.convertEnum(user.getType()));

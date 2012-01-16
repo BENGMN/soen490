@@ -60,19 +60,33 @@ public class FrontController extends HttpServlet {
 		return command;
 	}
 	
-	private void handleRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+	private void handleRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException
 	{
 		String commandString = request.getParameter("command");
 		FrontCommand command = getCommand(commandString);
-		if (command.responsible(request, response))
-			command.execute(request, response);
+		if (command.responsible(request, response)) {
+			try {
+				try {
+					command.execute(request, response);
+				}
+				catch (SQLException e) {
+					response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+				}
+				catch (IOException e) {
+					response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+				}
+			}
+			catch (Exception e) {
+				throw new ServletException(e);
+			}
+		}
 	}
 	
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 		handleRequest(request, response);
 	}
 	
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 		handleRequest(request, response);
 	}
 	
@@ -82,8 +96,8 @@ public class FrontController extends HttpServlet {
 			if (!Database.getInstance().isDatabaseCreated())
 				Database.getInstance().createDatabase();
 		}
-		catch (SQLException E) {
-			throw new ServletException(E.toString());
+		catch (Exception E) {
+			throw new ServletException(E);
 		}
 	}
 }

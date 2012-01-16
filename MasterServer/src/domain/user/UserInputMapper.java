@@ -1,5 +1,6 @@
 package domain.user;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -7,7 +8,7 @@ import foundation.UserFinder;
 
 public class UserInputMapper {
 
-	public static User find(long uid) {
+	public static User find(long uid) throws IOException {
 		User mappedUser = UserIdentityMap.getUniqueInstance().get(uid);
 		if (mappedUser != null)
 			return mappedUser;
@@ -27,7 +28,7 @@ public class UserInputMapper {
 		return null;
 	}
 	
-	public static User findByEmail(String email) {		
+	public static User findByEmail(String email) throws IOException {		
 		try	{
 			ResultSet rs = UserFinder.find(email); rs.next();
 			long uid = rs.getLong(1);

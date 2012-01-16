@@ -17,6 +17,7 @@ package application;
 
 import java.io.IOException;
 
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.GregorianCalendar;
 
@@ -39,44 +40,23 @@ public class PutMessageCommand extends RegionalCommand
 	// 50 K is our max upload size, for now.
 	public static int maximumUploadSize = 50 * 1024;
 	
-	public void execute(HttpServletRequest request, HttpServletResponse response)
+	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException, UnrecognizedUserException
 	{
 		MultipartResolver resolver = new CommonsMultipartResolver();
 		// Make sure our request is multi-part; if it's not, then it's not properly formatted.
 		if (!resolver.isMultipart(request)) {
-			try {
-				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Error: Put requests must be multi-part, as in RFC1867.");
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-			}
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Error: Put requests must be multi-part, as in RFC1867.");
 			return;
 		}
 		MultipartHttpServletRequest multipartRequest = resolver.resolveMultipart(request); 
 		// If java is smart, it will allocate this on the stack.
 		MultipartFile multipartFile = multipartRequest.getFile("bin");
 		if (multipartFile == null) {
-			try {
-				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Error: Put requests must have 'bin' as a multipart file upload.");
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-			}
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Error: Put requests must have 'bin' as a multipart file upload.");
 			return;
 		}
 		byte[] messageBytes = null;
-		try {
-			messageBytes = multipartFile.getBytes();
-		}
-		catch (IOException e1) {
-			try {
-				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error: " + e1 + ".");
-			}
-			catch (IOException e2) {
-				e2.printStackTrace();
-			}
-			return;
-		}
+		messageBytes = multipartFile.getBytes();
 		
 		// After we have our file bytes, let's check out all this stuff.
 		double longitude = Double.parseDouble(multipartRequest.getParameter("longitude"));
@@ -86,22 +66,10 @@ public class PutMessageCommand extends RegionalCommand
 		// TODO Will obviously have to change this in future, but will work for now.
 		String email = multipartRequest.getParameter("email");
 		User user = UserInputMapper.findByEmail(email);
-		try
-		{
-			if (user == null)
-				throw new UnrecognizedUserException();
-			MessageFactory.createNew(user.getUid(), messageBytes, speed, latitude, longitude, new Timestamp(GregorianCalendar.getInstance().getTimeInMillis()), 0);
-			response.setStatus(HttpServletResponse.SC_ACCEPTED);
-		}
-		catch (Exception e1)
-		{
-			try	{
-				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error: " + e1);
-			}
-			catch (IOException e2) {
-				e1.printStackTrace();
-			}
-		}
+		if (user == null)
+			throw new UnrecognizedUserException();
+		MessageFactory.createNew(user.getUid(), messageBytes, speed, latitude, longitude, new Timestamp(GregorianCalendar.getInstance().getTimeInMillis()), 0);
+		response.setStatus(HttpServletResponse.SC_ACCEPTED);
 	}
 
 }

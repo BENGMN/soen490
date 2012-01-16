@@ -29,21 +29,21 @@ public class UserProxy implements IUser {
 		realUser = null;
 	}
 	
-	private User getRealUser() 	{
+	private User getRealUser() throws IOException	{
 		if (realUser == null)
 			realUser = UserInputMapper.find(uid);
 		return realUser;
 	}
 	
-	public String getEmail() {
+	public String getEmail() throws IOException {
 		return getRealUser().getEmail();
 	}
 
-	public String getPassword() {
+	public String getPassword() throws IOException {
 		return getRealUser().getPassword();
 	}
 
-	public UserType getType() {
+	public UserType getType() throws IOException {
 		return getRealUser().getType();
 	}
 
@@ -51,23 +51,23 @@ public class UserProxy implements IUser {
 		return uid;
 	}
 
-	public int getVersion() {
+	public int getVersion() throws IOException {
 		return getRealUser().getVersion();
 	}
 
-	public void setEmail(String email) {
+	public void setEmail(String email) throws IOException {
 		getRealUser().setEmail(email);
 	}
 
-	public void setPassword(String password) {
+	public void setPassword(String password) throws IOException {
 		getRealUser().setPassword(password);
 	}
 
-	public void setType(UserType type) {
+	public void setType(UserType type) throws IOException {
 		getRealUser().setType(type);
 	}
 
-	public void setVersion(int version) {
+	public void setVersion(int version) throws IOException {
 		getRealUser().setVersion(version);
 	}
 

@@ -9,9 +9,10 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-mkdir -p $SERVER_PATH
+rm -Rf $SERVER_PATH
+mkdir $SERVER_PATH
 cp -R WebContent/* $SERVER_PATH
-mkdir -p $SERVER_PATH/WEB-INF/classes
+mkdir $SERVER_PATH/WEB-INF/classes
 cp -R lib $SERVER_PATH/WEB-INF
 cp -R bin/* $SERVER_PATH/WEB-INF/classes
 cp Database.properties $SERVER_PATH/WEB-INF/classes/

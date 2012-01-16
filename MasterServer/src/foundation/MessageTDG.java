@@ -16,6 +16,7 @@
 
 package foundation;
 
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -58,7 +59,7 @@ public class MessageTDG {
 	 * @return Returns 1 if the insert succeeded. 
 	 * @throws SQLException
 	 */
-	public static int insert(long mid, long uid, int version, byte[] message, float speed, double latitude , double longitude , Timestamp created_at , int user_rating) throws SQLException {
+	public static int insert(long mid, long uid, int version, byte[] message, float speed, double latitude , double longitude , Timestamp created_at , int user_rating) throws SQLException, IOException {
 		PreparedStatement ps = Database.getInstance().getStatement(INSERT);
 		
 		ps.setLong(1, mid);
@@ -89,7 +90,7 @@ public class MessageTDG {
 	 * @return Returns the number of rows updated, should be 1.
 	 * @throws SQLException
 	 */
-	public static int update(long mid, int user_rating, int version) throws SQLException {
+	public static int update(long mid, int user_rating, int version) throws SQLException, IOException {
 		PreparedStatement ps = Database.getInstance().getStatement(UPDATE);
 		
 		ps.setInt(1, user_rating);
@@ -111,7 +112,7 @@ public class MessageTDG {
 	 * @return Returns 1 if the operation was successful, 0 if it no rows were affected.
 	 * @throws SQLException
 	 */
-	public static int delete(long mid, int version) throws SQLException {
+	public static int delete(long mid, int version) throws SQLException, IOException {
 		PreparedStatement ps = Database.getInstance().getStatement(DELETE);
 		
 		ps.setLong(1, mid);
@@ -140,7 +141,7 @@ public class MessageTDG {
 	 * Creates the table Message in the database.
 	 * @throws SQLException 
 	 */
-	public static void create() throws SQLException {
+	public static void create() throws SQLException, IOException {
 		PreparedStatement ps = Database.getInstance().getStatement(CREATE_TABLE);
 
 		ps.executeUpdate();
@@ -153,7 +154,7 @@ public class MessageTDG {
 	 * Drops the table Message from the database.
 	 * @throws SQLException
 	 */
-	public static void drop() throws SQLException {
+	public static void drop() throws SQLException, IOException {
 		PreparedStatement ps = Database.getInstance().getStatement(DROP_TABLE);
 		ps.executeUpdate();
 	}

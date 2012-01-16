@@ -15,6 +15,7 @@
 
 package tests;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import static org.junit.Assert.*;
 import java.sql.SQLException;
@@ -30,7 +31,7 @@ public class UserTDGTest {
 	static long uid = 158749857934L;
 	
 	@Test
-	public void testFunctionality() throws SQLException
+	public void testFunctionality() throws SQLException, IOException
 	{
 		// We put this in here, so that the tests don't disturb the database if it's already present.
 		boolean previousDatabase = Database.getInstance().isDatabaseCreated();
@@ -43,60 +44,45 @@ public class UserTDGTest {
 			Database.getInstance().dropDatabase();
 	}
 	
-	private void insert()
+	private void insert() throws SQLException, IOException
 	{
-		try {
-			final String email = "example@example.com";
-			final String password = "password";
-			final int type = 1;
-			final int version = 1;
-			assertFalse(UserFinder.find(uid).next());
-			assertEquals(UserTDG.insert(uid, version, email, password, type), 1);
-			ResultSet rs = UserFinder.find(uid);
-			assertTrue(rs.next());
-			assertEquals(rs.getLong("u.uid"), uid);
-			assertEquals(rs.getString("u.email"), email);
-			assertEquals(rs.getString("u.password"), password);
-			assertEquals(rs.getInt("u.version"), version);
-			assertEquals(rs.getInt("u.type"), type);
-		}
-		catch (SQLException e) {
-			fail("Exception failure:" + e);
-		}
+		final String email = "example@example.com";
+		final String password = "password";
+		final int type = 1;
+		final int version = 1;
+		assertFalse(UserFinder.find(uid).next());
+		assertEquals(UserTDG.insert(uid, version, email, password, type), 1);
+		ResultSet rs = UserFinder.find(uid);
+		assertTrue(rs.next());
+		assertEquals(rs.getLong("u.uid"), uid);
+		assertEquals(rs.getString("u.email"), email);
+		assertEquals(rs.getString("u.password"), password);
+		assertEquals(rs.getInt("u.version"), version);
+		assertEquals(rs.getInt("u.type"), type);
 	}
 	
-	private void update()
+	private void update() throws SQLException, IOException
 	{
-		try {
-			final String email = "example2@example.com";
-			final String password = "password2";
-			final int type = 0;
-			final int version = 1;
-			assertTrue(UserFinder.find(uid).next());
-			assertEquals(1, UserTDG.update(uid, version, email, password, type));
-			ResultSet rs = UserFinder.find(uid);
-			assertTrue(rs.next());
-			assertEquals(rs.getLong("u.uid"), uid);
-			assertEquals(rs.getString("u.email"), email);
-			assertEquals(rs.getString("u.password"), password);
-			assertEquals(rs.getInt("u.version"), version+1);
-			assertEquals(rs.getInt("u.type"), type);
-		}
-		catch (SQLException e) {
-			fail("Exception failure:" + e);
-		}
+		final String email = "example2@example.com";
+		final String password = "password2";
+		final int type = 0;
+		final int version = 1;
+		assertTrue(UserFinder.find(uid).next());
+		assertEquals(1, UserTDG.update(uid, version, email, password, type));
+		ResultSet rs = UserFinder.find(uid);
+		assertTrue(rs.next());
+		assertEquals(rs.getLong("u.uid"), uid);
+		assertEquals(rs.getString("u.email"), email);
+		assertEquals(rs.getString("u.password"), password);
+		assertEquals(rs.getInt("u.version"), version+1);
+		assertEquals(rs.getInt("u.type"), type);
 	}
 	
-	private void delete()
+	private void delete() throws SQLException, IOException
 	{
-		try {
-			final int version = 2;
-			assertTrue(UserFinder.find(uid).next());
-			assertEquals(UserTDG.delete(uid, version), 1);
-			assertFalse(UserFinder.find(uid).next());
-		}
-		catch (SQLException e) {
-			fail("Exception failure:" + e);
-		}
+		final int version = 2;
+		assertTrue(UserFinder.find(uid).next());
+		assertEquals(UserTDG.delete(uid, version), 1);
+		assertFalse(UserFinder.find(uid).next());
 	}
 }

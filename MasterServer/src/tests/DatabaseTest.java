@@ -16,6 +16,8 @@
 
 package tests;
 import static org.junit.Assert.*;
+
+import java.io.IOException;
 import java.sql.SQLException;
 
 import org.junit.Test;
@@ -24,19 +26,19 @@ import foundation.Database;
 
 public class DatabaseTest {
 	@Test
-	public void testConnection()
+	public void testConnection() throws IOException
 	{
 		assertTrue(Database.getInstance().canConnect());
 	}
 	
 	@Test
-	public void testTables()
+	public void testTables() throws IOException
 	{
 		partTestCreateTable();
 		partTestDeleteTable();
 	}
 	
-	private void partTestCreateTable()
+	private void partTestCreateTable() throws IOException
 	{
 		try
 		{
@@ -50,7 +52,7 @@ public class DatabaseTest {
 		}
 	}
 	
-	private void partTestDeleteTable()
+	private void partTestDeleteTable() throws IOException
 	{
 		try
 		{

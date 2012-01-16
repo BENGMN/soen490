@@ -32,31 +32,15 @@ public class GetMessagesCommand extends RegionalCommand {
 	
 	public GetMessagesCommand() {}
 	
-	public void execute(HttpServletRequest request, HttpServletResponse response) {
+	public void execute(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
 		double longitude = Double.parseDouble(request.getParameter("longitude"));
 		double latitude = Double.parseDouble(request.getParameter("latitude"));
 		
 		double radius = DEFAULT_USER_RADIUS_METERS;
 		
-		List<Message> messages = null;
-		try {
-			messages = MessageInputMapper.findInProximity(longitude, latitude, radius);
-		} catch (SQLException e) {
-			// TODO do some error handling
-			e.printStackTrace();
-		}
+		List<Message> messages = MessageInputMapper.findInProximity(longitude, latitude, radius);
 		//messages = filterByProximity(messages, longitude, latitude, radius);
-		
-		try {
-			Message.writeListClient(messages, new DataOutputStream(response.getOutputStream()));
-		} catch (Exception e1) {
-			try	{
-				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error: " + e1);
-				return;
-			} catch (IOException e2) {
-				e2.printStackTrace();
-			}
-		}
+		Message.writeListClient(messages, new DataOutputStream(response.getOutputStream()));
 		response.setStatus(HttpServletResponse.SC_OK);
 	}
 	

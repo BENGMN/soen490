@@ -18,6 +18,7 @@ package foundation;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -35,16 +36,9 @@ public class Database {
 	//private static final long connectionPool = 10;
 
 	// If we want to pool connections we'd put the code in here; create at startup, and allocate connections on getConnection and freeConnection.
-	private Database()
+	private Database() throws IOException 
 	{
-		try
-		{
-			prop.load(new FileInputStream("Database.properties"));
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
+		prop.load(new FileInputStream("Database.properties"));
 	}
 	
 	public boolean canConnect()
@@ -64,22 +58,19 @@ public class Database {
 	
 	private synchronized Connection getConnection() throws SQLException
 	{
+		String driverLoadingString = "jdbc:mysql://" + prop.getProperty("hostname") + "/" + prop.getProperty("database") + "?"
+				+ "user=" + prop.getProperty("username") + "&password=" + prop.getProperty("password");
 		try {
 			// This will load the MySQL driver, each DB has its own driver
 			Class.forName("com.mysql.jdbc.Driver");
 			// Setup the connection with the DB
 			Connection connection = DriverManager
-					.getConnection("jdbc:mysql://" + prop.getProperty("hostname") + "/" + prop.getProperty("database") + "?"
-							+ "user=" + prop.getProperty("username") + "&password=" + prop.getProperty("password"));
+					.getConnection(driverLoadingString);
 			return connection;
 		}
-		catch (SQLException e) {
-			throw e;
-		}
 		catch (ClassNotFoundException e) {
-			
+			throw new SQLException(e);
 		}
-		return null;
 	}
 	
 	private synchronized void freeConnection(Connection connection) throws SQLException
@@ -159,14 +150,14 @@ public class Database {
 		return connection.prepareStatement(query);
 	}
 
-	public static Database getInstance()
+	public static Database getInstance() throws IOException
 	{
 		if (singleton == null)
 			singleton = new Database();
 		return singleton;
 	}
 	
-	public void createDatabase() throws SQLException
+	public void createDatabase() throws SQLException, IOException
 	{
 		if (!hasTable(UserTDG.TABLE))
 			UserTDG.create();
@@ -174,7 +165,7 @@ public class Database {
 			MessageTDG.create();
 	}
 	
-	public void dropDatabase() throws SQLException
+	public void dropDatabase() throws SQLException, IOException
 	{
 		if (hasTable(UserTDG.TABLE))
 			UserTDG.drop();

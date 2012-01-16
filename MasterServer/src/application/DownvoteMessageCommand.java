@@ -16,6 +16,7 @@
 package application;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,28 +28,14 @@ import domain.message.MessageOutputMapper;
 public class DownvoteMessageCommand extends RegionalCommand
 {
 
-	public void execute(HttpServletRequest request, HttpServletResponse response)
+	public void execute(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException
 	{
-		try
-		{
-			long mid = Long.parseLong(request.getParameter("mid"));
-			Message message = MessageInputMapper.find(mid);
-			synchronized(message) {
-				message.setUserRating(message.getUserRating()-1);
-			}
-			MessageOutputMapper.update(message);
-			response.setStatus(HttpServletResponse.SC_ACCEPTED);
+		long mid = Long.parseLong(request.getParameter("mid"));
+		Message message = MessageInputMapper.find(mid);
+		synchronized(message) {
+			message.setUserRating(message.getUserRating()-1);
 		}
-		catch (Exception e1)
-		{
-			try
-			{
-				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error: " + e1);
-			}
-			catch (IOException e2)
-			{
-				e1.printStackTrace();
-			}
-		}
+		MessageOutputMapper.update(message);
+		response.setStatus(HttpServletResponse.SC_ACCEPTED);
 	}
 }

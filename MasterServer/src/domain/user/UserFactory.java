@@ -1,10 +1,11 @@
 package domain.user;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import foundation.UserFinder;
 
 public class UserFactory {
-	public static User createNew(String email, String password, UserType type) {
+	public static User createNew(String email, String password, UserType type) throws IOException {
 		
 		User usr = null;
 		try {
@@ -21,7 +22,7 @@ public class UserFactory {
 		return usr;
 	}
 
-	public static User createClean(long uid, String email, String password, UserType type, int version) {
+	public static User createClean(long uid, String email, String password, UserType type, int version) throws IOException {
 		// Create a message object, passing the proxy as the owner
 		User usr = new User(uid, email, password, type, version);
 		

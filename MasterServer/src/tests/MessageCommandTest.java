@@ -42,6 +42,8 @@ import org.junit.Test;
 import org.msgpack.MessagePack;
 import org.msgpack.unpacker.Unpacker;
 
+import technical.UnrecognizedUserException;
+
 
 import application.DownvoteMessageCommand;
 import application.GetMessagesCommand;
@@ -63,7 +65,7 @@ public class MessageCommandTest {
 	boolean previousDatabase = false;
 	
 	@Before
-	public void createTables() throws SQLException
+	public void createTables() throws SQLException, IOException
 	{
 		previousDatabase = Database.getInstance().isDatabaseCreated();
 		if (!previousDatabase)
@@ -71,14 +73,14 @@ public class MessageCommandTest {
 	}
 	
 	@After
-	public void dropTables() throws SQLException
+	public void dropTables() throws SQLException, IOException
 	{
 		if (!previousDatabase)
 			Database.getInstance().dropDatabase();
 	}
 	
 	@Test
-	public void getCommand()
+	public void getCommand() throws SQLException, IOException
 	{
 		final double longitude = 10.0;
 		final double latitude = 30.0;
@@ -122,19 +124,13 @@ public class MessageCommandTest {
 	}
 	
 	@Test
-	public void putCommand()
+	public void putCommand() throws SQLException, IOException, UnrecognizedUserException
 	{		
 		String fileName = "test.amr";
 		File file = new File(fileName);
 		int fileSize = (int)file.length();
 		byte[] fileBytes = new byte[fileSize];
-		try {
-			assertEquals(fileSize, new FileInputStream(fileName).read(fileBytes));
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			fail();
-		}
+		assertEquals(fileSize, new FileInputStream(fileName).read(fileBytes));
 		String email = "example@example.com";
 		String password = "capstone";
 		User user = UserFactory.createNew(email, password, UserType.USER_NORMAL);
@@ -198,7 +194,7 @@ public class MessageCommandTest {
 	}
 	
 	@Test
-	public void upvoteCommand()
+	public void upvoteCommand() throws SQLException, IOException
 	{
 		final byte[] bytes = new byte[10];
 		final float speed = 10.0f;
@@ -220,7 +216,7 @@ public class MessageCommandTest {
 	}
 	
 	@Test
-	public void downvoteCommand()
+	public void downvoteCommand() throws SQLException, IOException
 	{
 		final byte[] bytes = new byte[10];
 		final float speed = 10.0f;

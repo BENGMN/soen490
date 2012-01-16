@@ -15,6 +15,7 @@
  */
 package domain.message;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -39,7 +40,7 @@ public class MessageInputMapper {
 	 * @return a list of message objects approximately within the radius.
 	 * @throws SQLException
 	 */
-	public static List<Message> findInProximity(double longitude, double latitude, double radius) throws SQLException {
+	public static List<Message> findInProximity(double longitude, double latitude, double radius) throws IOException, SQLException {
 		ResultSet rs = MessageFinder.findInProximity(longitude, latitude, radius);
 		List<Message> messages = new LinkedList<Message>();
 		while (rs.next()) {
@@ -80,7 +81,7 @@ public class MessageInputMapper {
 	 * @return a message with the specified id
 	 * @throws SQLException
 	 */
-	public static Message find(long mid) throws SQLException {
+	public static Message find(long mid) throws IOException, SQLException {
 		// Check if the Identity Map contains a message with the specified id
 		Message message = MessageIdentityMap.getUniqueInstance().get(mid);
 		
@@ -95,7 +96,7 @@ public class MessageInputMapper {
 		
 	}
 	
-	public static List<Message> findByUser(IUser user) throws SQLException {
+	public static List<Message> findByUser(IUser user) throws IOException, SQLException {
 		List<Message> messages = new LinkedList<Message>();
 		ResultSet rs = MessageFinder.findByUser(user.getUid());
 		while(rs.next()) {
@@ -110,7 +111,7 @@ public class MessageInputMapper {
 	 * @return list
 	 * @throws SQLException
 	 */
-	public static List<Message> findAll() throws SQLException {
+	public static List<Message> findAll() throws IOException, SQLException {
 		List<Message> messages = new LinkedList<Message>();
 		
 		ResultSet rs = MessageFinder.findAll();

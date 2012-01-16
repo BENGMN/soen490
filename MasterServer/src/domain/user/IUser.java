@@ -15,17 +15,19 @@
 
 package domain.user;
 
+import java.io.IOException;
+
 import technical.IServerSendable;
 
 public interface IUser extends IServerSendable {
 
 	public long getUid();
-	public String getPassword();
-	public void setPassword(String password);
-	public String getEmail();
-	public void setEmail(String email);
-	public UserType getType();
-	public void setType(UserType type);
-	public int getVersion();
-	public void setVersion(int version);
+	public String getPassword() throws IOException;
+	public void setPassword(String password) throws IOException;
+	public String getEmail() throws IOException;
+	public void setEmail(String email) throws IOException;
+	public UserType getType() throws IOException;
+	public void setType(UserType type) throws IOException;
+	public int getVersion() throws IOException;
+	public void setVersion(int version) throws IOException;
 }
