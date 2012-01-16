@@ -24,6 +24,8 @@ import java.util.GregorianCalendar;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.msgpack.MessagePack;
+import org.msgpack.packer.Packer;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.MultipartResolver;
@@ -31,6 +33,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import technical.UnrecognizedUserException;
 
+import domain.message.Message;
 import domain.message.MessageFactory;
 import domain.user.User;
 import domain.user.UserInputMapper;
@@ -66,7 +69,10 @@ public class PutMessageCommand extends RegionalCommand
 		User user = UserInputMapper.findByEmail(email);
 		if (user == null)
 			throw new UnrecognizedUserException();
-		MessageFactory.createNew(user.getUid(), messageBytes, speed, latitude, longitude, new Timestamp(GregorianCalendar.getInstance().getTimeInMillis()), 0);
+		Message message = MessageFactory.createNew(user.getUid(), messageBytes, speed, latitude, longitude, new Timestamp(GregorianCalendar.getInstance().getTimeInMillis()), 0);
+		MessagePack messagePack = new MessagePack();
+		Packer packer = messagePack.createPacker(response.getOutputStream());
+		packer.write(message.getMid());
 		response.setStatus(HttpServletResponse.SC_ACCEPTED);
 	}
 

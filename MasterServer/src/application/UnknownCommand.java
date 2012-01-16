@@ -22,8 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 
 public class UnknownCommand extends FrontCommand
 {
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException
+	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ParameterException
 	{
-		response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unknown Command");
+		throw new ParameterException("Unknown command.");
 	}
 }

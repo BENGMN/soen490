@@ -20,13 +20,11 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import javax.servlet.http.HttpServletResponse;
-
-
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import application.ParameterException;
 import application.UnknownCommand;
 
 public class UnknownCommandTest {
@@ -37,7 +35,12 @@ public class UnknownCommandTest {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		UnknownCommand command = new UnknownCommand();
-		command.execute(request, response);
-		assertEquals(HttpServletResponse.SC_BAD_REQUEST, response.getStatus());
+		try {
+			command.execute(request, response);
+			fail("Exception should've been thrown.");
+		}
+		catch (ParameterException e) {
+			
+		}
 	}
 }
