@@ -64,8 +64,8 @@ public class FrontController extends HttpServlet {
 	{
 		String commandString = request.getParameter("command");
 		FrontCommand command = getCommand(commandString);
-		if (command.responsible(request, response)) {
-			try {
+		try {
+			if (command.responsible(request, response)) {
 				try {
 					command.execute(request, response);
 				}
@@ -76,9 +76,9 @@ public class FrontController extends HttpServlet {
 					response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
 				}
 			}
-			catch (Exception e) {
-				throw new ServletException(e);
-			}
+		}
+		catch (Exception e) {
+			throw new ServletException(e);
 		}
 	}
 	

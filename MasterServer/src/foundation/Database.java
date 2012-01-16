@@ -38,22 +38,16 @@ public class Database {
 	// If we want to pool connections we'd put the code in here; create at startup, and allocate connections on getConnection and freeConnection.
 	private Database() throws IOException 
 	{
-		prop.load(new FileInputStream("Database.properties"));
+		prop.load(new FileInputStream("WEB-INF/Database.properties"));
 	}
 	
-	public boolean canConnect()
+	public boolean canConnect() throws SQLException
 	{
-		Connection connection = null;
-		try {
-			connection = getConnection();
-			if (connection == null)
-				return false;
-			freeConnection(connection);
-			return true;
-		}
-		catch (Exception e) {
+		Connection connection = getConnection();
+		if (connection == null)
 			return false;
-		}
+		freeConnection(connection);
+		return true;
 	}
 	
 	private synchronized Connection getConnection() throws SQLException
@@ -116,24 +110,15 @@ public class Database {
 		return update(queryString, null);
 	}
 	
-	public boolean runFile(String path)
+	public boolean runFile(String path) throws IOException, SQLException
 	{
-		try
+		BufferedReader fileReader = new BufferedReader(new FileReader(path));
+		String line;
+		while ((line = fileReader.readLine()) != null)
 		{
-			BufferedReader fileReader = new BufferedReader(new FileReader(path));
-			String line;
-			while ((line = fileReader.readLine()) != null)
-			{
-				update(line, null);
-			}
-			return true;
+			update(line, null);
 		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			return false;
-		}
-		
+		return true;
 	}
 	
 	public boolean hasTable(String tableName) throws SQLException

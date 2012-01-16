@@ -5,15 +5,9 @@ import java.sql.SQLException;
 import foundation.UserFinder;
 
 public class UserFactory {
-	public static User createNew(String email, String password, UserType type) throws IOException {
+	public static User createNew(String email, String password, UserType type) throws IOException, SQLException {
 		
-		User usr = null;
-		try {
-			usr = new User(UserFinder.findUniqueId(), email, password, type, 1);
-		}
-		catch (SQLException E) {
-			E.printStackTrace();
-		}
+		User usr = new User(UserFinder.findUniqueId(), email, password, type, 1);
 		
 		// Put the new message in the identity map
 		UserIdentityMap.getUniqueInstance().put(usr.getUid(), usr);

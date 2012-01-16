@@ -24,6 +24,6 @@ import javax.servlet.http.HttpServletResponse;
 import technical.UnrecognizedUserException;
 
 abstract class FrontCommand {
-	public boolean responsible(HttpServletRequest request, HttpServletResponse response) { return true; }
+	public boolean responsible(HttpServletRequest request, HttpServletResponse response) throws IOException { return true; }
 	abstract public void execute(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException, UnrecognizedUserException;
 }

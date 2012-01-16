@@ -15,17 +15,13 @@ import technical.ServerConfiguration;
  *
  */
 public abstract class RegionalCommand extends FrontCommand {
-	public boolean responsible(HttpServletRequest request, HttpServletResponse response)
+	public boolean responsible(HttpServletRequest request, HttpServletResponse response) throws IOException
 	{
 		double longitude = Double.parseDouble(request.getParameter("longitude"));
 		double latitude = Double.parseDouble(request.getParameter("latitude"));
 		if (!ServerConfiguration.getLocalConfiguration().isResponsible(longitude, latitude)) {
 			// Should redirect to the proper hostname, based on information in our server configuration.
-			try {
-				response.sendRedirect(null);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			response.sendRedirect(null);
 			return false;
 		}
 		return true;

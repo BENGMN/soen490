@@ -104,21 +104,17 @@ public class MessageCommandTest {
 		byte[] responseBytes = response.getContentAsByteArray();
 		MessagePack pack = new MessagePack();
 		Unpacker unpacker = pack.createUnpacker(new ByteArrayInputStream(responseBytes));
-		try {
-			int messageCount = unpacker.readInt();
-			assertEquals(1, messageCount);
-			assertEquals(message.getMid(), unpacker.readLong());
-			assertEquals(message.getOwner().getEmail(), unpacker.readString());
-			assertArrayEquals(message.getMessage(), unpacker.readByteArray());
-			assertEquals(message.getSpeed(), unpacker.readFloat(), 0.0001);
-			assertEquals(message.getCreatedAt().getTime(), unpacker.readLong());
-			assertEquals(message.getLongitude(), unpacker.readDouble(), 0.000001);
-			assertEquals(message.getLatitude(), unpacker.readDouble(), 0.000001);
-			assertEquals(message.getUserRating(), unpacker.readInt());
-		}
-		catch (IOException e) {
-			fail("Exception failure: " + e);
-		}
+		int messageCount = unpacker.readInt();
+		assertEquals(1, messageCount);
+		assertEquals(message.getMid(), unpacker.readLong());
+		assertEquals(message.getOwner().getEmail(), unpacker.readString());
+		assertArrayEquals(message.getMessage(), unpacker.readByteArray());
+		assertEquals(message.getSpeed(), unpacker.readFloat(), 0.0001);
+		assertEquals(message.getCreatedAt().getTime(), unpacker.readLong());
+		assertEquals(message.getLongitude(), unpacker.readDouble(), 0.000001);
+		assertEquals(message.getLatitude(), unpacker.readDouble(), 0.000001);
+		assertEquals(message.getUserRating(), unpacker.readInt());
+
 		UserOutputMapper.delete(user);
 		MessageOutputMapper.delete(message);		
 	}
@@ -147,13 +143,7 @@ public class MessageCommandTest {
 		PutMessageCommand putMessageCommand = new PutMessageCommand();
 		putMessageCommand.execute(request, response);
 		assertEquals(HttpServletResponse.SC_ACCEPTED, response.getStatus());
-		List<Message> messages = null;
-		try {
-			messages = MessageInputMapper.findByUser(user);
-		}
-		catch (SQLException e) {
-			fail("Exception failure: " + e);
-		}
+		List<Message> messages = MessageInputMapper.findByUser(user);
 		assertEquals(1, messages.size());
 		Message message = messages.get(0);
 		assertArrayEquals(message.getMessage(), fileBytes);
@@ -164,7 +154,7 @@ public class MessageCommandTest {
 	private static final String BOUNDARY = "AaB03x";
 	private static final String ENDLINE = "\r\n";
 	
-	private byte[] createContent(String fileName, byte[] fileBytes, Map<String, String> parameters)
+	private byte[] createContent(String fileName, byte[] fileBytes, Map<String, String> parameters) throws IOException
 	{
 		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		PrintWriter writer = new PrintWriter(byteArrayOutputStream);
@@ -181,12 +171,7 @@ public class MessageCommandTest {
         writer.append("Content-Transfer-Encoding: binary" + ENDLINE);
         writer.append(ENDLINE);
         writer.flush();
-        try {
-        	byteArrayOutputStream.write(fileBytes);
-        }
-        catch (Exception e) {
-        	fail("Exception failure: " + e);
-        }
+        byteArrayOutputStream.write(fileBytes);
         writer.append(ENDLINE);
         writer.append("--" + BOUNDARY + "--");
         writer.flush();

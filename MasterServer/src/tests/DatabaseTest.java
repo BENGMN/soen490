@@ -26,43 +26,29 @@ import foundation.Database;
 
 public class DatabaseTest {
 	@Test
-	public void testConnection() throws IOException
+	public void testConnection() throws IOException, SQLException
 	{
 		assertTrue(Database.getInstance().canConnect());
 	}
 	
 	@Test
-	public void testTables() throws IOException
+	public void testTables() throws IOException, SQLException
 	{
 		partTestCreateTable();
 		partTestDeleteTable();
 	}
 	
-	private void partTestCreateTable() throws IOException
+	private void partTestCreateTable() throws IOException, SQLException
 	{
-		try
-		{
-			assertTrue("Test table already exists!", !Database.getInstance().hasTable("testTable"));
-			Database.getInstance().update("CREATE TABLE testTable (testColumn1 varchar(40), testColumn2 varchar(50))");
-			assertTrue("Test table not created.", Database.getInstance().hasTable("testTable"));
-		}
-		catch (SQLException e)
-		{
-			fail("Failed to create table: " + e);
-		}
+		assertTrue("Test table already exists!", !Database.getInstance().hasTable("testTable"));
+		Database.getInstance().update("CREATE TABLE testTable (testColumn1 varchar(40), testColumn2 varchar(50))");
+		assertTrue("Test table not created.", Database.getInstance().hasTable("testTable"));
 	}
 	
-	private void partTestDeleteTable() throws IOException
+	private void partTestDeleteTable() throws IOException, SQLException
 	{
-		try
-		{
-			assertTrue("Test table not created.", Database.getInstance().hasTable("testTable"));
-			Database.getInstance().update("DROP TABLE testTable");
-			assertTrue("Test table not deleted.", !Database.getInstance().hasTable("testTable"));
-		}
-		catch (SQLException e)
-		{
-			fail("Failed to delete table: " + e);
-		}
+		assertTrue("Test table not created.", Database.getInstance().hasTable("testTable"));
+		Database.getInstance().update("DROP TABLE testTable");
+		assertTrue("Test table not deleted.", !Database.getInstance().hasTable("testTable"));
 	}
 }

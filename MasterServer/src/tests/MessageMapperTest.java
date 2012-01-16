@@ -18,7 +18,6 @@ package tests;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import org.junit.Test;
