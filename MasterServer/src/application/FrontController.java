@@ -35,7 +35,7 @@ public class FrontController extends HttpServlet {
 	private HashMap<String, FrontCommand> commandMap;
 	private UnknownCommand unknownCommand = null;
 	
-	private FrontController()
+	public FrontController()
 	{
 		commandMap = new HashMap<String, FrontCommand>();
 		unknownCommand = new UnknownCommand();

@@ -19,7 +19,6 @@
 	<classpathentry kind="lib" path="lib/jasper-el.jar"/>
 	<classpathentry kind="lib" path="lib/jsp-api.jar"/>
 	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.17-bin.jar"/>
-	<classpathentry kind="lib" path="lib/servlet-api.jar"/>
 	<classpathentry kind="lib" path="lib/tomcat-coyote.jar"/>
 	<classpathentry kind="lib" path="lib/ecj-3.7.jar"/>
 	<classpathentry kind="lib" path="lib/tomcat-dbcp.jar"/>
@@ -45,5 +44,6 @@
 	<classpathentry kind="lib" path="lib/slf4j/slf4j-api-1.6.4.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j/slf4j-ext-1.6.4.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j/slf4j-migrator-1.6.4.jar"/>
+	<classpathentry kind="lib" path="lib/servlet-api.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -39,7 +39,7 @@ public class Database {
 	{
 		try
 		{
-			prop.load(new FileInputStream("src/foundation/Database.properties"));
+			prop.load(new FileInputStream("Database.properties"));
 		}
 		catch (Exception e)
 		{

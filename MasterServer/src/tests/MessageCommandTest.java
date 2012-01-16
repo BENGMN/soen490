@@ -216,6 +216,7 @@ public class MessageCommandTest {
 		rateMessageCommand.execute(request, response);
 		assertEquals(HttpServletResponse.SC_ACCEPTED, response.getStatus());
 		assertEquals(userRating + 1, message.getUserRating());
+		assertEquals(1, MessageOutputMapper.delete(message));
 	}
 	
 	@Test
@@ -237,5 +238,6 @@ public class MessageCommandTest {
 		rateMessageCommand.execute(request, response);
 		assertEquals(HttpServletResponse.SC_ACCEPTED, response.getStatus());
 		assertEquals(userRating - 1, message.getUserRating());
+		assertEquals(1, MessageOutputMapper.delete(message));
 	}
 }
