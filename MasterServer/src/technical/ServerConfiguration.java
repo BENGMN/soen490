@@ -7,8 +7,8 @@ enum EServerType {
 
 public abstract class ServerConfiguration {
 	static ServerConfiguration localConfiguration = null;
-	String hostname;
-	int port;
+	private String hostname;
+	private int port;
 	
 	static int defaultPort = 8080;
 	

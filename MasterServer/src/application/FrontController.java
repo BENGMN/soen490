@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import foundation.Database;
+import foundation.ServletInformation;
 
 public class FrontController extends HttpServlet {
 
@@ -93,6 +94,7 @@ public class FrontController extends HttpServlet {
 	// Overridden to make sure that we have a database.
 	public void init() throws ServletException {
 		try {
+			ServletInformation.getInstance().setServletContext(getServletContext());
 			if (!Database.getInstance().isDatabaseCreated())
 				Database.getInstance().createDatabase();
 		}

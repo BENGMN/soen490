@@ -38,7 +38,8 @@ public class Database {
 	// If we want to pool connections we'd put the code in here; create at startup, and allocate connections on getConnection and freeConnection.
 	private Database() throws IOException 
 	{
-		prop.load(new FileInputStream("WEB-INF/Database.properties"));
+		String path = ServletInformation.getInstance().resolvePath("WEB-INF/Database.properties");
+		prop.load(new FileInputStream(path));
 	}
 	
 	public boolean canConnect() throws SQLException
