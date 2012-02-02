@@ -16,6 +16,7 @@
 
 package domain.message;
 
+import java.math.BigInteger;
 import java.util.HashMap;
 
 /**
@@ -27,7 +28,7 @@ public class MessageIdentityMap {
 	 * Key: message id
 	 * Value: message
 	 */
-	private HashMap<Long, Message> messageMap;
+	private HashMap<BigInteger, Message> messageMap;
 	
 	/**
 	 * Single unique instance 
@@ -38,7 +39,7 @@ public class MessageIdentityMap {
 	 * Private constructor for singleton class
 	 */
 	private MessageIdentityMap() {
-		messageMap = new HashMap<Long, Message>();
+		messageMap = new HashMap<BigInteger, Message>();
 	}
 	
 	/**
@@ -46,7 +47,7 @@ public class MessageIdentityMap {
 	 * @param mid Message id
 	 * @return the value (message) for which the specified key (mid) is mapped, or null if the map contains no mapping for the key
 	 */
-	public Message get(long mid) {
+	public Message get(BigInteger mid) {
 		return messageMap.get(mid);
 	}
 	
@@ -57,7 +58,7 @@ public class MessageIdentityMap {
 	 * @param mid Message id
 	 * @param message Message
 	 */
-	public void put(long mid, Message message) {
+	public void put(BigInteger mid, Message message) {
 		messageMap.put(mid, message);
 	}
 	
@@ -70,4 +71,5 @@ public class MessageIdentityMap {
 			uniqueInstance = new MessageIdentityMap();
 		return uniqueInstance;
 	}
+
 }

@@ -17,6 +17,7 @@
 package foundation;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -59,10 +60,10 @@ public class MessageTDG {
 	 * @return Returns 1 if the insert succeeded. 
 	 * @throws SQLException
 	 */
-	public static int insert(long mid, long uid, int version, byte[] message, float speed, double latitude , double longitude , Timestamp created_at , int user_rating) throws SQLException, IOException {
+	public static int insert(BigInteger mid, long uid, int version, byte[] message, float speed, double latitude , double longitude , Timestamp created_at , int user_rating) throws SQLException, IOException {
 		PreparedStatement ps = Database.getInstance().getStatement(INSERT);
 		
-		ps.setLong(1, mid);
+		ps.setObject(1,mid);
 		ps.setLong(2, uid);
 		ps.setBlob(3, new SerialBlob(message));
 		ps.setFloat(4, speed);
@@ -90,11 +91,11 @@ public class MessageTDG {
 	 * @return Returns the number of rows updated, should be 1.
 	 * @throws SQLException
 	 */
-	public static int update(long mid, int user_rating, int version) throws SQLException, IOException {
+	public static int update(BigInteger mid, int user_rating, int version) throws SQLException, IOException {
 		PreparedStatement ps = Database.getInstance().getStatement(UPDATE);
 		
 		ps.setInt(1, user_rating);
-		ps.setLong(2, mid);
+		ps.setObject(2, mid);
 		ps.setLong(3, version);
 		
 		int count = ps.executeUpdate();
@@ -112,10 +113,10 @@ public class MessageTDG {
 	 * @return Returns 1 if the operation was successful, 0 if it no rows were affected.
 	 * @throws SQLException
 	 */
-	public static int delete(long mid, int version) throws SQLException, IOException {
+	public static int delete(BigInteger mid, int version) throws SQLException, IOException {
 		PreparedStatement ps = Database.getInstance().getStatement(DELETE);
 		
-		ps.setLong(1, mid);
+		ps.setObject(1, mid);
 		ps.setInt(2, version);
 		
 		int count = ps.executeUpdate();

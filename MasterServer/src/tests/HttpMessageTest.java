@@ -5,16 +5,13 @@ import static org.junit.Assert.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
+import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -25,15 +22,12 @@ import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
 import org.junit.Test;
 import org.msgpack.MessagePack;
 import org.msgpack.unpacker.Unpacker;
 
 import domain.message.Message;
 import domain.message.MessageFactory;
-import domain.user.UserProxy;
 
 public class HttpMessageTest {
 	
@@ -69,7 +63,7 @@ public class HttpMessageTest {
 		int messageCount = unpacker.readInt();
 		ArrayList<Message> arrayList = new ArrayList<Message>();
 		for (int i = 0; i < messageCount; ++i) {
-			long mid = unpacker.readLong();
+			BigInteger mid = unpacker.readBigInteger();
 			String email = unpacker.readString();
 			byte[] message = unpacker.readByteArray();
 			float speed = unpacker.readFloat();

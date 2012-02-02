@@ -17,6 +17,7 @@ package tests;
 
 import java.util.GregorianCalendar;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -30,7 +31,7 @@ import static org.junit.Assert.*;
 
 public class MessageTDGTest {
 
-	static long mid = 158749857935L;
+	static BigInteger mid = new BigInteger("158749857935");
 	static long uid = 158749857934L;
 
 	@Test

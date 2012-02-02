@@ -17,6 +17,7 @@
 package foundation;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -70,9 +71,9 @@ public class MessageFinder {
 		 * m.mid, m.uid, m.message, m.speed, m.latitude, m.longitude, m.created_at, m.user_rating, m.version
 		 * @throws SQLException
 		 */
-		public static ResultSet find(long mid) throws SQLException, IOException {
+		public static ResultSet find(BigInteger mid) throws SQLException, IOException {
 			PreparedStatement ps = Database.getInstance().getStatement(SELECT);
-			ps.setLong(1, mid);
+			ps.setObject(1, mid);
 			ResultSet rs = ps.executeQuery();
 			return rs;
 		}
@@ -120,19 +121,4 @@ public class MessageFinder {
 			return rs;
 		}
 		
-		private final static String SELECT_UNIQUE_ID =
-				"SELECT m.mid FROM " + MessageTDG.TABLE + " AS m ORDER BY m.mid DESC LIMIT 1";
-		
-		/**
-		 * Retrieves a unique ID from the table, that is available.
-		 * @return Returns a unique ID that is not shared by any user in the database.
-		 * @throws SQLException
-		 */
-		public static long findUniqueId() throws SQLException, IOException { 
-			PreparedStatement ps = Database.getInstance().getStatement(SELECT_UNIQUE_ID);
-			ResultSet rs = ps.executeQuery();
-			if (rs.next())
-				return rs.getLong(1) + 1;
-			return 0;
-		}
 }

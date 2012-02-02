@@ -16,6 +16,7 @@
 package application;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,5 +26,5 @@ import technical.UnrecognizedUserException;
 
 abstract class FrontCommand {
 	public boolean responsible(HttpServletRequest request, HttpServletResponse response) throws IOException, ParameterException { return true; }
-	abstract public void execute(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException, UnrecognizedUserException, ParameterException;
+	abstract public void execute(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException, UnrecognizedUserException, ParameterException, NoSuchAlgorithmException;
 }

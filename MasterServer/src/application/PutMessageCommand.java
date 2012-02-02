@@ -17,6 +17,7 @@ package application;
 
 import java.io.IOException;
 
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.GregorianCalendar;
@@ -43,7 +44,7 @@ public class PutMessageCommand extends RegionalCommand
 	// 50 K is our max upload size, for now.
 	public static int maximumUploadSize = 50 * 1024;
 	
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException, UnrecognizedUserException, ParameterException
+	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException, UnrecognizedUserException, ParameterException, NoSuchAlgorithmException
 	{
 		MultipartResolver resolver = new CommonsMultipartResolver();
 		// Make sure our request is multi-part; if it's not, then it's not properly formatted.

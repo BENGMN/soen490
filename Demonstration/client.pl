@@ -4,7 +4,6 @@ use strict;
 use warnings;
 use LWP;
 use URI;
-use Data::MessagePack;
 
 my $ServerHost = 'localhost';
 my $ServerPort = 8080;
@@ -14,7 +13,7 @@ my $DatabasePassword = 'capstone';
 my $DatabaseHostname = 'localhost';
 my $DependencyFolder = "dep";
 my $DatabaseScript = "$DependencyFolder/sample.pl";
-my $ExternalBrowser = 'google-chrome';
+my $ExternalBrowser = 'firefox';
 
 my $Longitude = 10.0;
 my $Latitude = 20.0;
@@ -54,4 +53,4 @@ open($OUTPUT, ">dump");
 print $OUTPUT $Content;
 close($OUTPUT);
 # We have to hand it off to ruby here; the perl module isn't actually written properly; it throws an error.
-system('ruby unpack.rb');
+system('ruby1.9.1 unpack.rb');

@@ -18,6 +18,7 @@ package domain.message;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -32,7 +33,7 @@ import technical.IClientSendable;
 import technical.IServerSendable;
 
 public class Message implements IServerSendable, IClientSendable {	
-	private long mid;
+	private BigInteger mid;
 	private IUser owner;
 	private byte[] message;
 	private float speed;
@@ -42,7 +43,7 @@ public class Message implements IServerSendable, IClientSendable {
 	private int userRating;
 	private int version;
 	
-	public Message(long mid, IUser owner, byte[] message, float speed, double latitude, double longitude, Timestamp createdAt, int userRating, int version)
+	public Message(BigInteger mid, IUser owner, byte[] message, float speed, double latitude, double longitude, Timestamp createdAt, int userRating, int version)
 	{
 		this.mid = mid;
 		this.owner = owner;
@@ -56,7 +57,7 @@ public class Message implements IServerSendable, IClientSendable {
 	}
 	
 	// Getters and Setters
-	public long getMid() {
+	public BigInteger getMid() {
 		return mid;
 	}
 	
@@ -117,7 +118,7 @@ public class Message implements IServerSendable, IClientSendable {
 	public void readServer(DataInputStream in) throws IOException
 	{
 		Unpacker unpacker = (new MessagePack()).createUnpacker(in);
-		mid = unpacker.readLong();
+		mid = unpacker.readBigInteger();
 		owner = new UserProxy(unpacker.readLong());
 		message = unpacker.readByteArray();
 		speed = unpacker.readFloat();

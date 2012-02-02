@@ -16,6 +16,7 @@
 package domain.message;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -58,7 +59,7 @@ public class MessageInputMapper {
 	private static Message getMessage(ResultSet rs) throws SQLException {
 		Timestamp date = rs.getTimestamp("m.created_at");
 		
-		long mid = rs.getLong("m.mid");
+		BigInteger mid = (BigInteger)rs.getObject("m.mid");
 		Message message = MessageIdentityMap.getUniqueInstance().get(mid);
 		if (message != null)
 			return message;
@@ -81,7 +82,7 @@ public class MessageInputMapper {
 	 * @return a message with the specified id
 	 * @throws SQLException
 	 */
-	public static Message find(long mid) throws IOException, SQLException {
+	public static Message find(BigInteger mid) throws IOException, SQLException {
 		// Check if the Identity Map contains a message with the specified id
 		Message message = MessageIdentityMap.getUniqueInstance().get(mid);
 		if (message == null) {

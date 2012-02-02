@@ -16,6 +16,7 @@
 package application;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.sql.SQLException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,7 +33,7 @@ public class DownvoteMessageCommand extends RegionalCommand
 	{
 		if (request.getParameter("mid") == null)
 			throw new ParameterException("Must pass in the mid to downvote.");
-		long mid = Long.parseLong(request.getParameter("mid"));
+		BigInteger mid = new BigInteger(request.getParameter("mid"));
 		Message message = MessageInputMapper.find(mid);
 		synchronized(message) {
 			message.setUserRating(message.getUserRating()-1);

@@ -17,6 +17,7 @@ package tests;
 
 import static org.junit.Assert.*;
 
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.GregorianCalendar;
 
@@ -31,8 +32,8 @@ public class MessageIdentityMapTest {
 	public void testFunctionality()
 	{
 		MessageIdentityMap map = MessageIdentityMap.getUniqueInstance();
-		Message message = MessageFactory.createClean(0, 0, null, 10.0f, 10.0, 10.0, new Timestamp(GregorianCalendar.getInstance().getTimeInMillis()), 0, 1);
-		map.put(0, message);
-		assertEquals(map.get(0), message);
+		Message message = MessageFactory.createClean(new BigInteger("0"), 0, null, 10.0f, 10.0, 10.0, new Timestamp(GregorianCalendar.getInstance().getTimeInMillis()), 0, 1);
+		map.put(new BigInteger("0"), message);
+		assertEquals(map.get(new BigInteger("0")), message);
 	}
 }

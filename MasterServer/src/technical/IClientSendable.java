@@ -3,9 +3,6 @@ package technical;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import org.msgpack.packer.Packer;
-
-
 public interface IClientSendable {
 	// For interchange with client; DataOutputStream because client may or may not use java.
 	public void writeClient(DataOutputStream out) throws IOException;

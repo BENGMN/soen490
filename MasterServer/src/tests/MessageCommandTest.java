@@ -21,9 +21,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.GregorianCalendar;
@@ -83,7 +83,7 @@ public class MessageCommandTest {
 	}
 	
 	@Test
-	public void getCommand() throws SQLException, IOException
+	public void getCommand() throws SQLException, IOException, NoSuchAlgorithmException
 	{
 		final double longitude = 10.0;
 		final double latitude = 30.0;
@@ -123,7 +123,7 @@ public class MessageCommandTest {
 	}
 	
 	@Test
-	public void putCommand() throws SQLException, IOException, UnrecognizedUserException, ParameterException
+	public void putCommand() throws SQLException, IOException, UnrecognizedUserException, ParameterException, NoSuchAlgorithmException
 	{		
 		String fileName = "test.amr";
 		File file = new File(fileName);
@@ -182,7 +182,7 @@ public class MessageCommandTest {
 	}
 	
 	@Test
-	public void upvoteCommand() throws SQLException, IOException
+	public void upvoteCommand() throws SQLException, IOException, NoSuchAlgorithmException
 	{
 		final byte[] bytes = new byte[10];
 		final float speed = 10.0f;
@@ -194,7 +194,7 @@ public class MessageCommandTest {
 		UpvoteMessageCommand rateMessageCommand = new UpvoteMessageCommand();
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		MockHttpServletResponse response = new MockHttpServletResponse();
-		request.setParameter("mid", Long.toString(message.getMid()));
+		request.setParameter("mid", message.getMid().toString());
 		request.setParameter("longitude", Double.toString(longitude));
 		request.setParameter("latitude", Double.toString(latitude));
 		rateMessageCommand.execute(request, response);
@@ -204,7 +204,7 @@ public class MessageCommandTest {
 	}
 	
 	@Test
-	public void downvoteCommand() throws SQLException, IOException, ParameterException
+	public void downvoteCommand() throws SQLException, IOException, ParameterException, NoSuchAlgorithmException
 	{
 		final byte[] bytes = new byte[10];
 		final float speed = 10.0f;
@@ -216,7 +216,7 @@ public class MessageCommandTest {
 		DownvoteMessageCommand rateMessageCommand = new DownvoteMessageCommand();
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		MockHttpServletResponse response = new MockHttpServletResponse();
-		request.setParameter("mid", Long.toString(message.getMid()));
+		request.setParameter("mid", message.getMid().toString());
 		request.setParameter("longitude", Double.toString(longitude));
 		request.setParameter("latitude", Double.toString(latitude));
 		rateMessageCommand.execute(request, response);

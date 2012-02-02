@@ -16,6 +16,7 @@
 package application;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.sql.SQLException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,7 +31,7 @@ public class UpvoteMessageCommand extends RegionalCommand
 
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException
 	{
-		long mid = Long.parseLong(request.getParameter("mid"));
+		BigInteger mid = new BigInteger(request.getParameter("mid"));
 		Message message = MessageInputMapper.find(mid);
 		synchronized(message) {
 			message.setUserRating(message.getUserRating()+1);
