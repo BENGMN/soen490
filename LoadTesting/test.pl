@@ -22,10 +22,14 @@ my $Verbose = undef;
 my $Quiet = undef;
 my $DisplayHelp = undef;
 my $NoReport = undef;
+my $DieAtStart = undef;
 
-my $HelpMessage = "usage: $0 configuration_file [--help] [--verbose|--quiet]
+my $HelpMessage = "
+Garry's Load Testing Script
+
+usage: $0 configuration_file [--help] [--verbose|--quiet]
 [--server=localhost] [--port=8080] [--dname=soen490] [--duser==soen490]
-[-dpass=capstone] [--dhost=--server] [--browser=application] [--noreport]
+[-dpass=capstone] [--dhost=--server] [--browser=google-chrome] [--noreport]
 
 This is the load testing script, written by Garry. It basically does a
 preliminary check to see if you have all the appropriate programs, and
@@ -51,12 +55,14 @@ tsung's internal tools. It has the following options:
 	--noreport	Just runs tsung; doesn't bother with the report
 			generating step.\n";
 GetOptions("help" => \$DisplayHelp, "verbose" => \$Verbose, "quiet" => \$Quiet, "browser=s" => \$Webbrowser, "server=s" => \$ServerHostname,
-"port=i" => \$ServerPort, "dname=s" => \$DatabaseUsername, "dpass=s" => \$DatabasePassword, "dname" => \$DatabaseName, '<>' => sub { $ConfigFileName = shift; });
-die "Can't define both quiet and verbose.\n" if defined $Quiet && defined $Verbose;
+"port=i" => \$ServerPort, "dname=s" => \$DatabaseUsername, "dpass=s" => \$DatabasePassword, "dname=s" => \$DatabaseName, "dhost=s" => \$DatabaseHostname, "noreport" => \$NoReport,
+'<>' => sub { $DieAtStart = "Can only specify one configuration file.\n" if (defined $ConfigFileName); $ConfigFileName = shift; });
+
+$DieAtStart = "Can't define both quiet and verbose.\n" if defined $Quiet && defined $Verbose;
+die $DieAtStart if defined $DieAtStart;
 
 $DatabaseHostname = $ServerHostname unless defined $DatabaseHostname;
 $DisplayHelp = 1 unless defined $ConfigFileName;
-
 
 if (defined $DisplayHelp) {
 	print $HelpMessage;
@@ -70,6 +76,13 @@ sub run($) {
 		return system($Program);
 	}
 	`$Program 2>/dev/null`; return $?;
+}
+
+if ($^O ne "linux") {
+	print "I literally have no idea what will happen if you don't run this on linux.\n";
+	print "You have been warned. Things could end up getting deleted.\n";
+	print "Are you sure you want to contiunue? [y/n]: ";
+	die "Aborting.\n" unless getc eq "y"; <STDIN>
 }
 
 print "Checking installed programs...\n" unless defined $Quiet;
@@ -87,16 +100,17 @@ die "Cannot find configuration file: $ConfigFileName.\n" unless (-e $ConfigFileN
 
 die "Must have $DatabaseScript.\n" unless (-e $DatabaseScript);
 # Makes absolutely sure you want to run this script.
-print "This script will erase your database!\nAre you sure you want to continue? [y/n]: ";
-die "Aborting.\n" unless getc eq "y";
+print "This script will erase the database on $DatabaseHostname!\nAre you sure you want to continue? [y/n]: ";
+die "Aborting.\n" unless getc eq "y"; <STDIN>;
 
 # Check to see if we have the right mysql password.
 print "Accessing mysql database; deleting current rows...\n" unless defined $Quiet;
 my @Tables = `mysql -u $DatabaseUsername --password=$DatabasePassword $DatabaseName -e 'SHOW TABLES'`;
 die "Unable to access our mysql database. Wrong username/password?\n" unless $? == 0;
 # Clear our database.
-run("mysql -u $DatabaseUsername --password=$DatabasePassword $DatabaseName -h $DatabaseHostname -e 'DELETE FROM User'") if grep(/User/, @Tables);
-run("mysql -u $DatabaseUsername --password=$DatabasePassword $DatabaseName -h $DatabaseHostname -e 'DELETE FROM Message'") if grep(/Message/, @Tables);
+die "Mysql database must be set up properly (have User and Message); run a unit test or something." unless grep(/User/, @Tables) && grep(/Message/, @Tables);
+run("mysql -u $DatabaseUsername --password=$DatabasePassword $DatabaseName -h $DatabaseHostname -e 'DELETE FROM User'");
+run("mysql -u $DatabaseUsername --password=$DatabasePassword $DatabaseName -h $DatabaseHostname -e 'DELETE FROM Message'");
 # Run our script to populate our database.
 die "Trouble running database script.\n" unless run("perl $DatabaseScript | mysql -u $DatabaseUsername --password=$DatabasePassword $DatabaseName -h $DatabaseHostname") == 0;
 
