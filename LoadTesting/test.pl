@@ -92,7 +92,7 @@ die "Tomcat must be up!" unless defined get("http://$ServerHostname:$ServerPort"
 die "Tsung must be installed.\n" unless run("tsung -v") == 0;
 die "Mysql client must be installed.\n" unless run("mysql --version") == 0;
 die "tsung_stats must be installed.\n" unless run("$TsungStatsScript --version") == 0;
-die "Must have a suitable webbrowser installed. (tried $Webbrowser)" unless run("$Webbrowser --version") == 0;
+die "Must have a suitable webbrowser installed. (tried $Webbrowser)" unless defined $NoReport || run("$Webbrowser --version") == 0;
 
 # Make sure we can access our configuration file.
 print "Checking configuration file...\n" unless defined $Quiet;
