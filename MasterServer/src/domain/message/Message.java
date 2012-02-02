@@ -143,7 +143,7 @@ public class Message implements IServerSendable, IClientSendable {
 		Packer packer = pack.createPacker(out);
 		packer.write(mid);
 		packer.write(getOwner().getEmail());
-		//packer.write(message);
+		packer.write(message);
 		packer.write(speed);
 		packer.write(getCreatedAt().getTime());
 		packer.write(getLongitude());

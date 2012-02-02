@@ -38,9 +38,9 @@ die "Trouble running database script.\n" unless system("perl $DatabaseScript | m
 print "Sending GET request to $ServerHost at port $ServerPort. Full request is:\n";
 print "$GetURL\n";
 my $Response = $Browser->get($GetURL);
+my $OUTPUT;
 if (!$Response->is_success) {
 	my $ResponseFile = "response.html";
-	my $OUTPUT;
 	open($OUTPUT, ">$ResponseFile") or die ("Unable to open $ResponseFile.");
 	print $OUTPUT $Response->content;
 	system("$ExternalBrowser $ResponseFile");
@@ -49,9 +49,9 @@ if (!$Response->is_success) {
 my $LengthInK = int(length($Response->content) / 1024);
 print "Received a " . $Response->status_line . " response of " . length($Response->content) . " bytes ($LengthInK K):\n";
 print "Parsing...\n";
-my $MP = Data::MessagePack->new();
-my $MessageCount = $MP->unpack($Response->content);
-#print "Received $MessageCount messages. Splitting into files...\n";
-#for (my $C = 0; $C < $MessageCount; ++$C) {
-#
-#}
+my $Content = $Response->content;
+open($OUTPUT, ">dump");
+print $OUTPUT $Content;
+close($OUTPUT);
+# We have to hand it off to ruby here; the perl module isn't actually written properly; it throws an error.
+system('ruby unpack.rb');
