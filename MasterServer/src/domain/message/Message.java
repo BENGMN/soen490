@@ -131,7 +131,7 @@ public class Message implements IServerSendable, IClientSendable {
 	// Allowing us to use MessagePack in our domain layer, outside of our application layer.
 	public static void writeListClient(List<Message> messages, DataOutputStream out) throws IOException
 	{
-		Packer packer = (new MessagePack()).createPacker(out);		
+		Packer packer = (new MessagePack()).createPacker(out);
 		packer.write(messages.size());
 		for (Message message : messages)
 			message.writeClient(out);
@@ -143,7 +143,7 @@ public class Message implements IServerSendable, IClientSendable {
 		Packer packer = pack.createPacker(out);
 		packer.write(mid);
 		packer.write(getOwner().getEmail());
-		packer.write(message);
+		//packer.write(message);
 		packer.write(speed);
 		packer.write(getCreatedAt().getTime());
 		packer.write(getLongitude());

@@ -27,7 +27,7 @@
 
  <sessions>
   <session name="getMessages" probability="100" type="ts_http">
-    <setdynvars sourcetype="file" fileid="getFileId" delimiter=";" order="iter">
+    <setdynvars sourcetype="file" fileid="getFileId" delimiter=";" order="random">
         <var name="longitude"/>
         <var name="latitude"/>
     </setdynvars>

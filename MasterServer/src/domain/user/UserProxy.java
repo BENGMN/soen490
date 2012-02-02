@@ -30,8 +30,11 @@ public class UserProxy implements IUser {
 	}
 	
 	private User getRealUser() throws IOException	{
-		if (realUser == null)
+		if (realUser == null) {
 			realUser = UserInputMapper.find(uid);
+			if (realUser == null)
+				throw new IOException("Can't read in user of id " + uid);
+		}
 		return realUser;
 	}
 	

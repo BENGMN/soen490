@@ -64,7 +64,7 @@ public class MessageInputMapper {
 			return message;
 		
 		message = MessageFactory.createClean(mid,
-								 mid,
+								 rs.getLong("m.uid"),
 								 rs.getBytes("m.message"),
 								 rs.getFloat("m.speed"),
 								 rs.getDouble("m.latitude"),

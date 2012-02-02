@@ -28,7 +28,7 @@ import domain.message.MessageInputMapper;
 
 public class GetMessagesCommand extends RegionalCommand {
 		
-	private final double DEFAULT_USER_RADIUS_METERS = 500;
+	private final double DEFAULT_USER_RADIUS_METERS = 10000000;
 	
 	public GetMessagesCommand() {}
 	
