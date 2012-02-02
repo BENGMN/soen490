@@ -17,17 +17,14 @@ my $PasswordMaxCharacters = 16;
 # GENERATE USERS
 for (my $UID = 0; $UID < $UsersToGenerate; ++$UID) {
 	my @EmailDomains = ("com", "net", "org");
-	my $Email = random_regex('[a-zA-Z_]{4,16}@[a-zA-Z_]{4,16}') . "." . $EmailDomains[rand(@EmailDomains)];
+	my $Email = random_regex('[a-z]{4,16}@[a-z]{4,16}') . "." . $EmailDomains[rand(@EmailDomains)];
 	my $Password = random_regex('[a-zA-Z_0-9]' . "{$PasswordMinCharacters,$PasswordMaxCharacters}");
 	my $UserType = ((rand(1.0) < $AdvertiserChance) ? 1 : 0);
-	print "INSERT INTO User (uid, email, password, type) VALUES ($UID, '$Email', '$Password', $UserType, 0);\n"
+	print "INSERT INTO User (uid, email, password, type, version) VALUES ($UID, '$Email', '$Password', $UserType, 0);\n"
 }
 
 # GENERATE MESSAGES
 # Min Size 1K, Max Size 20K.
-#my $MinSize = 1024;
-#my $MaxSize = 20480;
-
 my $MinSize = 1024;
 my $MaxSize = 20480;
 

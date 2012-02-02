@@ -1,0 +1,5 @@
+This is the folder where we're going to be doing a bunch of load testing.
+
+Basically, everything should be taken care of by test.pl.
+
+Everything else is used by test.pl to make sure evrything works properly. test.pl will automagically make sure you have the appropriate dependencies and whatnot. If there's a problem, email garry.

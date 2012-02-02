@@ -64,7 +64,7 @@ public class MessageInputMapper {
 			return message;
 		
 		message = MessageFactory.createClean(mid,
-								 rs.getLong("m.uid"),
+								 mid,
 								 rs.getBytes("m.message"),
 								 rs.getFloat("m.speed"),
 								 rs.getDouble("m.latitude"),
@@ -84,7 +84,6 @@ public class MessageInputMapper {
 	public static Message find(long mid) throws IOException, SQLException {
 		// Check if the Identity Map contains a message with the specified id
 		Message message = MessageIdentityMap.getUniqueInstance().get(mid);
-		
 		if (message == null) {
 			ResultSet rs = MessageFinder.find(mid);
 			if (rs.next()) {

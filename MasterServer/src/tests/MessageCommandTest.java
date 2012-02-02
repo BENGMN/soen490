@@ -21,6 +21,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -53,6 +54,7 @@ import application.UpvoteMessageCommand;
 
 import domain.message.Message;
 import domain.message.MessageFactory;
+import domain.message.MessageIdentityMap;
 import domain.message.MessageInputMapper;
 import domain.message.MessageOutputMapper;
 import domain.user.User;
