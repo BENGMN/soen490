@@ -34,7 +34,7 @@ my $MaxRating = 200;
 
 for (my $MID = 0; $MID < $MessagesToGenerate; ++$MID) {
 	my $UID = int(rand($UsersToGenerate));
-	my $MessageID = random_regex("[0-9]{0,39}");
+	my $MessageID = random_regex("[0-9]{39}");
 	# Twice what we want because hexadecimal is twice the width of binary.
 	my $MessageLength = floor((int(rand($MaxSize-$MinSize)) + $MinSize)/2)*4;
 	my $Message = random_regex("[0-9A-F]{$MessageLength}");
