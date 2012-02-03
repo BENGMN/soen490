@@ -130,7 +130,7 @@ if (!defined $NoReport) {
 	print "Generating report...\n" unless defined $Quiet;
 	die "Can't find logfile $LogFile...\n" unless -e $LogFile;
 	die "Cannot change folder to $LogFolder." unless chdir($LogFolder);
-	die "Unable to generate report.\n" unless run("$TsungStatsScript") == 0;
+	die "Unable to generate report.\n" unless run("$TsungStatsScript -dygraph") == 0;
 	my $ReportFile = "$LogFolder/report.html";
 	die "Can't find report file.\n" unless -e $ReportFile;
 	print "Opening report...\n" unless defined $Quiet;

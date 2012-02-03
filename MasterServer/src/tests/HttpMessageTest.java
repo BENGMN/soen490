@@ -33,7 +33,6 @@ public class HttpMessageTest {
 	
 	static String serverUrl = "/MasterServer/frontController";
 	
-	@Test
 	public void test() throws URISyntaxException, ClientProtocolException, IOException
 	{
 		ArrayList<Message> messages = get();
@@ -58,6 +57,7 @@ public class HttpMessageTest {
 		HttpGet httpGet = new HttpGet(upvoteURI);
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpResponse response = httpClient.execute(httpGet);
+		System.out.println(new BufferedReader(new InputStreamReader(response.getEntity().getContent())).readLine());
 		assertEquals("HTTP/1.1 200 OK", response.getStatusLine().toString());
 		Unpacker unpacker = new MessagePack().createUnpacker(response.getEntity().getContent());
 		int messageCount = unpacker.readInt();
