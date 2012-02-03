@@ -16,6 +16,7 @@
 package domain.message;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -59,7 +60,7 @@ public class MessageInputMapper {
 	private static Message getMessage(ResultSet rs) throws SQLException {
 		Timestamp date = rs.getTimestamp("m.created_at");
 		
-		BigInteger mid = (BigInteger)rs.getObject("m.mid");
+		BigInteger mid = rs.getBigDecimal("m.mid").toBigInteger();
 		Message message = MessageIdentityMap.getUniqueInstance().get(mid);
 		if (message != null)
 			return message;

@@ -17,6 +17,7 @@
 package foundation;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -63,7 +64,7 @@ public class MessageTDG {
 	public static int insert(BigInteger mid, long uid, int version, byte[] message, float speed, double latitude , double longitude , Timestamp created_at , int user_rating) throws SQLException, IOException {
 		PreparedStatement ps = Database.getInstance().getStatement(INSERT);
 		
-		ps.setObject(1,mid);
+		ps.setBigDecimal(1, new BigDecimal(mid));
 		ps.setLong(2, uid);
 		ps.setBlob(3, new SerialBlob(message));
 		ps.setFloat(4, speed);
@@ -116,7 +117,7 @@ public class MessageTDG {
 	public static int delete(BigInteger mid, int version) throws SQLException, IOException {
 		PreparedStatement ps = Database.getInstance().getStatement(DELETE);
 		
-		ps.setObject(1, mid);
+		ps.setBigDecimal(1, new BigDecimal(mid));
 		ps.setInt(2, version);
 		
 		int count = ps.executeUpdate();
@@ -126,7 +127,7 @@ public class MessageTDG {
 	
 	private final static String CREATE_TABLE =
 		"CREATE TABLE " + TABLE + " " +
-		"(mid bigint NOT NULL, " +
+		"(mid decimal(39) NOT NULL, " +
 		"uid bigint NOT NULL, " +
 		"message blob NOT NULL, " +
 		"speed float, " +

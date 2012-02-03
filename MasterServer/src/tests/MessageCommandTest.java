@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -109,7 +110,7 @@ public class MessageCommandTest {
 		Unpacker unpacker = pack.createUnpacker(new ByteArrayInputStream(responseBytes));
 		int messageCount = unpacker.readInt();
 		assertEquals(1, messageCount);
-		assertEquals(message.getMid(), unpacker.readLong());
+		assertEquals(message.getMid(), new BigInteger(unpacker.readString()));
 		assertEquals(message.getOwner().getEmail(), unpacker.readString());
 		assertArrayEquals(message.getMessage(), unpacker.readByteArray());
 		assertEquals(message.getSpeed(), unpacker.readFloat(), 0.0001);
@@ -118,8 +119,8 @@ public class MessageCommandTest {
 		assertEquals(message.getLatitude(), unpacker.readDouble(), 0.000001);
 		assertEquals(message.getUserRating(), unpacker.readInt());
 
-		UserOutputMapper.delete(user);
-		MessageOutputMapper.delete(message);		
+		assertEquals(1, UserOutputMapper.delete(user));
+		assertEquals(1, MessageOutputMapper.delete(message));		
 	}
 	
 	@Test
@@ -133,6 +134,8 @@ public class MessageCommandTest {
 		String email = "example@example.com";
 		String password = "capstone";
 		User user = UserFactory.createNew(email, password, UserType.USER_NORMAL);
+		List<Message> messages = MessageInputMapper.findByUser(user);
+		assertEquals(0, messages.size());
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		MockHttpServletRequest request = new MockMultipartHttpServletRequest();
 		Map<String, String> parameters = new HashMap<String, String>();
@@ -146,7 +149,7 @@ public class MessageCommandTest {
 		PutMessageCommand putMessageCommand = new PutMessageCommand();
 		putMessageCommand.execute(request, response);
 		assertEquals(HttpServletResponse.SC_ACCEPTED, response.getStatus());
-		List<Message> messages = MessageInputMapper.findByUser(user);
+		messages = MessageInputMapper.findByUser(user);
 		assertEquals(1, messages.size());
 		Message message = messages.get(0);
 		assertArrayEquals(message.getMessage(), fileBytes);

@@ -118,7 +118,7 @@ public class Message implements IServerSendable, IClientSendable {
 	public void readServer(DataInputStream in) throws IOException
 	{
 		Unpacker unpacker = (new MessagePack()).createUnpacker(in);
-		mid = unpacker.readBigInteger();
+		mid = new BigInteger(unpacker.readString());
 		owner = new UserProxy(unpacker.readLong());
 		message = unpacker.readByteArray();
 		speed = unpacker.readFloat();
@@ -142,7 +142,7 @@ public class Message implements IServerSendable, IClientSendable {
 	{
 		MessagePack pack = new MessagePack();
 		Packer packer = pack.createPacker(out);
-		packer.write(mid);
+		packer.write(mid.toString());
 		packer.write(getOwner().getEmail());
 		packer.write(message);
 		packer.write(speed);

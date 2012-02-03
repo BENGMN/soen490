@@ -59,7 +59,7 @@ public class MessageTDGTest {
 				latitude, longitude, createdDate, user_rating), 1);
 		ResultSet rs = MessageFinder.find(mid);
 		assertTrue(rs.next());
-		assertEquals(rs.getLong("m.mid"), mid);
+		assertEquals(rs.getBigDecimal("m.mid").toBigInteger(), mid);
 		assertEquals(rs.getLong("m.uid"), uid);
 
 		byte[] b = rs.getBytes("m.message");
@@ -89,7 +89,7 @@ public class MessageTDGTest {
 		ResultSet rs = MessageFinder.find(mid);
 		assertTrue(rs.next());
 		assertEquals(rs.getLong("m.version"), version + 1);
-		assertEquals(mid, rs.getLong("m.mid"));
+		assertEquals(mid, rs.getBigDecimal("m.mid").toBigInteger());
 		assertEquals(uid, rs.getLong("m.uid"));
 		byte[] b = rs.getBytes("m.message");
 		for (int i = 0; i < message.length; i++) {

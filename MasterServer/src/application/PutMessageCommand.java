@@ -73,7 +73,7 @@ public class PutMessageCommand extends RegionalCommand
 		Message message = MessageFactory.createNew(user.getUid(), messageBytes, speed, latitude, longitude, new Timestamp(GregorianCalendar.getInstance().getTimeInMillis()), 0);
 		MessagePack messagePack = new MessagePack();
 		Packer packer = messagePack.createPacker(response.getOutputStream());
-		packer.write(message.getMid());
+		packer.write(message.getMid().toString());
 		response.setStatus(HttpServletResponse.SC_ACCEPTED);
 	}
 
