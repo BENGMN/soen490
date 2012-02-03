@@ -13,7 +13,7 @@ my $DatabasePassword = 'capstone';
 my $DatabaseHostname = 'localhost';
 my $DependencyFolder = "dep";
 my $DatabaseScript = "$DependencyFolder/sample.pl";
-my $ExternalBrowser = 'firefox';
+my $ExternalBrowser = 'google-chrome';
 
 my $Longitude = 10.0;
 my $Latitude = 20.0;
