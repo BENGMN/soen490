@@ -34,6 +34,7 @@ my $MaxRating = 200;
 
 for (my $MID = 0; $MID < $MessagesToGenerate; ++$MID) {
 	my $UID = int(rand($UsersToGenerate));
+	my $MessageID = random_regex("[0-9]{0,39}");
 	# Twice what we want because hexadecimal is twice the width of binary.
 	my $MessageLength = floor((int(rand($MaxSize-$MinSize)) + $MinSize)/2)*4;
 	my $Message = random_regex("[0-9A-F]{$MessageLength}");
@@ -42,7 +43,7 @@ for (my $MID = 0; $MID < $MessagesToGenerate; ++$MID) {
 	my $Longitude = rand(360.0) - 180.0;
 	my $CreatedAt = rand_datetime();
 	my $UserRating = int(rand($MaxRating - $MinRating)) + $MinRating;
-	print "INSERT INTO Message (mid, uid, message, speed, latitude, longitude, created_at, user_rating, version) VALUES ($MID, $UID, x'$Message', " . ((defined $Speed) ? $Speed : "NULL") . ", $Latitude, $Longitude, '$CreatedAt', $UserRating, 0);\n";
+	print "INSERT INTO Message (mid, uid, message, speed, latitude, longitude, created_at, user_rating, version) VALUES ($MessageID, $UID, x'$Message', " . ((defined $Speed) ? $Speed : "NULL") . ", $Latitude, $Longitude, '$CreatedAt', $UserRating, 0);\n";
 }
 
 
