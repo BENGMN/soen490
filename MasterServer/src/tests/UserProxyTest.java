@@ -19,6 +19,8 @@ import org.junit.Test;
 
 public class UserProxyTest {
 	
+	
+	
 	@Test
 	public void testFunctionality()
 	{

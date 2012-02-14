@@ -2,7 +2,7 @@
   associations="true" dependencies="true" nesting-relationships="true">  
   <class id="1" corner="BOTTOM_RIGHT" language="java" name="foundation.UserTDG" project="MasterServer" 
     file="/MasterServer/src/foundation/UserTDG.java" binary="false">    
-    <position height="-1" width="-1" x="928" y="506"/>    
+    <position height="-1" width="-1" x="666" y="475"/>    
     <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
@@ -18,7 +18,7 @@
   </class>  
   <class id="3" corner="BOTTOM_RIGHT" language="java" name="foundation.MessageFinder" project="MasterServer" 
     file="/MasterServer/src/foundation/MessageFinder.java" binary="false">    
-    <position height="-1" width="-1" x="433" y="481"/>    
+    <position height="-1" width="-1" x="373" y="446"/>    
     <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
@@ -26,7 +26,7 @@
   </class>  
   <class id="4" corner="BOTTOM_RIGHT" language="java" name="foundation.UserFinder" project="MasterServer" 
     file="/MasterServer/src/foundation/UserFinder.java" binary="false">    
-    <position height="-1" width="-1" x="703" y="498"/>    
+    <position height="-1" width="-1" x="597" y="188"/>    
     <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
