@@ -39,6 +39,8 @@ public class Database {
 	// If we want to pool connections we'd put the code in here; create at startup, and allocate connections on getConnection and freeConnection.
 	private Database() throws IOException 
 	{
+		// Note: that the path cannot be resolved properly unless the container is running
+		// LOCAL HACK: cd to MasterServer then ln -s /WebContent/WEB-INF (creates a symbolic link)
 		String path = ServletInformation.getInstance().resolvePath("WEB-INF/Database.properties");
 		prop.load(new FileInputStream(path));
 	}
@@ -79,7 +81,7 @@ public class Database {
 		return null;
 		
 	}
-	//This function returns a singleton threadlocal connection. 
+	// This function returns a singleton threadlocal connection. 
 	private Connection getConnection() throws SQLException
 	{
 		
@@ -186,6 +188,8 @@ public class Database {
 			MessageTDG.drop();
 	}
 	
+	// Refactor the hasTable method to be parameterized
+	// Note this method is called from the frontController
 	public boolean isDatabaseCreated() throws SQLException
 	{
 		return hasTable(UserTDG.TABLE) && hasTable(MessageTDG.TABLE); 

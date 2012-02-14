@@ -25,6 +25,7 @@ import org.junit.Test;
 import foundation.Database;
 
 public class DatabaseTest {
+
 	@Test
 	public void testConnection() throws IOException, SQLException
 	{
@@ -50,5 +51,9 @@ public class DatabaseTest {
 		assertTrue("Test table not created.", Database.getInstance().hasTable("testTable"));
 		Database.getInstance().update("DROP TABLE testTable");
 		assertTrue("Test table not deleted.", !Database.getInstance().hasTable("testTable"));
+	}
+	
+	public void testIsDatabaseCreated() throws SQLException, IOException {
+		assertTrue("Test to ensure that the tables we for the applicaton exist", Database.getInstance().isDatabaseCreated());
 	}
 }
