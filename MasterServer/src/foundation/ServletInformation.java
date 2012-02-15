@@ -6,7 +6,7 @@ public class ServletInformation {
 	private ServletContext context;
 	private static ServletInformation singleton = null;
 	
-	public ServletInformation()
+	private ServletInformation()
 	{
 		context = null;
 	}
