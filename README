@@ -26,3 +26,7 @@ Existing Git Repo?
 cd existing_git_repo
   git remote add origin git@github.com:BENGMN/soen490.git
   git push -u origin master
+
+Setting up the database:
+In the test folder the UserTDGTest can be used to set up your databases for you automatically. 
+Simply run the tests and comment out this line Database.getInstance().dropDatabase(); if you want the databases to persist.
