@@ -29,8 +29,13 @@ public class UserProxy implements IUser {
 		realUser = null;
 	}
 	
-	// TODO: This method does not seem to load an object into the identity map
-	// once it has been loaded from the input Mapper
+	/**
+	 * Load the actual object to which the proxy refers.
+	 * If the local reference to the object being proxied is null
+	 * call the input mapper to locate (or create) and return the object.
+	 * @return The user object to which the proxy refers.
+	 * @throws IOException
+	 */
 	private User getRealUser() throws IOException	{
 		if (realUser == null) {
 			realUser = UserInputMapper.find(uid);
