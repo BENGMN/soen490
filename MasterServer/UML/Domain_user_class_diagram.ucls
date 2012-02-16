@@ -1,143 +1,111 @@
 <class-diagram version="1.0.6" icons="true" always-add-relationships="true" generalizations="true" realizations="true" 
   associations="true" dependencies="true" nesting-relationships="true">  
-  <enumeration id="1" corner="BOTTOM_RIGHT" language="java" name="domain.user.UserType" project="MasterServer" 
-    file="/MasterServer/src/domain/user/UserType.java" binary="false">    
-    <position height="129" width="181" x="632" y="1017"/>    
-    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true"/>      
-      <operations public="true" package="true" protected="true" private="true"/>    
-    </display>  
-  </enumeration>  
-  <class id="2" corner="BOTTOM_RIGHT" language="java" name="domain.user.UserInputMapper" project="MasterServer" 
+  <class id="1" corner="BOTTOM_RIGHT" language="java" name="domain.user.UserInputMapper" project="MasterServer" 
     file="/MasterServer/src/domain/user/UserInputMapper.java" binary="false">    
-    <position height="97" width="140" x="151" y="110"/>    
+    <position height="-1" width="-1" x="116" y="162"/>    
     <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
     </display>  
   </class>  
-  <class id="3" corner="BOTTOM_RIGHT" language="java" name="domain.user.UserFactory" project="MasterServer" 
+  <class id="2" corner="BOTTOM_RIGHT" language="java" name="domain.user.UserFactory" project="MasterServer" 
     file="/MasterServer/src/domain/user/UserFactory.java" binary="false">    
-    <position height="97" width="261" x="331" y="110"/>    
+    <position height="-1" width="-1" x="480" y="78"/>    
     <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
     </display>  
   </class>  
-  <class id="4" corner="BOTTOM_RIGHT" language="java" name="domain.user.UserOutputMapper" project="MasterServer" 
+  <class id="3" corner="BOTTOM_RIGHT" language="java" name="domain.user.UserOutputMapper" project="MasterServer" 
     file="/MasterServer/src/domain/user/UserOutputMapper.java" binary="false">    
-    <position height="113" width="132" x="632" y="110"/>    
+    <position height="-1" width="-1" x="736" y="67"/>    
     <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
     </display>  
   </class>  
-  <class id="5" corner="BOTTOM_RIGHT" language="java" name="domain.user.User" project="MasterServer" 
+  <class id="4" corner="BOTTOM_RIGHT" language="java" name="domain.user.User" project="MasterServer" 
     file="/MasterServer/src/domain/user/User.java" binary="false">    
-    <position height="321" width="200" x="632" y="423"/>    
+    <position height="-1" width="-1" x="730" y="477"/>    
     <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
     </display>  
   </class>  
-  <class id="6" corner="BOTTOM_RIGHT" language="java" name="domain.user.UserProxy" project="MasterServer" 
+  <class id="5" corner="BOTTOM_RIGHT" language="java" name="domain.user.UserProxy" project="MasterServer" 
     file="/MasterServer/src/domain/user/UserProxy.java" binary="false">    
-    <position height="273" width="198" x="1055" y="110"/>    
+    <position height="-1" width="-1" x="1191" y="605"/>    
     <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
     </display>  
   </class>  
-  <interface id="7" corner="BOTTOM_RIGHT" language="java" name="domain.user.IUser" project="MasterServer" 
+  <interface id="6" corner="BOTTOM_RIGHT" language="java" name="domain.user.IUser" project="MasterServer" 
     file="/MasterServer/src/domain/user/IUser.java" binary="false">    
-    <position height="193" width="142" x="727" y="784"/>    
+    <position height="-1" width="-1" x="750" y="869"/>    
     <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
     </display>  
   </interface>  
-  <class id="8" corner="BOTTOM_RIGHT" language="java" name="domain.user.UserIdentityMap" project="MasterServer" 
+  <class id="7" corner="BOTTOM_RIGHT" language="java" name="domain.user.UserIdentityMap" project="MasterServer" 
     file="/MasterServer/src/domain/user/UserIdentityMap.java" binary="false">    
-    <position height="113" width="201" x="804" y="110"/>    
+    <position height="-1" width="-1" x="1098" y="122"/>    
     <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
     </display>  
   </class>  
-  <dependency id="9">    
+  <class id="8" corner="BOTTOM_RIGHT" language="java" name="foundation.UserFinder" project="MasterServer" 
+    file="/MasterServer/src/foundation/UserFinder.java" binary="false">    
+    <position height="225" width="254" x="145" y="390"/>    
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <realization id="9">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="6"/>  
+  </realization>  
+  <realization id="10">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="6"/>  
+  </realization>  
+  <dependency id="11">    
     <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="5"/>  
+    <end type="TARGET" refId="4"/>  
   </dependency>  
-  <dependency id="10">    
-    <end type="SOURCE" refId="7"/>    
-    <end type="TARGET" refId="1"/>  
+  <dependency id="12">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="4"/>  
   </dependency>  
-  <association id="11">    
-    <bendpoint x="641" y="784"/>    
+  <association id="13">    
     <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="12" name="type"/>      
-      <multiplicity id="13" minimum="0" maximum="1"/>    
+      <attribute id="14" name="realUser"/>      
+      <multiplicity id="15" minimum="0" maximum="1"/>    
     </end>    
-    <end type="TARGET" refId="1" navigable="true"/>    
+    <end type="TARGET" refId="4" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <dependency id="14">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="5"/>  
-  </dependency>  
-  <realization id="15">    
-    <bendpoint x="878" y="423"/>    
-    <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="7"/>  
-  </realization>  
-  <realization id="16">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="7"/>  
-  </realization>  
-  <dependency id="17">    
-    <bendpoint x="899" y="423"/>    
-    <bendpoint x="899" y="784"/>    
-    <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="1"/>  
-  </dependency>  
-  <dependency id="18">    
-    <bendpoint x="490" y="423"/>    
-    <bendpoint x="490" y="784"/>    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="1"/>  
-  </dependency>  
+  <association id="16">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="17" name="userMap"/>      
+      <multiplicity id="18" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="4" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
   <dependency id="19">    
-    <bendpoint x="400" y="423"/>    
-    <bendpoint x="400" y="784"/>    
-    <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="1"/>  
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="4"/>  
   </dependency>  
   <association id="20">    
-    <end type="SOURCE" refId="8" navigable="false">      
+    <end type="SOURCE" refId="7" navigable="false">      
       <attribute id="21" name="singleton"/>      
       <multiplicity id="22" minimum="0" maximum="1"/>    
     </end>    
-    <end type="TARGET" refId="8" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <dependency id="23">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="5"/>  
-  </dependency>  
-  <association id="24">    
-    <end type="SOURCE" refId="8" navigable="false">      
-      <attribute id="25" name="userMap"/>      
-      <multiplicity id="26" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="27">    
-    <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="28" name="realUser"/>      
-      <multiplicity id="29" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
+    <end type="TARGET" refId="7" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <classifier-display autosize="true" package="true" initial-value="false" signature="true" visibility="true">    
