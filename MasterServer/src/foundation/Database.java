@@ -39,7 +39,7 @@ public class Database {
 	// If we want to pool connections we'd put the code in here; create at startup, and allocate connections on getConnection and freeConnection.
 	private Database() throws IOException 
 	{
-		// Note: that the path cannot be resolved properly unless the container is running
+		// Note: The path cannot be resolved properly unless the container is running
 		// LOCAL HACK: cd to MasterServer then ln -s /WebContent/WEB-INF (creates a symbolic link)
 		String path = ServletInformation.getInstance().resolvePath("WEB-INF/Database.properties");
 		prop.load(new FileInputStream(path));
