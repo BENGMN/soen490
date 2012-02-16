@@ -57,4 +57,19 @@ public class UserTest {
 		assertEquals(user.getVersion(), version);
 		assertEquals(user.getType(), userType);
 	}
+	
+	@Test
+	public void testEquals()
+	{
+		final String email = "example@example.com";
+		final String password = "password";
+		final UserType userType = UserType.USER_NORMAL;
+		
+		User user1 = new User(uid, email, password, userType, 0);
+		User user2 = new User(uid, email, password, userType, 1);
+		
+		assertEquals(user1.equals(null), false);
+		assertEquals(user1.equals(user2), false);
+		assertEquals(user1.equals(user1), true);
+	}
 }
