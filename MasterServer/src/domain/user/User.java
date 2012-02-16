@@ -23,7 +23,6 @@ import org.msgpack.MessagePack;
 import org.msgpack.packer.Packer;
 import org.msgpack.unpacker.Unpacker;
 
-
 public class User implements IUser {
 	
 	private long uid;
@@ -108,5 +107,20 @@ public class User implements IUser {
 		password = unpacker.readString();
 		type = unpacker.read(UserType.class);
 		version = unpacker.readInt();
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+        // If the object is not null and is of the type User
+		if ((o != null) && (o.getClass().equals(this.getClass()))) {
+            // Test all of the particulars
+			return (
+	            		((User)o).getEmail().equals(this.getEmail()) &&
+	            		((User)o).getPassword().equals(this.getPassword()) &&
+	            		((User)o).getType() == this.getType() &&
+	            		((User)o).getVersion() == this.getVersion()
+            		);
+        }
+		return false; // if we made it here we failed above
 	}
 }
