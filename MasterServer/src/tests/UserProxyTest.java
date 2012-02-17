@@ -32,16 +32,39 @@ public class UserProxyTest extends TestCase {
 	private final UserType userType = UserType.USER_NORMAL;
 	private final int version = 1;
 	
+	private User realUser = null;						// Create a real user object
+	private UserProxy userProxy = null;	// Create a proxy for the real object
 	
-	public void testConstructorAndGetUid() throws IOException {
+	
+	public void testGetters() throws IOException {
 		// First we create an object via the factory so it get's sent to the IdentityMap as well
-		User realUser = UserFactory.createClean(uid, email, password, userType, version);
-		
+		realUser = UserFactory.createClean(uid, email, password, userType, version);
 		// Create a proxy for the real object
-		UserProxy userProxy = new UserProxy(uid);
+		userProxy = new UserProxy(uid);
 		
-		// Get the ID from the proxy and match it to the realUsers
 		assertEquals(userProxy.getUid(), realUser.getUid());
+		assertEquals(userProxy.getEmail(), realUser.getEmail());
+		assertEquals(userProxy.getPassword(), realUser.getPassword());
+		assertEquals(userProxy.getVersion(), realUser.getVersion());
+		assertEquals(userProxy.getType(), realUser.getType());
 	}
+	
+	public void testSetters() throws IOException {
+		realUser = UserFactory.createClean(uid, "test@example.com", "pass", UserType.USER_ADVERTISER, 0);
+		userProxy = new UserProxy(uid);
+		userProxy.setEmail(email);
+		userProxy.setPassword(password);
+		userProxy.setType(userType);
+		userProxy.setVersion(version);
+		
+		assertEquals(userProxy.getEmail(), email);
+		assertEquals(userProxy.getUid(), uid);
+		assertEquals(userProxy.getEmail(), email);
+		assertEquals(userProxy.getPassword(), password);
+		assertEquals(userProxy.getVersion(), version);
+		assertEquals(userProxy.getType(), userType);
+	}
+	
+	
 	
 }
