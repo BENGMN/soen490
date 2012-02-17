@@ -123,4 +123,9 @@ public class User implements IUser {
         }
 		return false; // if we made it here we failed above
 	}
+	
+	@Override
+	public String toString() {
+		return "UserID: "+uid+" Email: "+email+" Password: "+password+" Type: "+type+" Version: "+version;
+	}
 }
