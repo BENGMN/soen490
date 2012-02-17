@@ -13,7 +13,7 @@
  *
  */
 
-package tests;
+package tests.domain.message;
 
 import java.io.IOException;
 import java.math.BigInteger;

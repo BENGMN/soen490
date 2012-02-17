@@ -13,7 +13,7 @@
  *
  */
 
-package tests;
+package tests.domain.user;
 
 import static org.junit.Assert.*;
 

@@ -14,7 +14,7 @@
  *
  */
 
-package tests;
+package tests.domain.user;
 
 import java.io.IOException;
 import java.sql.SQLException;

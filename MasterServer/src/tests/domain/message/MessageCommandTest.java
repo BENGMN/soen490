@@ -13,7 +13,7 @@
  *
  */
 
-package tests;
+package tests.domain.message;
 
 import static org.junit.Assert.*;
 

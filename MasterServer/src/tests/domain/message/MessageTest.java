@@ -1,7 +1,7 @@
 /**
  * SOEN 490
  * Capstone 2011
- * Test for front controller class.
+ * Test for Messsage domain object.
  * Team members: 	Sotirios Delimanolis
  * 			Filipe Martinho
  * 			Adam Harrison
@@ -13,16 +13,20 @@
  *
  */
 
-
-package tests;
+package tests.domain.message;
 
 import org.junit.Test;
 
-
-public class FrontControllerTest {
+public class MessageTest {
 	
 	@Test
-	public void testFrontController()
+	public void testGetters()
+	{
+		
+	}
+	
+	@Test
+	public void testSetters()
 	{
 		
 	}

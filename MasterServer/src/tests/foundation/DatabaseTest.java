@@ -14,7 +14,7 @@
  */
 
 
-package tests;
+package tests.foundation;
 import static org.junit.Assert.*;
 
 import java.io.IOException;

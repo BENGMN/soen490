@@ -13,7 +13,7 @@
  *
  */
 
-package tests;
+package tests.domain.message;
 
 import java.util.GregorianCalendar;
 import java.io.IOException;
