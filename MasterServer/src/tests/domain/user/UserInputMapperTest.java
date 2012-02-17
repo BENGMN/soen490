@@ -76,4 +76,20 @@ public class UserInputMapperTest extends TestCase {
 		UserOutputMapper.delete(user);
 	}
 	
+	public void testFindByEmail() throws IOException, SQLException {
+		// Create a new user with the factory to make sure
+		// a) it is placed in the UserIdentityMap and
+		// b) persisted to the database
+		User user = UserFactory.createNew(email, password, userType);
+		
+		// Get a copy of the newly created object from the datastore
+		User userCopy = UserInputMapper.findByEmail(user.getEmail());
+		
+		// Make sure the copy is equivalent to the original
+		assertEquals(user.equals(userCopy), true);
+		
+		// Remove the test record from the database, which also confirms it was persisted.
+		UserOutputMapper.delete(user);
+	}
+	
 }
