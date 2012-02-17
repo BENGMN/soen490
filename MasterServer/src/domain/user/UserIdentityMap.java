@@ -37,6 +37,10 @@ public class UserIdentityMap {
 		userMap.put(uid, user);
 	}
 	
+	public void remove(long uid) {
+		userMap.remove(uid);
+	}
+	
 	public static UserIdentityMap getUniqueInstance()
 	{
 		if (singleton == null)
