@@ -1,7 +1,7 @@
 /**
  * SOEN 490
  * Capstone 2011
- * User identity map for user by UserMapper.
+ * User object identity map for use by UserMapper.
  * Team members: 	Sotirios Delimanolis
  * 			Filipe Martinho
  * 			Adam Harrison
@@ -17,7 +17,6 @@
 package domain.user;
 
 import java.util.HashMap;
-
 
 public class UserIdentityMap {
 	private HashMap<Long, User> userMap;
