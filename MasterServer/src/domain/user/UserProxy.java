@@ -89,4 +89,16 @@ public class UserProxy implements IUser {
 	public void readServer(DataInputStream in) throws IOException {
 		getRealUser().readServer(in);
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		// If the object is not null and is of the type User
+		if ((o != null) && (o.getClass().equals(this.getClass()))) {
+			// Test all of the particulars
+				return (
+						((UserProxy)o).getUid() == this.getUid()
+						);
+	        }
+			return false; // if we made it here we failed above
+	}
 }
