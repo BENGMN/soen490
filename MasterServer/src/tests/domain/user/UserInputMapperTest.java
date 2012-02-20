@@ -30,11 +30,11 @@ import junit.framework.TestCase;
 
 public class UserInputMapperTest extends TestCase {
 
-	private final String email = "example@example.com";
+	private final String email = "unique@example.com";
 	private final String password = "password";
 	private final UserType userType = UserType.USER_NORMAL;
 	private final int version = 1;
-	private final long uid = 3425635465657L;
+	private final long uid = 3785635465657L;
 	
 
 	public void testFindUserCacheHit() throws IOException, SQLException {

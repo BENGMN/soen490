@@ -17,7 +17,7 @@ public class UserOutputMapperTest extends TestCase {
 	private final String password = "password";
 	private final UserType userType = UserType.USER_NORMAL;
 	private final int version = 1;
-	private final long uid = 3425635465657L;
+	private final long uid = 3325635465657L;
 	private User user = null;
 	
 	public UserOutputMapperTest() {
