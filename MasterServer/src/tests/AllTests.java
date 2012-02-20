@@ -19,6 +19,7 @@ import tests.foundation.*;
 		 MessageIdentityMapTest.class,
 		 MessageMapperTest.class,
 		 MessageTest.class,
+		 MessageFactoryTest.class,
 		 UserFactoryTest.class,
 		 UserIdentityMapTest.class,
 		 UserInputMapperTest.class,

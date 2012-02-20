@@ -13,6 +13,7 @@ import tests.domain.user.*;
 		 MessageIdentityMapTest.class,
 		 MessageMapperTest.class,
 		 MessageTest.class,
+		 MessageFactoryTest.class,
 		 UserFactoryTest.class,
 		 UserIdentityMapTest.class,
 		 UserInputMapperTest.class,
