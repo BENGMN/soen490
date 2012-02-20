@@ -101,6 +101,26 @@ public class Message implements IServerSendable, IClientSendable {
 		return version;
 	}
 	
+	@Override
+	public boolean equals(Object o) {
+		// If the object is not null and is of the type User
+		if ((o != null) && (o.getClass().equals(this.getClass()))) {
+			// Test all of the particulars
+			return (
+		       		((Message)o).getMid().equals(this.getMid()) &&
+		       		((Message)o).getMessage().equals(this.getMessage()) &&
+		       		((Message)o).getSpeed() == this.getSpeed() &&
+		       		((Message)o).getLatitude() == this.getLatitude() &&
+		       		((Message)o).getLongitude() == this.getLongitude() &&
+		       		((Message)o).getCreatedAt() == this.getCreatedAt() &&
+		       		((Message)o).getUserRating() == this.getUserRating() &&
+		       		((Message)o).getVersion() == this.getVersion() &&
+		       		((Message)o).getOwner() == this.getOwner()
+	            	);
+	        }
+			return false; // if we made it here we failed above
+	}
+	
 	public void writeServer(DataOutputStream out) throws IOException
 	{
 		Packer packer = (new MessagePack()).createPacker(out);
