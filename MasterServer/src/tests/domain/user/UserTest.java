@@ -23,15 +23,16 @@ import domain.user.User;
 import domain.user.UserType;
 
 public class UserTest {
-	final long uid = 3425635465657L;
+	
+	private final long uid = 3425635465657L;
+	private final String email = "example@example.com";
+	private final String password = "password";
+	private final UserType userType = UserType.USER_NORMAL;
+	private final int version = 1;
 	
 	@Test
 	public void testGetters()
 	{
-		final String email = "example@example.com";
-		final String password = "password";
-		final UserType userType = UserType.USER_NORMAL;
-		final int version = 1;
 		User user = new User(uid, email, password, userType, version);
 		assertEquals(user.getUid(), uid);
 		assertEquals(user.getEmail(), email);
@@ -43,10 +44,6 @@ public class UserTest {
 	@Test
 	public void testSetters()
 	{
-		final String email = "example@example.com";
-		final String password = "password";
-		final UserType userType = UserType.USER_NORMAL;
-		final int version = 1;
 		User user = new User(uid, "", "", null, 0);
 		user.setEmail(email);
 		user.setPassword(password);
@@ -60,11 +57,7 @@ public class UserTest {
 	
 	@Test
 	public void testEquals()
-	{
-		final String email = "example@example.com";
-		final String password = "password";
-		final UserType userType = UserType.USER_NORMAL;
-		
+	{	
 		User user1 = new User(uid, email, password, userType, 0);
 		User user2 = new User(uid, email, password, userType, 1);
 		
