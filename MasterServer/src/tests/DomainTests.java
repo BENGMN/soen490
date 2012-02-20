@@ -4,18 +4,12 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import tests.application.*;
 import tests.domain.message.*;
 import tests.domain.user.*;
-import tests.foundation.*;
 
 @RunWith(Suite.class)
 
-@SuiteClasses({
-		FrontControllerTest.class, 
-		HttpMessageTest.class,
-		UnknownCommandTest.class,
-		MessageCommandTest.class,
+@SuiteClasses({ 
 		 MessageIdentityMapTest.class,
 		 MessageMapperTest.class,
 		 MessageTest.class,
@@ -24,13 +18,9 @@ import tests.foundation.*;
 		 UserInputMapperTest.class,
 		 UserOutputMapperTest.class,
 		 UserProxyTest.class,
-		 UserTest.class,
-		 DatabaseTest.class,
-		 MessageTDGTest.class,
-		 UserTDGTest.class
-
+		 UserTest.class
 })
 
-public class AllTests {
+public class DomainTests {
 
 }
