@@ -28,11 +28,13 @@ import domain.message.MessageIdentityMap;
 
 public class MessageIdentityMapTest {
 	
+	private byte[] messageData = { 1, 2, 3, 4, 5, 6 };
+	
 	@Test
 	public void testFunctionality()
 	{
 		MessageIdentityMap map = MessageIdentityMap.getUniqueInstance();
-		Message message = MessageFactory.createClean(new BigInteger("0"), 0, null, 10.0f, 10.0, 10.0, new Timestamp(GregorianCalendar.getInstance().getTimeInMillis()), 0, 1);
+		Message message = MessageFactory.createClean(new BigInteger("0"), 0, messageData, 10.0f, 10.0, 10.0, new Timestamp(GregorianCalendar.getInstance().getTimeInMillis()), 0, 1);
 		map.put(new BigInteger("0"), message);
 		assertEquals(map.get(new BigInteger("0")), message);
 	}
