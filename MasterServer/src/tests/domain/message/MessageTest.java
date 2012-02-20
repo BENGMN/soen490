@@ -15,19 +15,57 @@
 
 package tests.domain.message;
 
-import org.junit.Test;
+import java.math.BigInteger;
+import java.sql.Timestamp;
+import java.util.GregorianCalendar;
 
-public class MessageTest {
+import domain.message.Message;
+import domain.user.IUser;
+import domain.user.User;
+import domain.user.UserType;
+import junit.framework.TestCase;
+
+
+public class MessageTest extends TestCase {
 	
-	@Test
-	public void testGetters()
-	{
-		
+	// Attributes for a User
+	private final long uid = 3425635465657L;
+	private final String email = "example@example.com";
+	private final String password = "password";
+	private final UserType userType = UserType.USER_NORMAL;
+	private final int userVersion = 1;
+	
+
+	// Attributes for a Message
+	private BigInteger mid = new BigInteger("158749857935");
+	private IUser owner = new User(uid, email, password, userType, userVersion);
+	private byte[] message = { 1, 2, 3, 4, 5, 6 };
+	private float speed = 5.5f;
+	final double latitude = 29.221;
+	final double longitude = 35.134;
+	private Timestamp createdAt = new Timestamp(new GregorianCalendar(2011, 9, 10).getTimeInMillis());
+	private int userRating = 7;
+	private int msgVersion = 1;
+	
+	public void testGetters() {
+		Message msg = new Message(mid, owner, message, speed, latitude, longitude, createdAt, userRating, msgVersion);
+		assertEquals(msg.getMid(), mid);
+		assertEquals(msg.getOwner(), owner);
+		assertEquals(msg.getMessage(), message);
+		assertEquals(msg.getSpeed(), speed);
+		assertEquals(msg.getLatitude(), latitude);
+		assertEquals(msg.getLongitude(),  longitude);
+		assertEquals(msg.getCreatedAt(), createdAt);
+		assertEquals(msg.getUserRating(), userRating);
+		assertEquals(msg.getVersion(), msgVersion);
 	}
 	
-	@Test
-	public void testSetters()
-	{
+	public void testSetters() {
+		Message msg = new Message(mid, owner, message, speed, latitude, longitude, createdAt, userRating, msgVersion);
+		msg.setUserRating(10);
+		msg.setVersion(2);
 		
+		assertEquals(msg.getUserRating(), 10);
+		assertEquals(msg.getVersion(), 2);
 	}
 }
