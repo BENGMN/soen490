@@ -115,7 +115,7 @@ public class Message implements IServerSendable, IClientSendable {
 		       		((Message)o).getCreatedAt() == this.getCreatedAt() &&
 		       		((Message)o).getUserRating() == this.getUserRating() &&
 		       		((Message)o).getVersion() == this.getVersion() &&
-		       		((Message)o).getOwner() == this.getOwner()
+		       		((Message)o).getOwner().getUid() == this.getOwner().getUid()
 	            	);
 	        }
 			return false; // if we made it here we failed above
