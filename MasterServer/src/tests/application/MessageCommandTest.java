@@ -1,5 +1,5 @@
 /**
- * SOEN 490
+* SOEN 490
  * Capstone 2011
  * Test for RateMessagesCommand.
  * Team members: 	Sotirios Delimanolis
@@ -13,7 +13,7 @@
  *
  */
 
-package tests.domain.message;
+package tests.application;
 
 import static org.junit.Assert.*;
 
@@ -55,7 +55,6 @@ import application.UpvoteMessageCommand;
 
 import domain.message.Message;
 import domain.message.MessageFactory;
-import domain.message.MessageIdentityMap;
 import domain.message.MessageInputMapper;
 import domain.message.MessageOutputMapper;
 import domain.user.User;
