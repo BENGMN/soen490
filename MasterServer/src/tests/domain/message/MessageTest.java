@@ -68,4 +68,13 @@ public class MessageTest extends TestCase {
 		assertEquals(msg.getUserRating(), 10);
 		assertEquals(msg.getVersion(), 2);
 	}
+	
+	public void testEquals() {
+		Message m1 = new Message(mid, owner, message, speed, latitude, longitude, createdAt, userRating, msgVersion);
+		Message m2 = new Message(mid, owner, message, speed, latitude, longitude, createdAt, userRating, 2);
+		
+		assertEquals("Should return false when compared to a null",m1.equals(null), false);
+		assertEquals("Should return false when compared to a different object", m1.equals(m2), false);
+		assertEquals("Should return true when compared with the same object", m1.equals(m1), true);
+	}
 }
