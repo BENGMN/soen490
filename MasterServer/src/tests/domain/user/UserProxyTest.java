@@ -50,7 +50,6 @@ public class UserProxyTest extends TestCase {
 	}
 	
 	public void testSetters() throws IOException {
-		realUser = UserFactory.createClean(uid, "test@example.com", "pass", UserType.USER_ADVERTISER, 0);
 		userProxy = new UserProxy(uid);
 		userProxy.setEmail(email);
 		userProxy.setPassword(password);
@@ -63,6 +62,14 @@ public class UserProxyTest extends TestCase {
 		assertEquals(userProxy.getPassword(), password);
 		assertEquals(userProxy.getVersion(), version);
 		assertEquals(userProxy.getType(), userType);
+	}
+	
+	public void testEquals() {
+		userProxy = new UserProxy(uid);
+		UserProxy userProxy1 = new UserProxy(5555635465657L); // Different UserID specified here
+		assertEquals("Should return false when compared null", userProxy.equals(null),false);
+		assertEquals("Should return false when compared to a different object", userProxy.equals(userProxy1),false);
+		assertEquals("Should return true when compared to the same object", userProxy.equals(userProxy),true);
 	}
 	
 	
