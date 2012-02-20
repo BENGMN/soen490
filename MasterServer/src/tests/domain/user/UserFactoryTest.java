@@ -22,6 +22,7 @@ import java.sql.SQLException;
 import domain.user.User;
 import domain.user.UserFactory;
 import domain.user.UserIdentityMap;
+import domain.user.UserOutputMapper;
 import domain.user.UserType;
 import junit.framework.TestCase;
 
@@ -63,6 +64,9 @@ public class UserFactoryTest extends TestCase {
 		assertEquals(user.getVersion(), version);
 		assertEquals(user.getType(), userType);
 		assertEquals(user, UserIdentityMap.getUniqueInstance().get(uid)); // note this uses the overriden equals method
+		
+		// As a final test make sure the user is deleted from the database
+		assertEquals(UserOutputMapper.delete(user), 1);
 	}
 	
 }
