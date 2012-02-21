@@ -30,7 +30,7 @@ public class UserIdentityMapTest {
 	{
 		// Get a unique instance of the map
 		UserIdentityMap map = UserIdentityMap.getUniqueInstance();
-		final long uid = 2L;
+		final long uid = 234L;
 		// Create a new user
 		User user = new User(uid, "", "", UserType.USER_NORMAL, 0);
 		
