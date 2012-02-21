@@ -39,15 +39,23 @@ public class UserFactoryTest extends TestCase {
 	 * It should return a user object which should be cached
 	 * within the UserIdentityMap and the object should also be able to be located within the database.
 	 * @throws IOException
+	 * @throws SQLException 
 	 */
-	public void testCreateClean() throws IOException {
+	public void testCreateClean() throws IOException, SQLException {
 		User user = UserFactory.createClean(uid, email, password, userType, version);
+		
+		// Make sure all of the attributes were properly assigned
 		assertEquals(user.getUid(), uid);
 		assertEquals(user.getEmail(), email);
 		assertEquals(user.getPassword(), password);
 		assertEquals(user.getVersion(), version);
 		assertEquals(user.getType(), userType);
-		assertEquals(user, UserIdentityMap.getUniqueInstance().get(uid)); // note this uses the overriden equals method
+		
+		// Make sure the User object was created properly and placed into the cache
+		assertEquals(user, UserIdentityMap.getUniqueInstance().get(uid));
+		
+		// make sure the user is not in the database
+		assertEquals(UserOutputMapper.delete(user), 0); 
 	}
 	
 	/**
@@ -59,11 +67,15 @@ public class UserFactoryTest extends TestCase {
 	 */
 	public void testCreateNew() throws IOException, SQLException {
 		User user = UserFactory.createNew(email, password, userType);
+		
+		// Make sure all of the attributes were properly assigned
 		assertEquals(user.getEmail(), email);
 		assertEquals(user.getPassword(), password);
 		assertEquals(user.getVersion(), version);
 		assertEquals(user.getType(), userType);
-		assertEquals(user, UserIdentityMap.getUniqueInstance().get(uid)); // note this uses the overriden equals method
+		
+		// Make sure the User object was created properly and placed into the cache
+		assertEquals(user, UserIdentityMap.getUniqueInstance().get(uid));
 		
 		// As a final test make sure the user is deleted from the database
 		assertEquals(UserOutputMapper.delete(user), 1);
