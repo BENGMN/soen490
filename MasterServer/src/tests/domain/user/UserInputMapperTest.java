@@ -50,7 +50,7 @@ public class UserInputMapperTest extends TestCase {
 		assertEquals(user.equals(userCopy), true);
 		
 		// Remove the test record from the database, which also confirms it was persisted.
-		UserOutputMapper.delete(user);
+		assertEquals(UserOutputMapper.delete(user), 1);
 	}
 	
 	public void testFindUserCacheMiss() throws IOException {
@@ -73,7 +73,7 @@ public class UserInputMapperTest extends TestCase {
 		assertEquals(user.equals(userCopy), true);
 		
 		// Remove the test record from the database
-		UserOutputMapper.delete(user);
+		assertEquals(UserOutputMapper.delete(user), 1);
 	}
 	
 	public void testFindByEmail() throws IOException, SQLException {
@@ -89,7 +89,7 @@ public class UserInputMapperTest extends TestCase {
 		assertEquals(user.equals(userCopy), true);
 		
 		// Remove the test record from the database, which also confirms it was persisted.
-		UserOutputMapper.delete(user);
+		assertEquals(UserOutputMapper.delete(user), 1);
 	}
 	
 }

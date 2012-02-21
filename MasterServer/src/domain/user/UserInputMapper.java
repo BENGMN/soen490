@@ -39,6 +39,13 @@ public class UserInputMapper {
 		return null;
 	}
 	
+	/**
+	 * Find a User by their email address. Note this method does not consult
+	 * the UserInputMapper. Instead this method calls the database layer via the UserFinder.
+	 * @param email
+	 * @return
+	 * @throws IOException
+	 */
 	public static User findByEmail(String email) throws IOException {		
 		try	{
 			ResultSet rs = UserFinder.find(email);
