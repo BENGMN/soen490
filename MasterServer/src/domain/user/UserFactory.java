@@ -49,9 +49,6 @@ public class UserFactory {
 		// Put the loaded message in the identity map
 		UserIdentityMap.getUniqueInstance().put(uid, usr);
 		
-		// NOTE: Next line produces an SQL exception since it tries to insert instead of update the record.
-		//UserOutputMapper.insert(usr); 
-		
 		return usr;
 	}
 }
