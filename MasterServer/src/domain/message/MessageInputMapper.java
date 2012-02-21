@@ -51,18 +51,17 @@ public class MessageInputMapper {
 	}
 	
 	/**
-	 * Internal use of getMessage; checks map.
-	 * @param rs
-	 * @return Message
+	 * Internal use of getMessage; Does NOT check the map.
+	 * Object relational mapping for the Message occurs here.
+	 * @param rs Result set containing a message
+	 * @return Message Message object created based on the result set
 	 * @throws SQLException
 	 */
 	private static Message getMessage(ResultSet rs) throws SQLException {
 		Timestamp date = rs.getTimestamp("m.created_at");
 		
 		BigInteger mid = rs.getBigDecimal("m.mid").toBigInteger();
-		Message message = MessageIdentityMap.getUniqueInstance().get(mid);
-		if (message != null)
-			return message;
+		Message message;
 		
 		message = MessageFactory.createClean(mid,
 								 rs.getLong("m.uid"),
