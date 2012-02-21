@@ -29,13 +29,19 @@ import domain.message.MessageIdentityMap;
 public class MessageIdentityMapTest {
 	
 	private byte[] messageData = { 1, 2, 3, 4, 5, 6 };
-	
+	private BigInteger mid = new BigInteger("0");
 	@Test
 	public void testFunctionality()
 	{
 		MessageIdentityMap map = MessageIdentityMap.getUniqueInstance();
-		Message message = MessageFactory.createClean(new BigInteger("0"), 0, messageData, 10.0f, 10.0, 10.0, new Timestamp(GregorianCalendar.getInstance().getTimeInMillis()), 0, 1);
-		map.put(new BigInteger("0"), message);
-		assertEquals(map.get(new BigInteger("0")), message);
+		Message message = MessageFactory.createClean(mid, 0, messageData, 10.0f, 10.0, 10.0, new Timestamp(GregorianCalendar.getInstance().getTimeInMillis()), 0, 1);
+		
+		// Make sure the map put method works
+		map.put(mid, message);
+		assertEquals(map.get(mid), message);
+		
+		// Make sure the remove method works
+		map.remove(mid);
+		assertNull(map.get(mid));
 	}
 }
