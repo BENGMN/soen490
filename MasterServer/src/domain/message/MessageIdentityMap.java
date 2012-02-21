@@ -63,6 +63,14 @@ public class MessageIdentityMap {
 	}
 	
 	/**
+	 * Removes the associated message associated with the specified message ID (mid) from this map.
+	 * @param mid Message ID
+	 */
+	public void remove(BigInteger mid) {
+		messageMap.remove(mid);
+	}
+	
+	/**
 	 * Get the singleton unique instance
 	 * @return the unique instance
 	 */
