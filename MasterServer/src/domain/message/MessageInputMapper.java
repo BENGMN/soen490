@@ -2,8 +2,7 @@
  * SOEN 490
  * Capstone 2011
  * Message input mapper for message domain object.
- * Team members: 	
- * 			Sotirios Delimanolis
+ * Team members: Sotirios Delimanolis
  * 			Filipe Martinho
  * 			Adam Harrison
  * 			Vahe Chahinian
@@ -90,9 +89,7 @@ public class MessageInputMapper {
 				message = getMessage(rs);
 			}
 		}
-		
 		return message;
-		
 	}
 	
 	public static List<Message> findByUser(IUser user) throws IOException, SQLException {
@@ -119,8 +116,6 @@ public class MessageInputMapper {
 			Message m = getMessage(rs);
 			messages.add(m);
 		}
-		
-
 		return messages;
 	}
 	
