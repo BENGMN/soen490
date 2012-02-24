@@ -49,6 +49,16 @@ public class MessageInputMapper {
 		return messages;
 	}
 	
+	public List<BigInteger> findIdsInProximity(double longitude, double latitude, double radius) throws SQLException, IOException {
+		ResultSet rs = MessageFinder.findIdsInProximity(longitude, latitude, radius);
+		List<BigInteger> messages = new LinkedList<BigInteger>();
+		while (rs.next()) {
+			BigInteger mid = rs.getBigDecimal("m.mid").toBigInteger();
+			messages.add(mid);
+		}
+		return messages;
+	}
+	
 	/**
 	 * Internal use of getMessage; Does NOT check the map.
 	 * Object relational mapping for the Message occurs here.

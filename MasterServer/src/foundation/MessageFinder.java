@@ -117,4 +117,19 @@ public class MessageFinder {
 			return rs;
 		}
 		
+		private static final String SELECT_ID_BY_RADIUS =
+				"SELECT m.mid " +
+				"FROM " + MessageTDG.TABLE + " AS m " + "WHERE m.longitude BETWEEN ? AND ? AND m.latitude BETWEEN ? AND ?;";
+		
+		public static ResultSet findIdsInProximity(double longitude, double latitude, double radius) throws SQLException, IOException {
+			PreparedStatement ps = Database.getInstance().getStatement(SELECT_ID_BY_RADIUS);
+			List<Coordinate> rectangle = GeoSpatialSearch.convertPointToRectangle(new Coordinate(longitude, latitude), radius);
+			ps.setDouble(1, rectangle.get(0).getLongitude());
+			ps.setDouble(2, rectangle.get(1).getLongitude());
+			ps.setDouble(3, rectangle.get(0).getLatitude());
+			ps.setDouble(4, rectangle.get(1).getLatitude());
+			ResultSet rs = ps.executeQuery();
+			return rs;
+		}
+		
 }
