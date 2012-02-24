@@ -42,5 +42,5 @@ cd into the folder where you want the repository
 type git init
 Follow this tutorial:
   http://help.github.com/win-set-up-git/
-Type git clone git@github.com:BENGMN/soen490.git
+Type git remote add origin git@github.com:BENGMN/soen490.git
 Type git pull origin master
