@@ -21,6 +21,10 @@ import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
+
+import technical.Coordinate;
+import technical.GeoSpatialSearch;
 
 /**
  * Foundation class for executing finds on Message table
@@ -97,26 +101,18 @@ public class MessageFinder {
 		 * @throws SQLException
 		 */		
 		// Good explanation of how to create a fast query that is within particular bounds.
-		//http://www.scribd.com/doc/2569355/Geo-Distance-Search-with-MySQL
+		// http://www.scribd.com/doc/2569355/Geo-Distance-Search-with-MySQL
 		private static final String SELECT_BY_RADIUS =
 				"SELECT m.mid, m.uid, m.message, m.speed, m.latitude, m.longitude, m.created_at, m.user_rating, m.version " +
 				"FROM " + MessageTDG.TABLE + " AS m " + "WHERE m.longitude BETWEEN ? AND ? AND m.latitude BETWEEN ? AND ?;";
 		
 		public static ResultSet findInProximity(double longitude, double latitude, double radius) throws SQLException, IOException {
 			PreparedStatement ps = Database.getInstance().getStatement(SELECT_BY_RADIUS);
-			// Specified in paper; this is bascically a calculation based on meters; one degree is roughly 110400 meters.
-			final double metersPerLatitude = 110400.0;
-			final double metersPerLongitude = Math.cos(latitude)*metersPerLatitude;
-			// We take calculate the half-size of the square's side from this radius.
-			final double squareHalfSize = Math.sqrt(radius*radius / 2.0); 
-			double lon1 = longitude - squareHalfSize / metersPerLongitude;
-			double lon2 = longitude + squareHalfSize / metersPerLongitude;
-			double lat1 = latitude - squareHalfSize / metersPerLatitude;
-			double lat2 = latitude + squareHalfSize / metersPerLatitude;
-			ps.setDouble(1, lon1);
-			ps.setDouble(2, lon2);
-			ps.setDouble(3, lat1);
-			ps.setDouble(4, lat2);
+			List<Coordinate> rectangle = GeoSpatialSearch.convertPointToRectangle(new Coordinate(longitude, latitude), radius);
+			ps.setDouble(1, rectangle.get(0).getLongitude());
+			ps.setDouble(2, rectangle.get(1).getLongitude());
+			ps.setDouble(3, rectangle.get(0).getLatitude());
+			ps.setDouble(4, rectangle.get(1).getLatitude());
 			ResultSet rs = ps.executeQuery();
 			return rs;
 		}
