@@ -8,6 +8,7 @@ import tests.application.*;
 import tests.domain.message.*;
 import tests.domain.user.*;
 import tests.foundation.*;
+import tests.technical.GeoSpatialSearchTest;
 
 @RunWith(Suite.class)
 
@@ -28,7 +29,8 @@ import tests.foundation.*;
 		 UserTest.class,
 		 DatabaseTest.class,
 		 MessageTDGTest.class,
-		 UserTDGTest.class
+		 UserTDGTest.class,
+		 GeoSpatialSearchTest.class
 
 })
 

@@ -14,7 +14,7 @@
  *
  */
 
-package tests.foundation;
+package tests.technical;
 
 import java.text.DecimalFormat;
 import java.util.List;
