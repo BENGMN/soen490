@@ -16,6 +16,7 @@
 package domain.message;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.sql.SQLException;
 import foundation.MessageTDG;
 
@@ -45,8 +46,20 @@ public class MessageOutputMapper {
 	 */
 	public static int delete(Message message) throws IOException, SQLException {
 		MessageIdentityMap.getUniqueInstance().put(message.getMid(), null);
-		return MessageTDG.delete(message.getMid(), message.getVersion());
+		return MessageTDG.delete(message.getMid());
 	}
+	
+	/**
+	 * Calls the foundation method for deleting a message using its id
+	 * @param mid
+	 * @return
+	 * @throws SQLException
+	 * @throws IOException
+	 */
+	public static int deleteExpiredMessage(BigInteger mid) throws SQLException, IOException {
+		MessageIdentityMap.getUniqueInstance().remove(mid);
+		return MessageTDG.delete(mid);
+	}	
 	
 	/**
 	 * Calls the foundation method for inserting a message

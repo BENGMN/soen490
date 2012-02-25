@@ -111,6 +111,24 @@ public class MessageInputMapper {
 		}
 		return messages;
 	}
+	
+	/**
+	 * Find expired messages using time to live
+	 * @param timeToLive
+	 * @return List of message ids
+	 * @throws IOException
+	 * @throws SQLException
+	 */
+	public static List<BigInteger> findExpiredMessages(int timeToLive) throws IOException, SQLException {
+		ResultSet rs = MessageFinder.findExpired(timeToLive);
+		List<BigInteger> messageIds = new LinkedList<BigInteger>();
+		
+		while(rs.next()) {
+			messageIds.add(rs.getBigDecimal("m.mid").toBigInteger());
+		}
+			
+		return messageIds;
+	}
 
 	/**
 	 * Finds all. Obviously.

@@ -21,6 +21,7 @@ import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.List;
 
 import technical.Coordinate;
@@ -88,6 +89,27 @@ public class MessageFinder {
 		public static ResultSet findByUser(long uid) throws SQLException, IOException {
 			PreparedStatement ps = Database.getInstance().getStatement(SELECT_BY_EMAIL);
 			ps.setLong(1, uid);
+			ResultSet rs = ps.executeQuery();
+			return rs;
+		}
+		
+		
+		private static final String SELECT_BY_DATE = 
+				"SELECT m.mid" +  
+				"From" + MessageTDG.TABLE + "As m " +
+			    "Where DATE_ADD(created_at, INTERVAL ? DAY) >= ?";
+		
+		/**
+		 * Finds messages that are expired based on their date and time to live
+		 * @param timeToLive
+		 * @return Returns the resultset containing the message Ids to be deleted
+		 * @throws SQLException
+		 * @throws IOException
+		 */
+		public static ResultSet findExpired(int timeToLive) throws SQLException, IOException {
+			PreparedStatement ps = Database.getInstance().getStatement(SELECT_BY_DATE);
+			ps.setInt(1, timeToLive);
+			ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
 			ResultSet rs = ps.executeQuery();
 			return rs;
 		}

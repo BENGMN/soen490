@@ -105,7 +105,7 @@ public class MessageTDG {
 	}
 
 	private final static String DELETE = 
-		"DELETE FROM " + TABLE + " WHERE mid = ? AND version = ?";
+		"DELETE FROM " + TABLE + " WHERE mid = ?";
 	
 	/**
 	 * Deletes a message from the Message table.
@@ -114,11 +114,10 @@ public class MessageTDG {
 	 * @return Returns 1 if the operation was successful, 0 if it no rows were affected.
 	 * @throws SQLException
 	 */
-	public static int delete(BigInteger mid, int version) throws SQLException, IOException {
+	public static int delete(BigInteger mid) throws SQLException, IOException {
 		PreparedStatement ps = Database.getInstance().getStatement(DELETE);
 		
 		ps.setBigDecimal(1, new BigDecimal(mid));
-		ps.setInt(2, version);
 		
 		int count = ps.executeUpdate();
 		ps.close();
