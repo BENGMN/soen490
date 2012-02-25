@@ -30,3 +30,17 @@ cd existing_git_repo
 Setting up the database:
 In the test folder the UserTDGTest can be used to set up your databases for you automatically. 
 Simply run the tests and comment out this line Database.getInstance().dropDatabase(); if you want the databases to persist.
+
+For getting the actual git repository
+
+On windows
+Download and install Git
+  git config --global user.name "John Doe"
+  git config --global user.email john.doe@gmail.com
+go to the bash emulator
+cd into the folder where you want the repository
+type git init
+Follow this tutorial:
+  http://help.github.com/win-set-up-git/
+Type git remote add origin git@github.com:BENGMN/soen490.git
+Type git pull origin master

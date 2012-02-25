@@ -122,7 +122,7 @@ public class MessageInputMapperTest extends TestCase {
 	}
 	
 	public void testFindInProximity() {
-		
+
 	}
 	
 }

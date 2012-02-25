@@ -2,8 +2,7 @@
  * SOEN 490
  * Capstone 2011
  * Message input mapper for message domain object.
- * Team members: 	
- * 			Sotirios Delimanolis
+ * Team members: Sotirios Delimanolis
  * 			Filipe Martinho
  * 			Adam Harrison
  * 			Vahe Chahinian
@@ -50,6 +49,16 @@ public class MessageInputMapper {
 		return messages;
 	}
 	
+	public List<BigInteger> findIdsInProximity(double longitude, double latitude, double radius) throws SQLException, IOException {
+		ResultSet rs = MessageFinder.findIdsInProximity(longitude, latitude, radius);
+		List<BigInteger> messages = new LinkedList<BigInteger>();
+		while (rs.next()) {
+			BigInteger mid = rs.getBigDecimal("m.mid").toBigInteger();
+			messages.add(mid);
+		}
+		return messages;
+	}
+	
 	/**
 	 * Internal use of getMessage; Does NOT check the map.
 	 * Object relational mapping for the Message occurs here.
@@ -90,9 +99,7 @@ public class MessageInputMapper {
 				message = getMessage(rs);
 			}
 		}
-		
 		return message;
-		
 	}
 	
 	public static List<Message> findByUser(IUser user) throws IOException, SQLException {
@@ -119,8 +126,6 @@ public class MessageInputMapper {
 			Message m = getMessage(rs);
 			messages.add(m);
 		}
-		
-
 		return messages;
 	}
 	
