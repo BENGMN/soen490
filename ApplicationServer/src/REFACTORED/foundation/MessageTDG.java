@@ -130,8 +130,8 @@ public class MessageTDG {
 		"longitude double NOT NULL, " +
 		"created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, " +
 		"user_rating int NOT NULL, " +
-		"CONSTRAINT pk_mid PRIMARY KEY(mid), " +
-		"CONSTRAINT fk_uid FOREIGN KEY(uid) REFERENCES User (uid));";
+		"CONSTRAINT pk_mid PRIMARY KEY(mid));";
+		//"CONSTRAINT fk_uid FOREIGN KEY(uid) REFERENCES User (uid));";
 	
 	/**
 	 * Creates the table Message in the database.

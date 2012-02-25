@@ -40,8 +40,8 @@ public class Database {
 	private Database() throws IOException {
 		// Note: The path cannot be resolved properly unless the container is running
 		// LOCAL HACK: cd to MasterServer then ln -s /WebContent/WEB-INF (creates a symbolic link)
-		String path = ServletInformation.getInstance().resolvePath("WEB-INF/Database.properties");
-		prop.load(new FileInputStream(path));
+		String path = ServletInformation.getInstance().resolvePath("Database.properties");
+		prop.load(new FileInputStream("Database.properties"));
 	}
 	
 	// TODO this is a terrible way to do this
@@ -60,9 +60,12 @@ public class Database {
 			// This will load the MySQL driver, each DB has its own driver
 			Class.forName("com.mysql.jdbc.Driver");
 			// Setup the connection with the DB
-			Connection connection = DriverManager
-					.getConnection("jdbc:mysql://" + prop.getProperty("hostname") + "/" + prop.getProperty("database") + "?"
-							+ "user=" + prop.getProperty("username") + "&password=" + prop.getProperty("password"));
+			String host = prop.getProperty("hostname");
+			String db = prop.getProperty("database");
+			String user = prop.getProperty("username");
+			String password = prop.getProperty("password");
+			String connect = "jdbc:mysql://" + host + "/" + db + "&" + "user=" + user + "&password=" + password;
+			Connection connection = DriverManager.getConnection(connect);
 			return connection;
 		} catch (SQLException e) {			
 			throw e;

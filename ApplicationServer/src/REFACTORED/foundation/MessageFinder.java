@@ -59,7 +59,7 @@ public class MessageFinder {
 			"m.latitude, " +
 			"m.longitude, " +
 			"m.created_at, " +
-			"m.user_rating, " +
+			"m.user_rating " +
 			"FROM " + MessageTDG.TABLE + " AS m " +
 			"WHERE m.mid = ?;";
 		
