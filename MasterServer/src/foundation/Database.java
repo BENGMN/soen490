@@ -41,8 +41,8 @@ public class Database {
 	private Database() throws IOException {
 		// Note: The path cannot be resolved properly unless the container is running
 		// LOCAL HACK: cd to MasterServer then ln -s /WebContent/WEB-INF (creates a symbolic link)
-		String path = ServletInformation.getInstance().resolvePath("Database.properties");
-		prop.load(new FileInputStream("WEB-INF/Database.properties"));
+		String path = ServletInformation.getInstance().resolvePath("WEB-INF/Database.properties");
+		prop.load(new FileInputStream("Database.properties"));
 	}
 	
 	// TODO this is a terrible way to do this

@@ -56,6 +56,7 @@ public class MessageInputMapper {
 		return messages;
 	}
 	
+	
 	/**
 	 * Find by id method for message .
 	 * @param mid Message id

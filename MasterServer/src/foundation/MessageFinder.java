@@ -120,16 +120,90 @@ public class MessageFinder {
 		private static final String SELECT_ID_BY_RADIUS =
 				"SELECT m.mid " +
 				"FROM " + MessageTDG.TABLE + " AS m " + "WHERE m.longitude BETWEEN ? AND ? AND m.latitude BETWEEN ? AND ?;";
+		
+		private static String GET_SIZE = 
+				"SELECT COUNT(m.mid) AS size " +
+				"FROM " + MessageTDG.TABLE + " AS m " + "WHERE m.longitude BETWEEN ? AND ? AND m.latitude BETWEEN ? AND ?;";
 
-		public static ResultSet findIdsInProximity(double longitude, double latitude, double radius) throws SQLException, IOException {
-			PreparedStatement ps = Database.getInstance().getStatement(SELECT_ID_BY_RADIUS);
+		/**
+		 * 
+		 * @param longitude
+		 * @param latitude
+		 * @param speed
+		 * @return All ids of messages within a bounding rectangle that has a half cross-section of radius.
+		 * @throws SQLException
+		 */		
+		
+		public static ResultSet findIdsInProximity(double longitude, double latitude, double speed) throws SQLException, IOException {
+			
+			double radius = 0;
+			double multiplier = 0;
+			double radiusMultiplier = 500;
+			double maxRadius = 0;
+			//If the gps doesn't return a speed the default speed is 0
+			if(speed == 0)
+				speed = 30;
+			//The speed is in km 
+			//over 60km/h is highway driving 8 minutes to reach the farthest of the messages
+			//up to 16 minutes if you don't have at least 10 messages
+			if(speed > 60)
+			{	
+				multiplier = 134;
+				radius = multiplier*speed;
+				maxRadius = 8133;
+			}//over 30km/h driving is city driving 10 minutes to reach the farthest of the messages Up to 20 minutes if you don't have at least 10 messages
+			else if(speed>30 && speed<=60)
+			{
+				multiplier = 167;
+				radius = multiplier*speed;
+				maxRadius = 10333;
+			}//this is for biking speed 7 minutes to reach the farthest of the messages up to 14 minutes if you don't have at least 10 messages
+			else if(speed>9 && speed <=30)
+			{
+				multiplier = 11;
+				radius = multiplier * speed;
+				maxRadius = 2333;
+			}//this is walking speed 5 minutes to reach the farthest of the messages up to 10 minutes if you don't have at least 10 messages
+			else if(speed<=9)
+			{
+				multiplier = 83.3;
+				radius = multiplier * speed;
+				maxRadius = 1500;
+			}
+			//Next block of code is to enlarge the radius until you either find 10 messages or you reach the maximum radius allowed for that speed
+			ResultSet rsSize;
+			//flag for not incrementing the radius on the first run
+			boolean flag = false;
+			do{
+				
+				PreparedStatement psSize = Database.getInstance().getStatement(GET_SIZE);
+				List<Coordinate> rectangle = GeoSpatialSearch.convertPointToRectangle(new Coordinate(longitude, latitude), radius);
+				psSize.setDouble(1, rectangle.get(0).getLongitude());
+				psSize.setDouble(2, rectangle.get(1).getLongitude());
+				psSize.setDouble(3, rectangle.get(0).getLatitude());
+				psSize.setDouble(4, rectangle.get(1).getLatitude());
+				rsSize = psSize.executeQuery();
+				rsSize.next();
+			
+				if(flag)
+					radius += radiusMultiplier;
+				else
+					flag = true;
+			
+			}
+			while(rsSize.getInt("size") <= 10 && radius <= maxRadius);
+			//Getting the actual ids at this point
+			ResultSet finaleRs;
+			
+			PreparedStatement finalPs = Database.getInstance().getStatement(SELECT_ID_BY_RADIUS);
 			List<Coordinate> rectangle = GeoSpatialSearch.convertPointToRectangle(new Coordinate(longitude, latitude), radius);
-			ps.setDouble(1, rectangle.get(0).getLongitude());
-			ps.setDouble(2, rectangle.get(1).getLongitude());
-			ps.setDouble(3, rectangle.get(0).getLatitude());
-			ps.setDouble(4, rectangle.get(1).getLatitude());
-			ResultSet rs = ps.executeQuery();
-			return rs;
+			finalPs.setDouble(1, rectangle.get(0).getLongitude());
+			finalPs.setDouble(2, rectangle.get(1).getLongitude());
+			finalPs.setDouble(3, rectangle.get(0).getLatitude());
+			finalPs.setDouble(4, rectangle.get(1).getLatitude());
+			finaleRs = finalPs.executeQuery();
+
+			return finaleRs;
 		}
 		
 		private static final String SELECT_BY_DATE = 
