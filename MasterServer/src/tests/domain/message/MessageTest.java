@@ -45,10 +45,9 @@ public class MessageTest extends TestCase {
 	final double longitude = 35.134;
 	private Timestamp createdAt = new Timestamp(new GregorianCalendar(2011, 9, 10).getTimeInMillis());
 	private int userRating = 7;
-	private int msgVersion = 1;
 	
 	public void testGetters() {
-		Message msg = new Message(mid, owner, message, speed, latitude, longitude, createdAt, userRating, msgVersion);
+		Message msg = new Message(mid, owner, message, speed, latitude, longitude, createdAt, userRating);
 		assertEquals(msg.getMid(), mid);
 		assertEquals(msg.getOwner(), owner);
 		assertEquals(msg.getMessage(), message);
@@ -57,21 +56,18 @@ public class MessageTest extends TestCase {
 		assertEquals(msg.getLongitude(),  longitude);
 		assertEquals(msg.getCreatedAt(), createdAt);
 		assertEquals(msg.getUserRating(), userRating);
-		assertEquals(msg.getVersion(), msgVersion);
 	}
 	
 	public void testSetters() {
-		Message msg = new Message(mid, owner, message, speed, latitude, longitude, createdAt, userRating, msgVersion);
+		Message msg = new Message(mid, owner, message, speed, latitude, longitude, createdAt, userRating);
 		msg.setUserRating(10);
-		msg.setVersion(2);
 		
 		assertEquals(msg.getUserRating(), 10);
-		assertEquals(msg.getVersion(), 2);
 	}
 	
 	public void testEquals() {
-		Message m1 = new Message(mid, owner, message, speed, latitude, longitude, createdAt, userRating, msgVersion);
-		Message m2 = new Message(mid, owner, message, speed, latitude, longitude, createdAt, userRating, 2);
+		Message m1 = new Message(mid, owner, message, speed, latitude, longitude, createdAt, userRating);
+		Message m2 = new Message(mid, owner, message, 10.0f, latitude, longitude, createdAt, userRating);
 		
 		assertEquals("Should return false when compared to a null",m1.equals(null), false);
 		assertEquals("Should return false when compared to a different object", m1.equals(m2), false);

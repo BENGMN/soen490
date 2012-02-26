@@ -24,6 +24,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import javax.sql.rowset.serial.SerialBlob;
 
+
 /**
  * Foundation class for executing insert/delete/update operations on Message table
  * @author Moving Target
@@ -43,15 +44,13 @@ public class MessageTDG {
 			"latitude, " +
 			"longitude, " +
 			"created_at, " +
-			"user_rating, " +
-			"version) " +
-			"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+			"user_rating) " +
+			"VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 	
 	/**
 	 * Inserts a row into the table for Message, where the column row values are the passed parameters.
 	 * @param mid Message id
 	 * @param uid User id
-	 * @param version Message version
 	 * @param message Message contents
 	 * @param speed Message speed 
 	 * @param latitude Message latitude of location
@@ -61,7 +60,7 @@ public class MessageTDG {
 	 * @return Returns 1 if the insert succeeded. 
 	 * @throws SQLException
 	 */
-	public static int insert(BigInteger mid, long uid, int version, byte[] message, float speed, double latitude , double longitude , Timestamp created_at , int user_rating) throws SQLException, IOException {
+	public static int insert(BigInteger mid, long uid, byte[] message, float speed, double latitude , double longitude , Timestamp created_at , int user_rating) throws SQLException, IOException {
 		PreparedStatement ps = Database.getInstance().getStatement(INSERT);
 		
 		ps.setBigDecimal(1, new BigDecimal(mid));
@@ -72,7 +71,6 @@ public class MessageTDG {
 		ps.setDouble(6, longitude);
 		ps.setTimestamp(7, created_at);
 		ps.setInt(8, user_rating);
-		ps.setInt(9, version);
 		
 		int count = ps.executeUpdate();
 		ps.close();
@@ -81,8 +79,8 @@ public class MessageTDG {
 	
 	private final static String UPDATE = 
 		"UPDATE " + TABLE + " " +
-		"SET user_rating = ?, version = version + 1  " +
-		"WHERE mid = ? AND version = ?";
+		"SET user_rating = ? " +
+		"WHERE mid = ?";
 	
 	/**
 	 * Not much use for this, since we always want to increment or decrement the user rating by 1.
@@ -92,12 +90,11 @@ public class MessageTDG {
 	 * @return Returns the number of rows updated, should be 1.
 	 * @throws SQLException
 	 */
-	public static int update(BigInteger mid, int user_rating, int version) throws SQLException, IOException {
+	public static int update(BigInteger mid, int user_rating) throws SQLException, IOException {
 		PreparedStatement ps = Database.getInstance().getStatement(UPDATE);
 		
 		ps.setInt(1, user_rating);
 		ps.setObject(2, mid);
-		ps.setLong(3, version);
 		
 		int count = ps.executeUpdate();
 		ps.close();
@@ -110,7 +107,6 @@ public class MessageTDG {
 	/**
 	 * Deletes a message from the Message table.
 	 * @param mid Message id
-	 * @param version Message version
 	 * @return Returns 1 if the operation was successful, 0 if it no rows were affected.
 	 * @throws SQLException
 	 */
@@ -134,9 +130,8 @@ public class MessageTDG {
 		"longitude double NOT NULL, " +
 		"created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, " +
 		"user_rating int NOT NULL, " +
-		"version int NOT NULL, " +
-		"CONSTRAINT pk_mid PRIMARY KEY(mid), " +
-		"CONSTRAINT fk_uid FOREIGN KEY(uid) REFERENCES User (uid));";
+		"CONSTRAINT pk_mid PRIMARY KEY(mid));";
+		//"CONSTRAINT fk_uid FOREIGN KEY(uid) REFERENCES User (uid));";
 	
 	/**
 	 * Creates the table Message in the database.

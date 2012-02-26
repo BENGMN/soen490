@@ -27,7 +27,7 @@ import java.util.List;
 
 import domain.message.Message;
 import domain.message.MessageFactory;
-import domain.message.MessageOutputMapper;
+import domain.message.mappers.MessageOutputMapper;
 import foundation.MessageFinder;
 
 import junit.framework.TestCase;
@@ -50,9 +50,9 @@ public class MessageFinderTest extends TestCase {
 	private Timestamp createdDate = new Timestamp(new GregorianCalendar(2011, 9, 10).getTimeInMillis());
 	private int userRating = -1;
 	
-	private Message newMessage1 = MessageFactory.createClean(mid1, uid, array, speed, latitude1, longitude1, createdDate, userRating, 1);
-	private Message newMessage2 = MessageFactory.createClean(mid2, uid, array, speed, latitude2, longitude2, createdDate, userRating, 1);
-	private Message newMessage3 = MessageFactory.createClean(mid3, uid, array, speed, latitude3, longitude3, createdDate, userRating, 1);
+	private Message newMessage1 = MessageFactory.createClean(mid1, uid, array, speed, latitude1, longitude1, createdDate, userRating);
+	private Message newMessage2 = MessageFactory.createClean(mid2, uid, array, speed, latitude2, longitude2, createdDate, userRating);
+	private Message newMessage3 = MessageFactory.createClean(mid3, uid, array, speed, latitude3, longitude3, createdDate, userRating);
 	
 	private void createTestMessages() throws IOException, SQLException {
 
@@ -106,8 +106,7 @@ public class MessageFinderTest extends TestCase {
 								 rs.getDouble("m.latitude"),
 								 rs.getDouble("m.longitude"),
 								 date,
-								 rs.getInt("m.user_rating"),
-								 rs.getInt("m.version"));
+								 rs.getInt("m.user_rating"));
 		return message;
 	}
 }

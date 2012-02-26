@@ -23,8 +23,8 @@ import domain.user.User;
 
 import domain.user.UserFactory;
 import domain.user.UserIdentityMap;
-import domain.user.UserInputMapper;
-import domain.user.UserOutputMapper;
+import domain.user.mappers.UserInputMapper;
+import domain.user.mappers.UserOutputMapper;
 import domain.user.UserType;
 import junit.framework.TestCase;
 
@@ -64,7 +64,7 @@ public class UserInputMapperTest extends TestCase {
 		UserOutputMapper.insert(user);
 		
 		// Make sure a cache miss occurs
-		assertEquals(UserIdentityMap.getUniqueInstance().get(uid), null);
+		assertEquals(UserIdentityMap.get(uid), null);
 		
 		// Retrieve the user object from the database
 		User userCopy = UserInputMapper.find(uid);

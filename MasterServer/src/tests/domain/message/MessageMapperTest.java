@@ -25,8 +25,9 @@ import org.junit.Test;
 
 import domain.message.Message;
 import domain.message.MessageFactory;
-import domain.message.MessageInputMapper;
-import domain.message.MessageOutputMapper;
+import domain.message.mappers.MessageInputMapper;
+import domain.message.mappers.MessageOutputMapper;
+import exceptions.MapperException;
 
 import foundation.Database;
 import static org.junit.Assert.*;
@@ -37,7 +38,7 @@ public class MessageMapperTest {
 	static long uid = 158749857934L;
 	
 	@Test
-	public void testFunctionality() throws SQLException, IOException
+	public void testFunctionality() throws SQLException, IOException, MapperException
 	{
 		boolean previousDatabase = Database.getInstance().isDatabaseCreated();
 		if (!previousDatabase)
@@ -49,7 +50,7 @@ public class MessageMapperTest {
 			Database.getInstance().dropDatabase();
 	}
 	
-	private void create() throws SQLException, IOException
+	private void create() throws SQLException, IOException, MapperException
 	{
 		final byte array[] = {0,1,2,3,4,5};
 		final float speed = 10.0f;
@@ -57,14 +58,17 @@ public class MessageMapperTest {
 		final double longitude = 10.0;
 		Timestamp createdDate = new Timestamp(new GregorianCalendar(2011, 9, 10).getTimeInMillis());
 		final int userRating = -1;
-		assertNull(MessageInputMapper.find(mid));
-		Message newMessage = MessageFactory.createClean(mid, uid, array, speed, latitude, longitude, createdDate, userRating, 1);
+		//assertNull(MessageInputMapper.find(mid));
+		Message newMessage = MessageFactory.createClean(mid, uid, array, speed, latitude, longitude, createdDate, userRating);
 		MessageOutputMapper.insert(newMessage);
 		Message oldMessage = MessageInputMapper.find(mid);
+		
+		System.out.println(newMessage+"\nOld: "+oldMessage);
+		
 		assertEquals(newMessage, oldMessage);
 	}
 	
-	private void update() throws SQLException, IOException
+	private void update() throws SQLException, IOException, MapperException
 	{
 		Message oldMessage = MessageInputMapper.find(mid);
 		assertNotNull(oldMessage);
@@ -80,7 +84,6 @@ public class MessageMapperTest {
 		assertEquals(longitude, oldMessage.getLongitude(), 0.00001);
 		assertEquals(createdDate, oldMessage.getCreatedAt());
 		assertEquals(userRating, oldMessage.getUserRating());
-		assertEquals(1, oldMessage.getVersion());
 		final int newUserRating = 1;
 		oldMessage.setUserRating(newUserRating);
 		MessageOutputMapper.update(oldMessage);
@@ -95,7 +98,7 @@ public class MessageMapperTest {
 		//assertEquals(2, oldMessage.getVersion());
 	}
 	
-	private void delete() throws SQLException, IOException
+	private void delete() throws SQLException, IOException, MapperException
 	{
 		Message oldMessage = MessageInputMapper.find(mid);
 		assertNotNull(oldMessage);

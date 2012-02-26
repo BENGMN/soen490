@@ -22,8 +22,8 @@ import java.sql.SQLException;
 import domain.user.User;
 import domain.user.UserFactory;
 import domain.user.UserIdentityMap;
-import domain.user.UserOutputMapper;
 import domain.user.UserType;
+import domain.user.mappers.UserOutputMapper;
 import junit.framework.TestCase;
 
 public class UserFactoryTest extends TestCase {

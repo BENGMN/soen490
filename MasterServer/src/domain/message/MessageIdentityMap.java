@@ -45,10 +45,10 @@ public class MessageIdentityMap {
 	/**
 	 * Returns the value for which the specified key is mapped, or null if there is no mapping.
 	 * @param mid Message id
-	 * @return the value (message) for which the specified key (mid) is mapped, or null if the map contains no mapping for the key
+	 * @return Returns the value (message) for which the specified key (mid) is mapped, or null if the map contains no mapping for the key.
 	 */
-	public Message get(BigInteger mid) {
-		return messageMap.get(mid);
+	public static Message get(BigInteger mid) {
+		return getUniqueInstance().messageMap.get(mid);
 	}
 	
 	/**
@@ -58,16 +58,16 @@ public class MessageIdentityMap {
 	 * @param mid Message id
 	 * @param message Message
 	 */
-	public void put(BigInteger mid, Message message) {
-		messageMap.put(mid, message);
+	public static void put(BigInteger mid, Message message) {
+		getUniqueInstance().messageMap.put(mid, message);
 	}
 	
 	/**
 	 * Removes the associated message associated with the specified message ID (mid) from this map.
 	 * @param mid Message ID
 	 */
-	public void remove(BigInteger mid) {
-		messageMap.remove(mid);
+	public static void remove(BigInteger mid) {
+		getUniqueInstance().messageMap.remove(mid);
 	}
 	
 	/**

@@ -19,30 +19,26 @@ package domain.user;
 import java.util.HashMap;
 
 public class UserIdentityMap {
-	private HashMap<Long, User> userMap;
+	private static HashMap<Long, User> userMap;
 	private static UserIdentityMap singleton = null;
 	
-	private UserIdentityMap()
-	{
+	private UserIdentityMap() {
 		userMap = new HashMap<Long, User>();
 	}
 	
-	public User get(long uid)
-	{
+	public static User get(long uid) {
 		return userMap.get(uid);
 	}
 	
-	public void put(long uid, User user)
-	{
-		userMap.put(uid, user);
+	public static void put(long uid, User user) {
+			userMap.put(uid, user);
 	}
 	
-	public void remove(long uid) {
+	public static void remove(long uid) {
 		userMap.remove(uid);
 	}
 	
-	public static UserIdentityMap getUniqueInstance()
-	{
+	public static UserIdentityMap getUniqueInstance(){
 		if (singleton == null)
 			singleton = new UserIdentityMap();
 		return singleton;

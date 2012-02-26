@@ -16,6 +16,7 @@
 package foundation;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -27,77 +28,71 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
+
+
 //import java.util.Stack;
 
 public class Database {
 	private static Database singleton = null;
 	private Properties prop = new Properties();
 	public static final ThreadLocal<Connection> threadConnection = new ThreadLocal<Connection>();
-	//private Stack<Connection> freeConnections = new Stack<Connection>();
-	//private static final long connectionPool = 10;
 
 	// If we want to pool connections we'd put the code in here; create at startup, and allocate connections on getConnection and freeConnection.
-	private Database() throws IOException 
-	{
+	private Database() throws IOException {
 		// Note: The path cannot be resolved properly unless the container is running
 		// LOCAL HACK: cd to MasterServer then ln -s /WebContent/WEB-INF (creates a symbolic link)
-		String path = ServletInformation.getInstance().resolvePath("WEB-INF/Database.properties");
-		prop.load(new FileInputStream(path));
+		String path = ServletInformation.getInstance().resolvePath("Database.properties");
+		prop.load(new FileInputStream("WEB-INF/Database.properties"));
 	}
 	
-	public boolean canConnect() throws SQLException
-	{
+	// TODO this is a terrible way to do this
+	public boolean canConnect() throws SQLException {
+		
 		Connection connection = getConnection();
 		if (connection == null)
 			return false;
 		freeConnection(connection);
 		return true;
 	}
+	
 	//Simply connects to the database using the correct credentials and returns a connection object.
-	private Connection connect() throws SQLException
-	{
+	private Connection connect() throws SQLException {
 		try {
 			// This will load the MySQL driver, each DB has its own driver
 			Class.forName("com.mysql.jdbc.Driver");
 			// Setup the connection with the DB
-			Connection connection = DriverManager
-					.getConnection("jdbc:mysql://" + prop.getProperty("hostname") + "/" + prop.getProperty("database") + "?"
-							+ "user=" + prop.getProperty("username") + "&password=" + prop.getProperty("password"));
+			
+			String host = prop.getProperty("hostname");
+			String db = prop.getProperty("database");
+			String user = prop.getProperty("username");
+			String password = prop.getProperty("password");
+			
+			String jdbcConnect = "jdbc:mysql://" + host + "/" + db + "?" + "user=" + user + "&password=" + password;
+			
+			Connection connection = DriverManager.getConnection(jdbcConnect);
 			return connection;
-		}
-		catch (SQLException e) 
-		{
-			
+		} catch (SQLException e) {			
 			throw e;
-			
-		}
-		catch (ClassNotFoundException e) 
-		{
-			
+		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-		
 		} 
 		
 		return null;
 		
 	}
 	// This function returns a singleton threadlocal connection. 
-	private Connection getConnection() throws SQLException
-	{
+	private Connection getConnection() throws SQLException {
 		
-		if(threadConnection.get() == null)
-		{
+		if(threadConnection.get() == null) {
 			Connection connection = connect();
 			threadConnection.set(connection);
 			return threadConnection.get();
-		}
-		else
+		} else
 			return threadConnection.get();
 		
 	}
 	
-	private void freeConnection(Connection connection) throws SQLException
-	{
+	private void freeConnection(Connection connection) throws SQLException {
 		connection.close();
 		threadConnection.remove();
 	}

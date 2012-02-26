@@ -70,7 +70,7 @@ public class HttpMessageTest {
 			double longitude = unpacker.readDouble();
 			double latitude = unpacker.readDouble();
 			int userRating = unpacker.readInt();
-			arrayList.add(MessageFactory.createClean(mid, 0, message, speed, latitude, longitude, createdAt, userRating, 0));
+			arrayList.add(MessageFactory.createClean(mid, 0, message, speed, latitude, longitude, createdAt, userRating));
 		}
 		return arrayList;
 	}

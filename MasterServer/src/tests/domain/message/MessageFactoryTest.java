@@ -10,7 +10,7 @@ import java.util.GregorianCalendar;
 import domain.message.Message;
 import domain.message.MessageFactory;
 import domain.message.MessageIdentityMap;
-import domain.message.MessageOutputMapper;
+import domain.message.mappers.MessageOutputMapper;
 import domain.user.IUser;
 import domain.user.UserProxy;
 
@@ -30,13 +30,13 @@ public class MessageFactoryTest extends TestCase {
 	final double longitude = 35.134;
 	private Timestamp createdAt = new Timestamp(new GregorianCalendar(2011, 9, 10).getTimeInMillis());
 	private int userRating = 7;
-	private int msgVersion = 1;
 	
 	public void testCreateClean() {
-		Message newMsg = new Message(mid, owner, message, speed, latitude, longitude, createdAt, userRating, msgVersion);
-		Message factoryMsg = MessageFactory.createClean(mid, uid, message, speed, latitude, longitude, createdAt, userRating, msgVersion);
+		Message newMsg = new Message(mid, owner, message, speed, latitude, longitude, createdAt, userRating);
+		Message factoryMsg = MessageFactory.createClean(mid, uid, message, speed, latitude, longitude, createdAt, userRating);
 		assertEquals("Message created using constructor should be identical to that the factory produces", newMsg.equals(factoryMsg), true);
-		assertEquals("Message created using constructor should be identical to that the factory produces and stores in the MessageIdentityMap", newMsg.equals(MessageIdentityMap.getUniqueInstance().get(mid)), true);
+		MessageIdentityMap.getUniqueInstance();
+		assertEquals("Message created using constructor should be identical to that the factory produces and stores in the MessageIdentityMap", newMsg.equals(MessageIdentityMap.get(mid)), true);
 	}
 	
 	public void testCreateNew() throws NoSuchAlgorithmException, IOException, SQLException {
@@ -48,7 +48,6 @@ public class MessageFactoryTest extends TestCase {
 		assertEquals(msg.getLongitude(), longitude);
 		assertEquals(msg.getSpeed(), speed);
 		assertEquals(msg.getUserRating(), userRating);
-		assertEquals(msg.getVersion(), msgVersion);
 		assertEquals(msg.getCreatedAt(), createdAt);
 		assertEquals(msg.getMessage(), message);
 		assertEquals(msg.getOwner(), owner);

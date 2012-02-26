@@ -1,8 +1,8 @@
 /**
  * SOEN 490
  * Capstone 2011
- * IUser interface for the User Domain Object and its proxy.
- * Team members: 	Sotirios Delimanolis
+ * Team members: 	
+ * 			Sotirios Delimanolis
  * 			Filipe Martinho
  * 			Adam Harrison
  * 			Vahe Chahinian
@@ -17,9 +17,8 @@ package domain.user;
 
 import java.io.IOException;
 
-import technical.IServerSendable;
 
-public interface IUser extends IServerSendable {
+public interface IUser {
 
 	public long getUid();
 	public String getPassword() throws IOException;

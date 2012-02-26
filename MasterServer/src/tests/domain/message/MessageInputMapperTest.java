@@ -26,11 +26,12 @@ import java.util.List;
 
 import domain.message.Message;
 import domain.message.MessageFactory;
-import domain.message.MessageInputMapper;
-import domain.message.MessageOutputMapper;
+import domain.message.mappers.MessageInputMapper;
+import domain.message.mappers.MessageOutputMapper;
 import domain.user.IUser;
 import domain.user.UserFactory;
 import domain.user.UserType;
+import exceptions.MapperException;
 
 import junit.framework.TestCase;
 
@@ -52,12 +53,12 @@ public class MessageInputMapperTest extends TestCase {
 	private final UserType userType = UserType.USER_NORMAL;
 	private final int version = 1;
 	
-	public void testFind() throws IOException, SQLException {
+	public void testFind() throws IOException, SQLException, MapperException {
 		// Make sure that the message does not already exist in the database
 		assertNull(MessageInputMapper.find(mid));
 		
 		// Create a new message using the factory createClean method to ensure it does not do the insertion into the database
-		Message newMessage = MessageFactory.createClean(mid, uid, message, speed, latitude, longitude, createdDate, userRating, 1);
+		Message newMessage = MessageFactory.createClean(mid, uid, message, speed, latitude, longitude, createdDate, userRating);
 		
 		// Insert the message into the database
 		MessageOutputMapper.insert(newMessage);

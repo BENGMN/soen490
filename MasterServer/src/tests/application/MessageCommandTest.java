@@ -47,20 +47,21 @@ import org.msgpack.unpacker.Unpacker;
 import technical.UnrecognizedUserException;
 
 
-import application.DownvoteMessageCommand;
-import application.GetMessagesCommand;
-import application.ParameterException;
-import application.PutMessageCommand;
-import application.UpvoteMessageCommand;
+import application.commands.DownvoteMessageCommand;
+import application.commands.ReadMessageCommand;
+import application.commands.CreateMessageCommand;
+import application.commands.UpvoteMessageCommand;
 
 import domain.message.Message;
 import domain.message.MessageFactory;
-import domain.message.MessageInputMapper;
-import domain.message.MessageOutputMapper;
+import domain.message.mappers.MessageInputMapper;
+import domain.message.mappers.MessageOutputMapper;
 import domain.user.User;
 import domain.user.UserFactory;
-import domain.user.UserOutputMapper;
+import domain.user.mappers.UserOutputMapper;
 import domain.user.UserType;
+import exceptions.MapperException;
+import exceptions.ParameterException;
 import foundation.Database;
 
 public class MessageCommandTest {
@@ -83,7 +84,7 @@ public class MessageCommandTest {
 	}
 	
 	@Test
-	public void getCommand() throws SQLException, IOException, NoSuchAlgorithmException
+	public void getCommand() throws SQLException, IOException, NoSuchAlgorithmException, MapperException, ParameterException, exceptions.UnrecognizedUserException
 	{
 		final double longitude = 10.0;
 		final double latitude = 30.0;
@@ -101,7 +102,7 @@ public class MessageCommandTest {
 		request.setParameter("longitude", Double.toString(longitude));
 		request.setParameter("latitude", Double.toString(latitude));
 		request.setParameter("speed", Float.toString(speed));
-		GetMessagesCommand getMessageCommand = new GetMessagesCommand();
+		ReadMessageCommand getMessageCommand = new ReadMessageCommand();
 		getMessageCommand.execute(request, response);
 		assertEquals(HttpServletResponse.SC_OK, response.getStatus());
 		byte[] responseBytes = response.getContentAsByteArray();
@@ -123,7 +124,7 @@ public class MessageCommandTest {
 	}
 	
 	@Test
-	public void putCommand() throws SQLException, IOException, UnrecognizedUserException, ParameterException, NoSuchAlgorithmException
+	public void putCommand() throws SQLException, IOException, UnrecognizedUserException, ParameterException, NoSuchAlgorithmException, MapperException, exceptions.UnrecognizedUserException
 	{		
 		String fileName = "test.amr";
 		File file = new File(fileName);
@@ -145,8 +146,8 @@ public class MessageCommandTest {
 		byte[] contentArray = createContent("bin", fileBytes, parameters);
 		request.setContentType("multipart/mixed; boundary=" + BOUNDARY);
 		request.setContent(contentArray);
-		PutMessageCommand putMessageCommand = new PutMessageCommand();
-		putMessageCommand.execute(request, response);
+		CreateMessageCommand createMessageCommand = new CreateMessageCommand();
+		createMessageCommand.execute(request, response);
 		assertEquals(HttpServletResponse.SC_ACCEPTED, response.getStatus());
 		messages = MessageInputMapper.findByUser(user);
 		assertEquals(1, messages.size());
@@ -184,7 +185,7 @@ public class MessageCommandTest {
 	}
 	
 	@Test
-	public void upvoteCommand() throws SQLException, IOException, NoSuchAlgorithmException
+	public void upvoteCommand() throws SQLException, IOException, NoSuchAlgorithmException, MapperException, ParameterException, exceptions.UnrecognizedUserException
 	{
 		final byte[] bytes = new byte[10];
 		final float speed = 10.0f;
@@ -193,20 +194,20 @@ public class MessageCommandTest {
 		Timestamp createdDate = new Timestamp(GregorianCalendar.getInstance().getTimeInMillis());
 		final int userRating = 0;
 		Message message = MessageFactory.createNew(0, bytes, speed, latitude, longitude, createdDate, userRating);
-		UpvoteMessageCommand rateMessageCommand = new UpvoteMessageCommand();
+		UpvoteMessageCommand upvoteMessageCommand = new UpvoteMessageCommand();
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		request.setParameter("mid", message.getMid().toString());
 		request.setParameter("longitude", Double.toString(longitude));
 		request.setParameter("latitude", Double.toString(latitude));
-		rateMessageCommand.execute(request, response);
+		upvoteMessageCommand.execute(request, response);
 		assertEquals(HttpServletResponse.SC_ACCEPTED, response.getStatus());
 		assertEquals(userRating + 1, message.getUserRating());
 		assertEquals(1, MessageOutputMapper.delete(message));
 	}
 	
 	@Test
-	public void downvoteCommand() throws SQLException, IOException, ParameterException, NoSuchAlgorithmException
+	public void downvoteCommand() throws NoSuchAlgorithmException, IOException, SQLException, MapperException, ParameterException, exceptions.UnrecognizedUserException
 	{
 		final byte[] bytes = new byte[10];
 		final float speed = 10.0f;

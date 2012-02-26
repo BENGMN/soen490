@@ -1,8 +1,8 @@
 /**
  * SOEN 490
  * Capstone 2011
- * Put message command; allows a user to store a message on the server.
- * Team members: 	Sotirios Delimanolis
+ * Team members: 	
+ * 			Sotirios Delimanolis
  * 			Filipe Martinho
  * 			Adam Harrison
  * 			Vahe Chahinian
@@ -23,8 +23,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import domain.message.MessageInputMapper;
-import domain.message.MessageOutputMapper;
+import domain.message.mappers.MessageInputMapper;
+import domain.message.mappers.MessageOutputMapper;
 
 public class PurgeMonitor {
 	
@@ -69,7 +69,7 @@ public class PurgeMonitor {
 	private void deleteExpiredMessages() throws IOException, SQLException {		
 		List<BigInteger> messageIds = MessageInputMapper.findExpiredMessages(timeToLive);		
 		for(BigInteger mid: messageIds) {
-			MessageOutputMapper.deleteExpiredMessage(mid);
+			MessageOutputMapper.delete(mid);
 		}	
 	}	
 }

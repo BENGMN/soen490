@@ -20,6 +20,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import domain.user.mappers.UserInputMapper;
+
 public class UserProxy implements IUser {
 	private long uid;
 	private User realUser;
@@ -85,7 +87,6 @@ public class UserProxy implements IUser {
 		getRealUser().writeServer(out);
 	}
 
-	@Override
 	public void readServer(DataInputStream in) throws IOException {
 		getRealUser().readServer(in);
 	}

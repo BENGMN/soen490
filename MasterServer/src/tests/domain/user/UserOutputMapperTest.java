@@ -5,8 +5,8 @@ import java.sql.SQLException;
 
 import domain.user.User;
 import domain.user.UserIdentityMap;
-import domain.user.UserInputMapper;
-import domain.user.UserOutputMapper;
+import domain.user.mappers.UserInputMapper;
+import domain.user.mappers.UserOutputMapper;
 import domain.user.UserType;
 import foundation.UserTDG;
 import junit.framework.TestCase;
@@ -36,7 +36,7 @@ public class UserOutputMapperTest extends TestCase {
 		
 		// Delete the newly created record from the database and the identity map
 		assertEquals(UserTDG.delete(uid, version),1);
-		UserIdentityMap.getUniqueInstance().remove(uid);
+		UserIdentityMap.remove(uid);
 	}
 	
 	public void testUpdate() throws IOException, SQLException {

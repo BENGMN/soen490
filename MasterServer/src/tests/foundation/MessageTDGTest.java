@@ -47,15 +47,14 @@ public class MessageTDGTest {
 	}
 
 	private void insert() throws SQLException, IOException {
-		final byte[] message = { 1, 2, 3, 4, 5, 6 };
-		final float speed = 5.5f;
-		final double latitude = 29.221;
-		final double longitude = 35.134;
+		byte[] message = { 1, 2, 3, 4, 5, 6 };
+		float speed = 5.5f;
+		double latitude = 29.221;
+		double longitude = 35.134;
 		Timestamp createdDate = new Timestamp(new GregorianCalendar(2011, 9, 10).getTimeInMillis());
-		final int user_rating = 6;
-		final int version = 1;
+		int user_rating = 6;
 		assertFalse(MessageFinder.find(mid).next());
-		assertEquals(MessageTDG.insert(mid, uid, version, message, speed,
+		assertEquals(MessageTDG.insert(mid, uid, message, speed,
 				latitude, longitude, createdDate, user_rating), 1);
 		ResultSet rs = MessageFinder.find(mid);
 		assertTrue(rs.next());
@@ -78,17 +77,15 @@ public class MessageTDGTest {
 
 	private void update() throws SQLException, IOException {
 
-		final byte[] message = { 1, 2, 3, 4, 5, 6 };
-		final float speed = 5.5f;
-		final double latitude = 29.221;
-		final double longitude = 35.134;
-		final Timestamp createdDate = new Timestamp(new GregorianCalendar(2011, 9, 10).getTimeInMillis());
-		final int user_rating = 7;
-		final int version = 1;
-		assertEquals(1, MessageTDG.update(mid, user_rating, version));
+		byte[] message = { 1, 2, 3, 4, 5, 6 };
+		float speed = 5.5f;
+		double latitude = 29.221;
+		double longitude = 35.134;
+		Timestamp createdDate = new Timestamp(new GregorianCalendar(2011, 9, 10).getTimeInMillis());
+		int user_rating = 7;
+		assertEquals(1, MessageTDG.update(mid, user_rating));
 		ResultSet rs = MessageFinder.find(mid);
 		assertTrue(rs.next());
-		assertEquals(rs.getLong("m.version"), version + 1);
 		assertEquals(mid, rs.getBigDecimal("m.mid").toBigInteger());
 		assertEquals(uid, rs.getLong("m.uid"));
 		byte[] b = rs.getBytes("m.message");
@@ -103,9 +100,8 @@ public class MessageTDGTest {
 	}
 
 	private void delete() throws SQLException, IOException {
-		final int version = 2;
 		assertTrue(MessageFinder.find(mid).next());
-		assertEquals(1, MessageTDG.delete(mid, version));
+		assertEquals(1, MessageTDG.delete(mid));
 		assertFalse(MessageFinder.find(mid).next());
 	}
 }

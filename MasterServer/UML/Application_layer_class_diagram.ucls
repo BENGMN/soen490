@@ -16,7 +16,7 @@
       <operations public="true" package="true" protected="true" private="true"/>    
     </display>  
   </class>  
-  <class id="3" corner="BOTTOM_RIGHT" language="java" name="application.ParameterException" project="MasterServer" 
+  <class id="3" corner="BOTTOM_RIGHT" language="java" name="exceptions.ParameterException" project="MasterServer" 
     file="/MasterServer/src/application/ParameterException.java" binary="false">    
     <position height="113" width="265" x="670" y="516"/>    
     <display autosize="true" package="true" initial-value="true" signature="true" visibility="true">      

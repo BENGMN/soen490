@@ -34,7 +34,7 @@ public class MessageIdentityMapTest {
 	public void testFunctionality()
 	{
 		MessageIdentityMap map = MessageIdentityMap.getUniqueInstance();
-		Message message = MessageFactory.createClean(mid, 0, messageData, 10.0f, 10.0, 10.0, new Timestamp(GregorianCalendar.getInstance().getTimeInMillis()), 0, 1);
+		Message message = MessageFactory.createClean(mid, 0, messageData, 10.0f, 10.0, 10.0, new Timestamp(GregorianCalendar.getInstance().getTimeInMillis()),0);
 		
 		// Make sure the map put method works
 		map.put(mid, message);

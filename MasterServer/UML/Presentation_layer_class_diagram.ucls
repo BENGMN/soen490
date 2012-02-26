@@ -8,7 +8,7 @@
       <operations public="true" package="true" protected="true" private="true"/>    
     </display>  
   </class>  
-  <class id="2" corner="BOTTOM_RIGHT" language="java" name="application.ParameterException" project="MasterServer" 
+  <class id="2" corner="BOTTOM_RIGHT" language="java" name="exceptions.ParameterException" project="MasterServer" 
     file="/MasterServer/src/application/ParameterException.java" binary="false">    
     <position height="113" width="174" x="1119" y="334"/>    
     <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      

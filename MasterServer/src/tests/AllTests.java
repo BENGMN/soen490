@@ -15,7 +15,7 @@ import tests.technical.GeoSpatialSearchTest;
 @SuiteClasses({
 		FrontControllerTest.class, 
 		HttpMessageTest.class,
-		UnknownCommandTest.class,
+		UnsupportedCommandTest.class,
 		MessageCommandTest.class,
 		 MessageIdentityMapTest.class,
 		 MessageMapperTest.class,

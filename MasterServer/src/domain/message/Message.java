@@ -29,10 +29,7 @@ import org.msgpack.unpacker.Unpacker;
 import domain.user.IUser;
 import domain.user.UserProxy;
 
-import technical.IClientSendable;
-import technical.IServerSendable;
-
-public class Message implements IServerSendable, IClientSendable {	
+public class Message {	
 	private BigInteger mid;
 	private IUser owner;
 	private byte[] message;
@@ -41,9 +38,8 @@ public class Message implements IServerSendable, IClientSendable {
 	private double longitude;
 	private Timestamp createdAt;
 	private int userRating;
-	private int version;
 	
-	public Message(BigInteger mid, IUser owner, byte[] message, float speed, double latitude, double longitude, Timestamp createdAt, int userRating, int version)
+	public Message(BigInteger mid, IUser owner, byte[] message, float speed, double latitude, double longitude, Timestamp createdAt, int userRating)
 	{
 		this.mid = mid;
 		this.owner = owner;
@@ -53,7 +49,6 @@ public class Message implements IServerSendable, IClientSendable {
 		this.longitude = longitude;
 		this.createdAt = createdAt;
 		this.userRating = userRating;
-		this.version = version;
 	}
 	
 	// Getters and Setters
@@ -92,15 +87,7 @@ public class Message implements IServerSendable, IClientSendable {
 	public void setUserRating(int userRating) {
 		this.userRating = userRating;
 	}
-	
-	public void setVersion(int version)	{
-		this.version = version;
-	}
-	
-	public int getVersion() {
-		return version;
-	}
-	
+		
 	@Override
 	public boolean equals(Object o) {
 		// If the object is not null and is of the type User
@@ -114,7 +101,6 @@ public class Message implements IServerSendable, IClientSendable {
 		       		((Message)o).getLongitude() == this.getLongitude() &&
 		       		((Message)o).getCreatedAt() == this.getCreatedAt() &&
 		       		((Message)o).getUserRating() == this.getUserRating() &&
-		       		((Message)o).getVersion() == this.getVersion() &&
 		       		((Message)o).getOwner().getUid() == this.getOwner().getUid()
 	            	);
 	        }
@@ -132,7 +118,6 @@ public class Message implements IServerSendable, IClientSendable {
 		packer.write(getLongitude());
 		packer.write(getLatitude());
 		packer.write(getUserRating());
-		packer.write(version);
 	}
 	
 	public void readServer(DataInputStream in) throws IOException
@@ -146,7 +131,6 @@ public class Message implements IServerSendable, IClientSendable {
 		longitude = unpacker.readDouble();
 		latitude = unpacker.readDouble();
 		userRating = unpacker.readInt();
-		version = unpacker.readInt();
 	}
 	
 	// Allowing us to use MessagePack in our domain layer, outside of our application layer.
