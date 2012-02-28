@@ -87,12 +87,6 @@ public class Database {
 		
 	}
 	
-	//Simply connects to the database using the correct credentials and returns a connection object.
-	private Connection connect() throws SQLException {
-		return null;
-	}
-	
-	
 	// This function returns a singleton threadlocal connection. 
 	public static Connection getConnection() throws SQLException {
 		
