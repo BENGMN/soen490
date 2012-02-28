@@ -16,6 +16,7 @@
 package foundation;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -49,8 +50,8 @@ public class UserTDG {
 	 * @throws SQLException
 	 */
 	public static int insert(long uid, int version, String email, String password, int type) throws SQLException, IOException {
-
-		PreparedStatement ps = Database.getInstance().getStatement(INSERT);
+		Connection connection = Database.getConnection();
+		PreparedStatement ps = connection.prepareStatement(INSERT);
 		
 		ps.setLong(1, uid);
 		ps.setInt(2, version);
@@ -84,8 +85,8 @@ public class UserTDG {
 	 * @throws SQLException
 	 */
 	public static int update(long uid, int version, String email, String password, int type) throws SQLException, IOException {
-		
-		PreparedStatement ps = Database.getInstance().getStatement(UPDATE);
+		Connection connection = Database.getConnection();
+		PreparedStatement ps = connection.prepareStatement(UPDATE);
 		
 		ps.setString(1, email);
 		ps.setString(2, password);
@@ -110,8 +111,8 @@ public class UserTDG {
 	 * @throws SQLException
 	 */
 	public static int delete(long uid, int version) throws SQLException, IOException {
-		PreparedStatement ps = Database.getInstance().getStatement(DELETE);
-
+		Connection connection = Database.getConnection();
+		PreparedStatement ps = connection.prepareStatement(DELETE);
 		ps.setLong(1, uid);
 		ps.setInt(2, version);
 		
@@ -128,9 +129,11 @@ public class UserTDG {
 	 * @throws SQLException 
 	 */
 	public static void create() throws SQLException, IOException {
-		PreparedStatement ps = Database.getInstance().getStatement(CREATE_TABLE);
+		Connection connection = Database.getConnection();
+		PreparedStatement ps = connection.prepareStatement(CREATE_TABLE);
 
 		ps.executeUpdate();
+		ps.close();
 	}
 	
 	private final static String DROP_TABLE =
@@ -141,7 +144,10 @@ public class UserTDG {
 	 * @throws SQLException
 	 */
 	public static void drop() throws SQLException, IOException {
-		PreparedStatement ps = Database.getInstance().getStatement(DROP_TABLE);
+		Connection connection = Database.getConnection();
+		PreparedStatement ps = connection.prepareStatement(DROP_TABLE);
+		
 		ps.executeUpdate();
+		ps.close();
 	}
 }

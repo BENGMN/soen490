@@ -18,6 +18,7 @@ package foundation;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
@@ -28,68 +29,87 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import com.jolbox.bonecp.BoneCP;
+import com.jolbox.bonecp.BoneCPConfig;
+
 
 
 //import java.util.Stack;
 
 public class Database {
 	private static Database singleton = null;
-	private Properties prop = new Properties();
+	private static Properties prop = new Properties();
 	public static final ThreadLocal<Connection> threadConnection = new ThreadLocal<Connection>();
-
+	private static BoneCP connectionPool = null;
+	
+	// File path to properties file
+	private static final String PATH  = "Database.properties";
+	
+	static {
+		try {
+			// This will load the MySQL driver, each DB has its own driver
+			Class.forName("com.mysql.jdbc.Driver");
+			// Setup the connection with the DB
+			prop.load(new FileInputStream(PATH));
+			
+			String host = prop.getProperty("hostname");
+			String db = prop.getProperty("database");
+			String username = prop.getProperty("username");
+			String password = prop.getProperty("password");
+			
+			BoneCPConfig config = new BoneCPConfig();
+			config.setJdbcUrl("jdbc:mysql://" + host + "/" + db);
+			config.setUsername(username);
+			config.setPassword(password);
+			config.setMinConnectionsPerPartition(15);
+			config.setMaxConnectionsPerPartition(35);
+			config.setPartitionCount(1);
+			connectionPool = new BoneCP(config);
+			
+		} catch (SQLException e) {			
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+	}
+	
 	// If we want to pool connections we'd put the code in here; create at startup, and allocate connections on getConnection and freeConnection.
 	private Database() throws IOException {
 		// Note: The path cannot be resolved properly unless the container is running
 		// LOCAL HACK: cd to MasterServer then ln -s /WebContent/WEB-INF (creates a symbolic link)
 		String path = ServletInformation.getInstance().resolvePath("WEB-INF/Database.properties");
-		prop.load(new FileInputStream("Database.properties"));
-	}
-	
-	// TODO this is a terrible way to do this
-	public boolean canConnect() throws SQLException {
 		
-		Connection connection = getConnection();
-		if (connection == null)
-			return false;
-		freeConnection(connection);
-		return true;
 	}
 	
 	//Simply connects to the database using the correct credentials and returns a connection object.
 	private Connection connect() throws SQLException {
-		try {
-			// This will load the MySQL driver, each DB has its own driver
-			Class.forName("com.mysql.jdbc.Driver");
-			// Setup the connection with the DB
-			
-			String host = prop.getProperty("hostname");
-			String db = prop.getProperty("database");
-			String user = prop.getProperty("username");
-			String password = prop.getProperty("password");
-			
-			String jdbcConnect = "jdbc:mysql://" + host + "/" + db + "?" + "user=" + user + "&password=" + password;
-			
-			Connection connection = DriverManager.getConnection(jdbcConnect);
-			return connection;
-		} catch (SQLException e) {			
-			throw e;
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} 
-		
 		return null;
-		
 	}
+	
+	
 	// This function returns a singleton threadlocal connection. 
-	private Connection getConnection() throws SQLException {
+	public static Connection getConnection() throws SQLException {
 		
 		if(threadConnection.get() == null) {
-			Connection connection = connect();
+			Connection connection = connectionPool.getConnection();
 			threadConnection.set(connection);
 			return threadConnection.get();
 		} else
 			return threadConnection.get();
 		
+	}
+	
+	public static void freeConnection() throws SQLException {
+		Connection connection = threadConnection.get();
+		if (connection != null) {
+			connection.close();
+		}
 	}
 	
 	private void freeConnection(Connection connection) throws SQLException {

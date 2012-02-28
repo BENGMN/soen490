@@ -18,6 +18,7 @@ package foundation;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -41,7 +42,7 @@ public class MessageFinder {
 			"m.latitude, " +
 			"m.longitude, " +
 			"m.created_at, " +
-			"m.user_rating, " +
+			"m.user_rating " +
 			"FROM " + MessageTDG.TABLE + " AS m";
 
 		/**
@@ -51,7 +52,9 @@ public class MessageFinder {
 		 * @throws SQLException
 		 */
 		public static ResultSet findAll() throws SQLException, IOException {
-			PreparedStatement ps = Database.getInstance().getStatement(SELECT_ALL);
+			Connection connection = Database.getConnection();
+			PreparedStatement ps = connection.prepareStatement(SELECT_ALL);
+			
 			ResultSet rs = ps.executeQuery();
 			return rs;
 		}
@@ -76,7 +79,9 @@ public class MessageFinder {
 		 * @throws SQLException
 		 */
 		public static ResultSet find(BigInteger mid) throws SQLException, IOException {
-			PreparedStatement ps = Database.getInstance().getStatement(SELECT);
+			Connection connection = Database.getConnection();
+			PreparedStatement ps = connection.prepareStatement(SELECT);
+			
 			ps.setObject(1, mid);
 			ResultSet rs = ps.executeQuery();
 			return rs;
@@ -86,7 +91,9 @@ public class MessageFinder {
 				"SELECT * FROM " + MessageTDG.TABLE + " AS m WHERE m.uid = ?;";
 
 		public static ResultSet findByUser(long uid) throws SQLException, IOException {
-			PreparedStatement ps = Database.getInstance().getStatement(SELECT_BY_EMAIL);
+			Connection connection = Database.getConnection();
+			PreparedStatement ps = connection.prepareStatement(SELECT_BY_EMAIL);
+			
 			ps.setLong(1, uid);
 			ResultSet rs = ps.executeQuery();
 			return rs;
@@ -107,7 +114,9 @@ public class MessageFinder {
 				"FROM " + MessageTDG.TABLE + " AS m " + "WHERE m.longitude BETWEEN ? AND ? AND m.latitude BETWEEN ? AND ?;";
 
 		public static ResultSet findInProximity(double longitude, double latitude, double radius) throws SQLException, IOException {
-			PreparedStatement ps = Database.getInstance().getStatement(SELECT_BY_RADIUS);
+			Connection connection = Database.getConnection();
+			PreparedStatement ps = connection.prepareStatement(SELECT_BY_RADIUS);
+			
 			List<Coordinate> rectangle = GeoSpatialSearch.convertPointToRectangle(new Coordinate(longitude, latitude), radius);
 			ps.setDouble(1, rectangle.get(0).getLongitude());
 			ps.setDouble(2, rectangle.get(1).getLongitude());
@@ -174,9 +183,10 @@ public class MessageFinder {
 			ResultSet rsSize;
 			//flag for not incrementing the radius on the first run
 			boolean flag = false;
-			do{
+			do {
+				Connection connection = Database.getConnection();
+				PreparedStatement psSize = connection.prepareStatement(GET_SIZE);
 				
-				PreparedStatement psSize = Database.getInstance().getStatement(GET_SIZE);
 				List<Coordinate> rectangle = GeoSpatialSearch.convertPointToRectangle(new Coordinate(longitude, latitude), radius);
 				psSize.setDouble(1, rectangle.get(0).getLongitude());
 				psSize.setDouble(2, rectangle.get(1).getLongitude());
@@ -219,7 +229,9 @@ public class MessageFinder {
 		 * @throws IOException
 		 */
 		public static ResultSet findExpired(int timeToLive) throws SQLException, IOException {
-			PreparedStatement ps = Database.getInstance().getStatement(SELECT_BY_DATE);
+			Connection connection = Database.getConnection();
+			PreparedStatement ps = connection.prepareStatement(SELECT_BY_DATE);	
+			
 			ps.setInt(1, timeToLive);
 			ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
 			ResultSet rs = ps.executeQuery();

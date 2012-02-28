@@ -27,12 +27,6 @@ import foundation.Database;
 public class DatabaseTest {
 
 	@Test
-	public void testConnection() throws IOException, SQLException
-	{
-		assertTrue(Database.getInstance().canConnect());
-	}
-	
-	@Test
 	public void testTables() throws IOException, SQLException
 	{
 		partTestCreateTable();

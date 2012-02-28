@@ -19,6 +19,7 @@ package foundation;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -61,7 +62,8 @@ public class MessageTDG {
 	 * @throws SQLException
 	 */
 	public static int insert(BigInteger mid, long uid, byte[] message, float speed, double latitude , double longitude , Timestamp created_at , int user_rating) throws SQLException, IOException {
-		PreparedStatement ps = Database.getInstance().getStatement(INSERT);
+		Connection connection = Database.getConnection();
+		PreparedStatement ps = connection.prepareStatement(INSERT);
 		
 		ps.setBigDecimal(1, new BigDecimal(mid));
 		ps.setLong(2, uid);
@@ -91,7 +93,8 @@ public class MessageTDG {
 	 * @throws SQLException
 	 */
 	public static int update(BigInteger mid, int user_rating) throws SQLException, IOException {
-		PreparedStatement ps = Database.getInstance().getStatement(UPDATE);
+		Connection connection = Database.getConnection();
+		PreparedStatement ps = connection.prepareStatement(UPDATE);
 		
 		ps.setInt(1, user_rating);
 		ps.setObject(2, mid);
@@ -111,7 +114,8 @@ public class MessageTDG {
 	 * @throws SQLException
 	 */
 	public static int delete(BigInteger mid) throws SQLException, IOException {
-		PreparedStatement ps = Database.getInstance().getStatement(DELETE);
+		Connection connection = Database.getConnection();
+		PreparedStatement ps = connection.prepareStatement(DELETE);
 		
 		ps.setBigDecimal(1, new BigDecimal(mid));
 		
@@ -138,9 +142,11 @@ public class MessageTDG {
 	 * @throws SQLException 
 	 */
 	public static void create() throws SQLException, IOException {
-		PreparedStatement ps = Database.getInstance().getStatement(CREATE_TABLE);
-
+		Connection connection = Database.getConnection();
+		PreparedStatement ps = connection.prepareStatement(CREATE_TABLE);
+		
 		ps.executeUpdate();
+		ps.close();
 	}
 	
 	private final static String DROP_TABLE =
@@ -151,7 +157,10 @@ public class MessageTDG {
 	 * @throws SQLException
 	 */
 	public static void drop() throws SQLException, IOException {
-		PreparedStatement ps = Database.getInstance().getStatement(DROP_TABLE);
+		Connection connection = Database.getConnection();
+		PreparedStatement ps = connection.prepareStatement(DROP_TABLE);
+		
 		ps.executeUpdate();
+		ps.close();
 	}
 }

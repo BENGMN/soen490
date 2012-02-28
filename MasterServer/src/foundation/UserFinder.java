@@ -17,6 +17,7 @@
 package foundation;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -38,7 +39,9 @@ public class UserFinder {
 	 * @throws SQLException
 	 */
 	public static ResultSet find(long uid) throws SQLException, IOException {
-		PreparedStatement ps = Database.getInstance().getStatement(SELECT);
+		Connection connection = Database.getConnection();
+		PreparedStatement ps = connection.prepareStatement(SELECT);
+
 		ps.setLong(1, uid);
 		ResultSet rs = ps.executeQuery();		
 		return rs;
@@ -57,7 +60,9 @@ public class UserFinder {
 	 * @throws SQLException
 	 */
 	public static ResultSet find(String email, String password) throws SQLException, IOException {
-		PreparedStatement ps = Database.getInstance().getStatement(SELECT_BY_EMAIL_AND_PASSWORD);
+		Connection connection = Database.getConnection();
+		PreparedStatement ps = connection.prepareStatement(SELECT_BY_EMAIL_AND_PASSWORD);
+		
 		ps.setString(1, email);
 		ps.setString(2, password);
 		ResultSet rs = ps.executeQuery();
@@ -76,7 +81,9 @@ public class UserFinder {
 	 * @throws SQLException
 	 */
 	public static ResultSet find(String email) throws SQLException, IOException {
-		PreparedStatement ps = Database.getInstance().getStatement(SELECT_BY_EMAIL);
+		Connection connection = Database.getConnection();
+		PreparedStatement ps = connection.prepareStatement(SELECT_BY_EMAIL);
+		
 		ps.setString(1, email);
 		ResultSet rs = ps.executeQuery();
 		return rs;
@@ -92,7 +99,9 @@ public class UserFinder {
 	 * @throws SQLException
 	 */
 	public static ResultSet findAll() throws SQLException, IOException {
-		PreparedStatement ps = Database.getInstance().getStatement(SELECT_ALL);
+		Connection connection = Database.getConnection();
+		PreparedStatement ps = connection.prepareStatement(SELECT_ALL);
+		
 		ResultSet rs = ps.executeQuery();
 		return rs;		
 	}
@@ -106,7 +115,9 @@ public class UserFinder {
 	 * @throws SQLException
 	 */
 	public static long findUniqueId() throws SQLException, IOException { 
-		PreparedStatement ps = Database.getInstance().getStatement(SELECT_UNIQUE_ID);
+		Connection connection = Database.getConnection();
+		PreparedStatement ps = connection.prepareStatement(SELECT_UNIQUE_ID);
+
 		ResultSet rs = ps.executeQuery();
 		if (rs.next())
 			return rs.getLong(1) + 1;

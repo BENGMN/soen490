@@ -18,6 +18,8 @@ package application;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashMap;
 
@@ -106,6 +108,20 @@ public class FrontController extends HttpServlet {
 	 * This method handles all request 
 	 */
 	private void handleRequest(HttpServletRequest request, HttpServletResponse response, String httpMethod) throws ServletException {
+		
+		Connection conn = null;
+		
+		try {
+			conn = Database.getConnection();
+			conn.setAutoCommit(false);
+			PreparedStatement ps = conn.prepareStatement("START TRANSACTION;");
+			ps.execute();
+			ps.close();
+		} catch (SQLException e1) {
+			// TODO LOG
+			e1.printStackTrace();
+		}
+		
 		// Get the command string from the request object (url ex.: www.webserver.com?command=downvote&messageid=12433512343524683542)
 		String commandString = request.getParameter("command");
 
@@ -132,6 +148,24 @@ public class FrontController extends HttpServlet {
 			}
 		} catch (IOException e) {
 			throw new ServletException(e);
+		}
+		
+		try {
+			conn = Database.getConnection();
+			PreparedStatement ps = conn.prepareStatement("COMMIT;");
+			ps.execute();
+			ps.close();
+		} catch (SQLException e1) {
+			// TODO LOG
+			e1.printStackTrace();
+		} finally {
+			try {
+				Database.freeConnection();
+				
+			} catch (SQLException e1) {
+				// TODO LOG
+				e1.printStackTrace();
+			}
 		}
 	}
 	
