@@ -16,6 +16,7 @@
 
 package foundation;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.Connection;
@@ -24,6 +25,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Properties;
 
 import technical.Coordinate;
 import technical.GeoSpatialSearch;
@@ -145,11 +147,19 @@ public class MessageFinder {
 		
 		public static ResultSet findIdsInProximity(double longitude, double latitude, double speed) throws SQLException, IOException {
 			
+			//To be remove when we have a config system
+			String PATH  = "tempConfigFile.properties";
+			Properties prop = new Properties();
+			prop.load(new FileInputStream(PATH));
+			int minMessages  = Integer.parseInt(prop.getProperty("minMessages"));
+			
 			double radius = 0;
 			double multiplier = 0;
-			double radiusMultiplier = 500;
+			double radiusAdder = 500;
 			double maxRadius = 0;
-			//If the gps doesn't return a speed the default speed is 0
+			
+			
+			//If the gps doesn't return a speed the default speed is 30
 			if(speed == 0)
 				speed = 30;
 			//The speed is in km 
@@ -159,25 +169,25 @@ public class MessageFinder {
 			{	
 				multiplier = 134;
 				radius = multiplier*speed;
-				maxRadius = 8133;
+				maxRadius = 2*multiplier*speed;
 			}//over 30km/h driving is city driving 10 minutes to reach the farthest of the messages Up to 20 minutes if you don't have at least 10 messages
 			else if(speed>30 && speed<=60)
 			{
 				multiplier = 167;
 				radius = multiplier*speed;
-				maxRadius = 10333;
+				maxRadius = 2*multiplier*speed;
 			}//this is for biking speed 7 minutes to reach the farthest of the messages up to 14 minutes if you don't have at least 10 messages
 			else if(speed>9 && speed <=30)
 			{
 				multiplier = 11;
 				radius = multiplier * speed;
-				maxRadius = 2333;
+				maxRadius = 2*multiplier*speed;
 			}//this is walking speed 5 minutes to reach the farthest of the messages up to 10 minutes if you don't have at least 10 messages
 			else if(speed<=9)
 			{
 				multiplier = 83.3;
 				radius = multiplier * speed;
-				maxRadius = 1500;
+				maxRadius = 2*multiplier*speed;
 			}
 			//Next block of code is to enlarge the radius until you either find 10 messages or you reach the maximum radius allowed for that speed
 			ResultSet rsSize;
@@ -196,12 +206,12 @@ public class MessageFinder {
 				rsSize.next();
 			
 				if(flag)
-					radius += radiusMultiplier;
+					radius += radiusAdder;
 				else
 					flag = true;
 			
 			}
-			while(rsSize.getInt("size") <= 10 && radius <= maxRadius);
+			while(rsSize.getInt("size") <= minMessages && radius <= maxRadius);
 			//Getting the actual ids at this point
 			ResultSet finaleRs;
 			

@@ -7,22 +7,38 @@ import java.sql.SQLException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import domain.message.mappers.MessageInputMapper;
+
 import exceptions.MapperException;
 import exceptions.ParameterException;
 import exceptions.UnrecognizedUserException;
-import foundation.MessageFinder;
 
 public class GetMessageIDsCommand extends FrontCommand{
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, IOException, UnrecognizedUserException, NoSuchAlgorithmException, SQLException {
 		
-		double longitude = Double.parseDouble(request.getParameter("longitude"));
-		double latitude = Double.parseDouble(request.getParameter("latitude"));
-		double speed = Double.parseDouble(request.getParameter("speed"));
+		String stringLongitude;
+		String stringLatitude;
+		String stringSpeed;
 		
-		// TODO I know this is wrong eventually we need to fix it so that it is pure layered architecture
-		MessageFinder.findIdsInProximity(longitude, latitude, speed);		
+		// Get message longitude from request object
+		if ((stringLongitude = request.getParameter("longitude")) == null)
+			throw new ParameterException("Must pass in the mid to downvote.");
+		
+		// Get message latitude from request object
+		if ((stringLatitude = request.getParameter("latitude")) == null)
+			throw new ParameterException("Must pass in the mid to downvote.");
+		
+		double speed = 0;
+		// Get speed from request object
+		if ((stringSpeed = request.getParameter("speed")) != null)
+			speed = Double.parseDouble(stringSpeed);
+				
+		double longitude = Double.parseDouble(stringLongitude);
+		double latitude = Double.parseDouble(stringLatitude);
+		
+		MessageInputMapper.findIdsInProximity(longitude, latitude, speed);		
 		
 	}
 
