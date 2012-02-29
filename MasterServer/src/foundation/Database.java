@@ -37,7 +37,6 @@ import com.jolbox.bonecp.BoneCPConfig;
 //import java.util.Stack;
 
 public class Database {
-	private static Database singleton = null;
 	private static Properties prop = new Properties();
 	public static final ThreadLocal<Connection> threadConnection = new ThreadLocal<Connection>();
 	private static BoneCP connectionPool = null;
@@ -103,10 +102,11 @@ public class Database {
 		Connection connection = threadConnection.get();
 		if (connection != null) {
 			connection.close();
+			threadConnection.remove();
 		}
 	}
 	
-	private void freeConnection(Connection connection) throws SQLException {
+	private static void freeConnection(Connection connection) throws SQLException {
 		connection.close();
 		threadConnection.remove();
 	}
@@ -131,7 +131,7 @@ public class Database {
 		return query(queryString, null);
 	}
 	
-	public int update(String queryString, Object[] objects) throws SQLException
+	public static int update(String queryString, Object[] objects) throws SQLException
 	{
 		Connection connection = getConnection();
 		PreparedStatement statement = connection.prepareStatement(queryString);
@@ -144,7 +144,7 @@ public class Database {
 		return result;
 	}
 	
-	public int update(String queryString) throws SQLException
+	public static int update(String queryString) throws SQLException
 	{
 		return update(queryString, null);
 	}
@@ -160,7 +160,7 @@ public class Database {
 		return true;
 	}
 	
-	public boolean hasTable(String tableName) throws SQLException
+	public static boolean hasTable(String tableName) throws SQLException
 	{
 		Connection connection = getConnection();
 		DatabaseMetaData metaData = connection.getMetaData();
@@ -174,14 +174,8 @@ public class Database {
 		return connection.prepareStatement(query);
 	}
 
-	public static Database getInstance() throws IOException
-	{
-		if (singleton == null)
-			singleton = new Database();
-		return singleton;
-	}
-	
-	public void createDatabase() throws SQLException, IOException
+
+	public static void createDatabase() throws SQLException, IOException
 	{
 		if (!hasTable(UserTDG.TABLE))
 			UserTDG.create();
@@ -189,7 +183,7 @@ public class Database {
 			MessageTDG.create();
 	}
 	
-	public void dropDatabase() throws SQLException, IOException
+	public static void dropDatabase() throws SQLException, IOException
 	{
 		if (hasTable(UserTDG.TABLE))
 			UserTDG.drop();
@@ -199,7 +193,7 @@ public class Database {
 	
 	// Refactor the hasTable method to be parameterized
 	// Note this method is called from the frontController
-	public boolean isDatabaseCreated() throws SQLException
+	public static boolean isDatabaseCreated() throws SQLException
 	{
 		return hasTable(UserTDG.TABLE) && hasTable(MessageTDG.TABLE); 
 	}

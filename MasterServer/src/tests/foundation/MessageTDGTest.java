@@ -36,14 +36,14 @@ public class MessageTDGTest {
 
 	@Test
 	public void testFunctionality() throws SQLException, IOException {
-		boolean previousDatabase = Database.getInstance().isDatabaseCreated();
+		boolean previousDatabase = Database.isDatabaseCreated();
 		if (!previousDatabase)
-			Database.getInstance().createDatabase();
+			Database.createDatabase();
 		insert();
 		update();
 		delete();
 		if (!previousDatabase)
-			Database.getInstance().dropDatabase();
+			Database.dropDatabase();
 	}
 
 	private void insert() throws SQLException, IOException {

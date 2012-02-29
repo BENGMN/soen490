@@ -18,11 +18,7 @@ public class UserOutputMapperTest extends TestCase {
 	private final UserType userType = UserType.USER_NORMAL;
 	private final int version = 1;
 	private final long uid = 3325635465657L;
-	private User user = null;
-	
-	public UserOutputMapperTest() {
-		user = new User(uid, email, password, userType, version);
-	}
+	private User user = new User(uid, email, password, userType, version);
 	
 	public void testInsert() throws IOException, SQLException {
 		// Use the UserOutputMapper to deconstruct the object and place it into the database

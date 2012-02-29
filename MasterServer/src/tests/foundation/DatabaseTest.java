@@ -35,19 +35,19 @@ public class DatabaseTest {
 	
 	private void partTestCreateTable() throws IOException, SQLException
 	{
-		assertTrue("Test table already exists!", !Database.getInstance().hasTable("testTable"));
-		Database.getInstance().update("CREATE TABLE testTable (testColumn1 varchar(40), testColumn2 varchar(50))");
-		assertTrue("Test table not created.", Database.getInstance().hasTable("testTable"));
+		assertTrue("Test table already exists!", !Database.hasTable("testTable"));
+		Database.update("CREATE TABLE testTable (testColumn1 varchar(40), testColumn2 varchar(50))");
+		assertTrue("Test table not created.", Database.hasTable("testTable"));
 	}
 	
 	private void partTestDeleteTable() throws IOException, SQLException
 	{
-		assertTrue("Test table not created.", Database.getInstance().hasTable("testTable"));
-		Database.getInstance().update("DROP TABLE testTable");
-		assertTrue("Test table not deleted.", !Database.getInstance().hasTable("testTable"));
+		assertTrue("Test table not created.", Database.hasTable("testTable"));
+		Database.update("DROP TABLE testTable");
+		assertTrue("Test table not deleted.", !Database.hasTable("testTable"));
 	}
 	
 	public void testIsDatabaseCreated() throws SQLException, IOException {
-		assertTrue("Test to ensure that the tables we for the applicaton exist", Database.getInstance().isDatabaseCreated());
+		assertTrue("Test to ensure that the tables we for the applicaton exist", Database.isDatabaseCreated());
 	}
 }

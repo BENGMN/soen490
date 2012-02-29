@@ -40,14 +40,14 @@ public class MessageMapperTest {
 	@Test
 	public void testFunctionality() throws SQLException, IOException, MapperException
 	{
-		boolean previousDatabase = Database.getInstance().isDatabaseCreated();
+		boolean previousDatabase = Database.isDatabaseCreated();
 		if (!previousDatabase)
-			Database.getInstance().createDatabase();
+			Database.createDatabase();
 		create();
 		update();
 		delete();
 		if (!previousDatabase)
-			Database.getInstance().dropDatabase();
+			Database.dropDatabase();
 	}
 	
 	private void create() throws SQLException, IOException, MapperException
