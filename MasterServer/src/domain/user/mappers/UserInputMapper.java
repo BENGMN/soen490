@@ -16,6 +16,7 @@
 package domain.user.mappers;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -38,7 +39,7 @@ public class UserInputMapper {
 	 * @return A user object is returned and is placed in the identity map if it has not been already.
 	 * @throws IOException
 	 */
-	public static User find(long uid) throws IOException {
+	public static User find(BigInteger uid) throws IOException {
 		User mappedUser = UserIdentityMap.get(uid);
 		if (mappedUser != null)
 			return mappedUser;
@@ -46,7 +47,7 @@ public class UserInputMapper {
 		try	{
 			ResultSet rs = UserFinder.find(uid);
 			if (rs.next()) {
-				long ruid = rs.getLong(1);
+				BigInteger ruid = rs.getBigDecimal(1).toBigInteger();
 				assert(ruid == uid);
 				int version = rs.getInt(2);
 				String email = rs.getString(3);
@@ -71,7 +72,7 @@ public class UserInputMapper {
 		try	{
 			ResultSet rs = UserFinder.find(email);
 			if (rs.next()) {
-				long uid = rs.getLong(1);
+				BigInteger uid = rs.getBigDecimal(1).toBigInteger();
 				User mappedUser = UserIdentityMap.get(uid);
 				if (mappedUser != null)
 					return mappedUser;

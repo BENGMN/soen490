@@ -18,6 +18,7 @@ package domain.user;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 
 import org.msgpack.MessagePack;
 import org.msgpack.packer.Packer;
@@ -25,13 +26,13 @@ import org.msgpack.unpacker.Unpacker;
 
 public class User implements IUser {
 	
-	private long uid;
+	private BigInteger uid;
 	private String email;
 	private String password;
 	private UserType type;
 	private int version;
 	
-	public User(long uid, String email, String password, UserType type, int version)
+	public User(BigInteger uid, String email, String password, UserType type, int version)
 	{
 		this.uid = uid;
 		this.email = email;
@@ -40,7 +41,7 @@ public class User implements IUser {
 		this.version = version;
 	}
 	
-	public long getUid()
+	public BigInteger getUid()
 	{
 		return uid;
 	}
@@ -102,7 +103,7 @@ public class User implements IUser {
 
 	public void readServer(DataInputStream in) throws IOException {
 		Unpacker unpacker = (new MessagePack()).createUnpacker(in);
-		uid = unpacker.readLong();
+		uid = unpacker.readBigInteger();
 		email = unpacker.readString();
 		password = unpacker.readString();
 		type = unpacker.read(UserType.class);

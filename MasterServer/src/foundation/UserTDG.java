@@ -16,6 +16,8 @@
 package foundation;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -49,11 +51,11 @@ public class UserTDG {
 	 * @param type User type as an integer
 	 * @throws SQLException
 	 */
-	public static int insert(long uid, int version, String email, String password, int type) throws SQLException, IOException {
+	public static int insert(BigInteger uid, int version, String email, String password, int type) throws SQLException, IOException {
 		Connection connection = Database.getConnection();
 		PreparedStatement ps = connection.prepareStatement(INSERT);
 		
-		ps.setLong(1, uid);
+		ps.setBigDecimal(1, new BigDecimal(uid));
 		ps.setInt(2, version);
 		ps.setString(3, email);
 		ps.setString(4, password);
@@ -84,14 +86,14 @@ public class UserTDG {
 	 * @return Returns the number of rows affected by the update.
 	 * @throws SQLException
 	 */
-	public static int update(long uid, int version, String email, String password, int type) throws SQLException, IOException {
+	public static int update(BigInteger uid, int version, String email, String password, int type) throws SQLException, IOException {
 		Connection connection = Database.getConnection();
 		PreparedStatement ps = connection.prepareStatement(UPDATE);
 		
 		ps.setString(1, email);
 		ps.setString(2, password);
 		ps.setInt(3, type);
-		ps.setLong(4, uid);
+		ps.setBigDecimal(4, new BigDecimal(uid));
 		ps.setInt(5, version);
 		
 		int count = ps.executeUpdate();
@@ -110,10 +112,10 @@ public class UserTDG {
 	 * @return Returns the number of rows affected by the delete.
 	 * @throws SQLException
 	 */
-	public static int delete(long uid, int version) throws SQLException, IOException {
+	public static int delete(BigInteger uid, int version) throws SQLException, IOException {
 		Connection connection = Database.getConnection();
 		PreparedStatement ps = connection.prepareStatement(DELETE);
-		ps.setLong(1, uid);
+		ps.setBigDecimal(1, new BigDecimal(uid));
 		ps.setInt(2, version);
 		
 		int count = ps.executeUpdate();
@@ -122,7 +124,7 @@ public class UserTDG {
 	}
 	
 	private final static String CREATE_TABLE =
-			"CREATE TABLE User (uid bigint NOT NULL, email varchar(64) NOT NULL, password varchar(256) NOT NULL, type tinyint NOT NULL, version int NOT NULL, CONSTRAINT pk_uid PRIMARY KEY (uid));";
+			"CREATE TABLE User (uid decimal(39) NOT NULL, email varchar(64) NOT NULL, password varchar(256) NOT NULL, type tinyint NOT NULL, version int NOT NULL, CONSTRAINT pk_uid PRIMARY KEY (uid));";
 		
 	/**
 	 * Creates the table User in the database.

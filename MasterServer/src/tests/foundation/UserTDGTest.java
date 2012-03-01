@@ -16,6 +16,7 @@
 package tests.foundation;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.sql.ResultSet;
 import static org.junit.Assert.*;
 import java.sql.SQLException;
@@ -28,7 +29,7 @@ import foundation.UserTDG;
 
 public class UserTDGTest {
 	
-	static long uid = 158749857934L;
+	static BigInteger uid = new BigInteger("158749857934");
 	
 	@Test
 	public void testFunctionality() throws SQLException, IOException
@@ -54,7 +55,7 @@ public class UserTDGTest {
 		assertEquals(UserTDG.insert(uid, version, email, password, type), 1);
 		ResultSet rs = UserFinder.find(uid);
 		assertTrue(rs.next());
-		assertEquals(rs.getLong("u.uid"), uid);
+		assertEquals(rs.getBigDecimal("u.uid").toBigInteger(), uid);
 		assertEquals(rs.getString("u.email"), email);
 		assertEquals(rs.getString("u.password"), password);
 		assertEquals(rs.getInt("u.version"), version);

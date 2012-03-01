@@ -17,6 +17,8 @@
 package tests.domain.user;
 
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
 import domain.user.User;
@@ -34,10 +36,10 @@ public class UserInputMapperTest extends TestCase {
 	private final String password = "password";
 	private final UserType userType = UserType.USER_NORMAL;
 	private final int version = 1;
-	private final long uid = 3785635465657L;
+	private final BigInteger uid = new BigInteger("3785635465657");
 	
 
-	public void testFindUserCacheHit() throws IOException, SQLException {
+	public void testFindUserCacheHit() throws IOException, SQLException, NoSuchAlgorithmException {
 		// Create a new user with the factory to make sure
 		// a) it is placed in the UserIdentityMap and
 		// b) persisted to the database
@@ -76,7 +78,7 @@ public class UserInputMapperTest extends TestCase {
 		assertEquals(UserOutputMapper.delete(user), 1);
 	}
 	
-	public void testFindByEmail() throws IOException, SQLException {
+	public void testFindByEmail() throws IOException, SQLException, NoSuchAlgorithmException {
 		// Create a new user with the factory to make sure
 		// a) it is placed in the UserIdentityMap and
 		// b) persisted to the database

@@ -61,12 +61,12 @@ public class MessageTDG {
 	 * @return Returns 1 if the insert succeeded. 
 	 * @throws SQLException
 	 */
-	public static int insert(BigInteger mid, long uid, byte[] message, float speed, double latitude , double longitude , Timestamp created_at , int user_rating) throws SQLException, IOException {
+	public static int insert(BigInteger mid, BigInteger uid, byte[] message, float speed, double latitude , double longitude , Timestamp created_at , int user_rating) throws SQLException, IOException {
 		Connection connection = Database.getConnection();
 		PreparedStatement ps = connection.prepareStatement(INSERT);
 		
 		ps.setBigDecimal(1, new BigDecimal(mid));
-		ps.setLong(2, uid);
+		ps.setBigDecimal(2, new BigDecimal(uid));
 		ps.setBlob(3, new SerialBlob(message));
 		ps.setFloat(4, speed);
 		ps.setDouble(5, latitude);
@@ -97,7 +97,7 @@ public class MessageTDG {
 		PreparedStatement ps = connection.prepareStatement(UPDATE);
 		
 		ps.setInt(1, user_rating);
-		ps.setObject(2, mid);
+		ps.setBigDecimal(2, new BigDecimal(mid));
 		
 		int count = ps.executeUpdate();
 		ps.close();
@@ -127,7 +127,7 @@ public class MessageTDG {
 	private final static String CREATE_TABLE =
 		"CREATE TABLE " + TABLE + " " +
 		"(mid decimal(39) NOT NULL, " +
-		"uid bigint NOT NULL, " +
+		"uid decimal(39) NOT NULL, " +
 		"message blob NOT NULL, " +
 		"speed float, " +
 		"latitude double NOT NULL, " +

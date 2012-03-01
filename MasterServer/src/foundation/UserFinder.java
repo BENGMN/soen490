@@ -17,6 +17,8 @@
 package foundation;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -38,11 +40,11 @@ public class UserFinder {
 	 * @return Returns the ResultSet containing the user information as u.uid, u.version, u.email, u.password, u.type.
 	 * @throws SQLException
 	 */
-	public static ResultSet find(long uid) throws SQLException, IOException {
+	public static ResultSet find(BigInteger uid) throws SQLException, IOException {
 		Connection connection = Database.getConnection();
 		PreparedStatement ps = connection.prepareStatement(SELECT);
 
-		ps.setLong(1, uid);
+		ps.setBigDecimal(1, new BigDecimal(uid));
 		ResultSet rs = ps.executeQuery();		
 		return rs;
 	}

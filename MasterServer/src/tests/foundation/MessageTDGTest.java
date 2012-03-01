@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
 public class MessageTDGTest {
 
 	static BigInteger mid = new BigInteger("158749857935");
-	static long uid = 158749857934L;
+	static BigInteger uid = new BigInteger("158749857934");
 
 	@Test
 	public void testFunctionality() throws SQLException, IOException {
@@ -59,7 +59,7 @@ public class MessageTDGTest {
 		ResultSet rs = MessageFinder.find(mid);
 		assertTrue(rs.next());
 		assertEquals(rs.getBigDecimal("m.mid").toBigInteger(), mid);
-		assertEquals(rs.getLong("m.uid"), uid);
+		assertEquals(rs.getBigDecimal("m.uid").toBigInteger(), uid);
 
 		byte[] b = rs.getBytes("m.message");
 		for (int i = 0; i < message.length; i++) {
@@ -87,7 +87,7 @@ public class MessageTDGTest {
 		ResultSet rs = MessageFinder.find(mid);
 		assertTrue(rs.next());
 		assertEquals(mid, rs.getBigDecimal("m.mid").toBigInteger());
-		assertEquals(uid, rs.getLong("m.uid"));
+		assertEquals(uid, rs.getBigDecimal("m.uid").toBigInteger());
 		byte[] b = rs.getBytes("m.message");
 		for (int i = 0; i < message.length; i++) {
 			assertEquals(b[i], message[i]);

@@ -16,6 +16,8 @@
 package tests.domain.user;
 
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
 import domain.user.User;
@@ -27,7 +29,7 @@ import junit.framework.TestCase;
 
 public class UserProxyTest extends TestCase {
 	
-	private final long uid = 3425635465657L;
+	private final BigInteger uid = new BigInteger("3425635465657");
 	private final String email = "example@example.com";
 	private final String password = "password";
 	private final UserType userType = UserType.USER_NORMAL;
@@ -37,7 +39,7 @@ public class UserProxyTest extends TestCase {
 	private UserProxy userProxy = null;		// Create a proxy for the real object
 	
 	
-	public void testSetters() throws IOException, SQLException {
+	public void testSetters() throws IOException, SQLException, NoSuchAlgorithmException {
 		realUser = UserFactory.createNew(email, password, userType);
 		
 		userProxy = new UserProxy(uid);
@@ -53,7 +55,7 @@ public class UserProxyTest extends TestCase {
 		assertEquals(userProxy.getType(), userType);
 	}
 	
-	public void testGetters() throws IOException, SQLException {
+	public void testGetters() throws IOException, SQLException, NoSuchAlgorithmException {
 		// First we create an object via the factory so it get's sent to the IdentityMap as well
 		realUser = UserFactory.createNew(email, password, userType);
 		// Create a proxy for the real object
@@ -71,7 +73,7 @@ public class UserProxyTest extends TestCase {
 	
 	public void testEquals() {
 		userProxy = new UserProxy(uid);
-		UserProxy userProxy1 = new UserProxy(5555635465657L); // Different UserID specified here
+		UserProxy userProxy1 = new UserProxy(new BigInteger("5555635465657")); // Different UserID specified here
 		assertEquals("Should return false when compared null", userProxy.equals(null),false);
 		assertEquals("Should return false when compared to a different object", userProxy.equals(userProxy1),false);
 		assertEquals("Should return true when compared to the same object", userProxy.equals(userProxy),true);

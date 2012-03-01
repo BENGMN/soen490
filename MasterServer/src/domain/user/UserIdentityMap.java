@@ -16,25 +16,26 @@
 
 package domain.user;
 
+import java.math.BigInteger;
 import java.util.HashMap;
 
 public class UserIdentityMap {
-	private static HashMap<Long, User> userMap;
+	private static HashMap<BigInteger, User> userMap;
 	private static UserIdentityMap singleton = null;
 	
 	private UserIdentityMap() {
-		userMap = new HashMap<Long, User>();
+		userMap = new HashMap<BigInteger, User>();
 	}
 	
-	public static User get(long uid) {
+	public static User get(BigInteger uid) {
 		return userMap.get(uid);
 	}
 	
-	public static void put(long uid, User user) {
+	public static void put(BigInteger uid, User user) {
 			userMap.put(uid, user);
 	}
 	
-	public static void remove(long uid) {
+	public static void remove(BigInteger uid) {
 		userMap.remove(uid);
 	}
 	

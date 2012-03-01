@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
 public class MessageMapperTest {
 	
 	static BigInteger mid = new BigInteger("158749857935");
-	static long uid = 158749857934L;
+	static BigInteger uid = new BigInteger("158749857934");
 	
 	@Test
 	public void testFunctionality() throws SQLException, IOException, MapperException

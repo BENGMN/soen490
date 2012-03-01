@@ -218,7 +218,7 @@ public class MessageInputMapper {
 		BigInteger mid = rs.getBigDecimal("m.mid").toBigInteger();
 		
 		message = MessageFactory.createClean(mid,
-								 rs.getLong("m.uid"),
+								 rs.getBigDecimal("m.uid").toBigInteger(),
 								 rs.getBytes("m.message"),
 								 rs.getFloat("m.speed"),
 								 rs.getDouble("m.latitude"),

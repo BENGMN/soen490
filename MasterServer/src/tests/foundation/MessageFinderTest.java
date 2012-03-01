@@ -38,7 +38,7 @@ public class MessageFinderTest extends TestCase {
 	private BigInteger mid1 = new BigInteger("158749857935");
 	private BigInteger mid2 = new BigInteger("168749857935");
 	private BigInteger mid3 = new BigInteger("178749857935");
-	private long uid = 158749857934L;
+	private BigInteger uid = new BigInteger("158749857934");
 	private byte array[] = {0,1,2,3,4,5};
 	private float speed = 10.0f;
 	private double latitude1 = 45.4562;	// Brossard 
@@ -100,7 +100,7 @@ public class MessageFinderTest extends TestCase {
 		Message message;
 		
 		message = MessageFactory.createClean(mid,
-								 rs.getLong("m.uid"),
+								 rs.getBigDecimal("m.uid").toBigInteger(),
 								 rs.getBytes("m.message"),
 								 rs.getFloat("m.speed"),
 								 rs.getDouble("m.latitude"),

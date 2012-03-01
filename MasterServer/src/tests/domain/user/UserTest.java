@@ -17,6 +17,8 @@ package tests.domain.user;
 
 import static org.junit.Assert.*;
 
+import java.math.BigInteger;
+
 import org.junit.Test;
 
 import domain.user.User;
@@ -24,7 +26,7 @@ import domain.user.UserType;
 
 public class UserTest {
 	
-	private final long uid = 3425635465657L;
+	private final BigInteger uid = new BigInteger("3425635465657");
 	private final String email = "example@example.com";
 	private final String password = "password";
 	private final UserType userType = UserType.USER_NORMAL;

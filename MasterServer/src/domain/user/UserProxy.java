@@ -19,14 +19,15 @@ package domain.user;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 
 import domain.user.mappers.UserInputMapper;
 
 public class UserProxy implements IUser {
-	private long uid;
+	private BigInteger uid;
 	private User realUser;
 	
-	public UserProxy(long uid) {
+	public UserProxy(BigInteger uid) {
 		this.uid = uid;
 		realUser = null;
 	}
@@ -59,7 +60,7 @@ public class UserProxy implements IUser {
 		return getRealUser().getType();
 	}
 
-	public long getUid() {
+	public BigInteger getUid() {
 		return uid;
 	}
 

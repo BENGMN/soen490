@@ -16,11 +16,12 @@
 package domain.user;
 
 import java.io.IOException;
+import java.math.BigInteger;
 
 
 public interface IUser {
 
-	public long getUid();
+	public BigInteger getUid();
 	public String getPassword() throws IOException;
 	public void setPassword(String password) throws IOException;
 	public String getEmail() throws IOException;

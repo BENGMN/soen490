@@ -193,7 +193,7 @@ public class MessageCommandTest {
 		final double longitude = 20.0;
 		Timestamp createdDate = new Timestamp(GregorianCalendar.getInstance().getTimeInMillis());
 		final int userRating = 0;
-		Message message = MessageFactory.createNew(0, bytes, speed, latitude, longitude, createdDate, userRating);
+		Message message = MessageFactory.createNew(new BigInteger("0"), bytes, speed, latitude, longitude, createdDate, userRating);
 		UpvoteMessageCommand upvoteMessageCommand = new UpvoteMessageCommand();
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		MockHttpServletResponse response = new MockHttpServletResponse();
@@ -215,7 +215,7 @@ public class MessageCommandTest {
 		final double longitude = 20.0;
 		Timestamp createdDate = new Timestamp(GregorianCalendar.getInstance().getTimeInMillis());
 		final int userRating = 0;
-		Message message = MessageFactory.createNew(0, bytes, speed, latitude, longitude, createdDate, userRating);
+		Message message = MessageFactory.createNew(new BigInteger("0"), bytes, speed, latitude, longitude, createdDate, userRating);
 		DownvoteMessageCommand rateMessageCommand = new DownvoteMessageCommand();
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		MockHttpServletResponse response = new MockHttpServletResponse();

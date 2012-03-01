@@ -18,6 +18,7 @@ package foundation;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -92,11 +93,11 @@ public class MessageFinder {
 		private static final String SELECT_BY_EMAIL =
 				"SELECT * FROM " + MessageTDG.TABLE + " AS m WHERE m.uid = ?;";
 
-		public static ResultSet findByUser(long uid) throws SQLException, IOException {
+		public static ResultSet findByUser(BigInteger uid) throws SQLException, IOException {
 			Connection connection = Database.getConnection();
 			PreparedStatement ps = connection.prepareStatement(SELECT_BY_EMAIL);
 			
-			ps.setLong(1, uid);
+			ps.setBigDecimal(1, new BigDecimal(uid));
 			ResultSet rs = ps.executeQuery();
 			return rs;
 		}
@@ -147,11 +148,12 @@ public class MessageFinder {
 		
 		public static ResultSet findIdsInProximity(double longitude, double latitude, double speed) throws SQLException, IOException {
 			
-			//To be remove when we have a config system
+			//To be remove when we have a config system///////////////////////////
 			String PATH  = "tempConfigFile.properties";
 			Properties prop = new Properties();
 			prop.load(new FileInputStream(PATH));
 			int minMessages  = Integer.parseInt(prop.getProperty("minMessages"));
+			//////////////////////////////////////////////////////////////////////
 			
 			double radius = 0;
 			double multiplier = 0;
@@ -194,6 +196,7 @@ public class MessageFinder {
 			//flag for not incrementing the radius on the first run
 			boolean flag = false;
 			do {
+				
 				Connection connection = Database.getConnection();
 				PreparedStatement psSize = connection.prepareStatement(GET_SIZE);
 				
@@ -212,6 +215,7 @@ public class MessageFinder {
 			
 			}
 			while(rsSize.getInt("size") <= minMessages && radius <= maxRadius);
+			
 			//Getting the actual ids at this point
 			ResultSet finaleRs;
 			

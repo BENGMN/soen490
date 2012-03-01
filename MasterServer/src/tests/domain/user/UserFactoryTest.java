@@ -17,6 +17,8 @@
 package tests.domain.user;
 
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
 import domain.user.User;
@@ -28,7 +30,7 @@ import junit.framework.TestCase;
 
 public class UserFactoryTest extends TestCase {
 
-	private final long uid = 3425635465657L;
+	private final BigInteger uid = new BigInteger("3425635465657");
 	private final String email = "example@example.com";
 	private final String password = "password";
 	private final UserType userType = UserType.USER_NORMAL;
@@ -64,8 +66,9 @@ public class UserFactoryTest extends TestCase {
 	 * The version however should be returned as 1.
 	 * @throws IOException
 	 * @throws SQLException
+	 * @throws NoSuchAlgorithmException 
 	 */
-	public void testCreateNew() throws IOException, SQLException {
+	public void testCreateNew() throws IOException, SQLException, NoSuchAlgorithmException {
 		User user = UserFactory.createNew(email, password, userType);
 		
 		// Make sure all of the attributes were properly assigned

@@ -1,6 +1,7 @@
 package tests.domain.user;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.sql.SQLException;
 
 import domain.user.User;
@@ -17,7 +18,7 @@ public class UserOutputMapperTest extends TestCase {
 	private final String password = "password";
 	private final UserType userType = UserType.USER_NORMAL;
 	private final int version = 1;
-	private final long uid = 3325635465657L;
+	private final BigInteger uid = new BigInteger("3325635465657");
 	private User user = null;
 	
 	public UserOutputMapperTest() {

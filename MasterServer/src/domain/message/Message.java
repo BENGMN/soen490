@@ -124,7 +124,7 @@ public class Message {
 	{
 		Unpacker unpacker = (new MessagePack()).createUnpacker(in);
 		mid = new BigInteger(unpacker.readString());
-		owner = new UserProxy(unpacker.readLong());
+		owner = new UserProxy(unpacker.readBigInteger());
 		message = unpacker.readByteArray();
 		speed = unpacker.readFloat();
 		createdAt = unpacker.read(Timestamp.class);

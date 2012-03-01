@@ -17,6 +17,8 @@ package tests.domain.user;
 
 import static org.junit.Assert.*;
 
+import java.math.BigInteger;
+
 import org.junit.Test;
 
 import domain.user.User;
@@ -30,7 +32,7 @@ public class UserIdentityMapTest {
 	{
 		// Get a unique instance of the map
 		UserIdentityMap map = UserIdentityMap.getUniqueInstance();
-		final long uid = 234L;
+		final BigInteger uid = new BigInteger("234");
 		// Create a new user
 		User user = new User(uid, "", "", UserType.USER_NORMAL, 0);
 		

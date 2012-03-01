@@ -29,7 +29,7 @@ import junit.framework.TestCase;
 public class MessageTest extends TestCase {
 	
 	// Attributes for a User
-	private final long uid = 3425635465657L;
+	private final BigInteger uid = new BigInteger("3425635465657");
 	private final String email = "example@example.com";
 	private final String password = "password";
 	private final UserType userType = UserType.USER_NORMAL;
