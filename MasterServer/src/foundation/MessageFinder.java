@@ -148,6 +148,8 @@ public class MessageFinder {
 		
 		public static ResultSet findIdsInProximity(double longitude, double latitude, double speed) throws SQLException, IOException {
 			
+			Connection connection = Database.getConnection();
+			
 			//To be remove when we have a config system///////////////////////////
 			String PATH  = "tempConfigFile.properties";
 			Properties prop = new Properties();
@@ -197,7 +199,6 @@ public class MessageFinder {
 			boolean flag = false;
 			do {
 				
-				Connection connection = Database.getConnection();
 				PreparedStatement psSize = connection.prepareStatement(GET_SIZE);
 				
 				List<Coordinate> rectangle = GeoSpatialSearch.convertPointToRectangle(new Coordinate(longitude, latitude), radius);
@@ -219,8 +220,9 @@ public class MessageFinder {
 			//Getting the actual ids at this point
 			ResultSet finaleRs;
 			
-			PreparedStatement finalPs = Database.getInstance().getStatement(SELECT_ID_BY_RADIUS);
+			PreparedStatement finalPs = connection.prepareStatement(SELECT_ID_BY_RADIUS);
 			List<Coordinate> rectangle = GeoSpatialSearch.convertPointToRectangle(new Coordinate(longitude, latitude), radius);
+			
 			finalPs.setDouble(1, rectangle.get(0).getLongitude());
 			finalPs.setDouble(2, rectangle.get(1).getLongitude());
 			finalPs.setDouble(3, rectangle.get(0).getLatitude());

@@ -28,7 +28,7 @@ import org.msgpack.unpacker.Unpacker;
 import domain.message.Message;
 import domain.message.MessageFactory;
 
-public class HttpMessageTest {
+public class HttpMessageTest  {
 	
 	static String serverUrl = "/MasterServer/frontController";
 	

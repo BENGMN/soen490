@@ -35,14 +35,14 @@ public class UserTDGTest {
 	public void testFunctionality() throws SQLException, IOException
 	{
 		// We put this in here, so that the tests don't disturb the database if it's already present.
-		boolean previousDatabase = Database.getInstance().isDatabaseCreated();
+		boolean previousDatabase = Database.isDatabaseCreated();
 		if (!previousDatabase)
-			Database.getInstance().createDatabase();
+			Database.createDatabase();
 		insert();
 		update();
 		delete();
 		if (!previousDatabase)
-			Database.getInstance().dropDatabase();
+			Database.dropDatabase();
 	}
 	
 	private void insert() throws SQLException, IOException

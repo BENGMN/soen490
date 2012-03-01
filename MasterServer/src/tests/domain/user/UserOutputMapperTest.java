@@ -24,7 +24,6 @@ public class UserOutputMapperTest extends TestCase {
 	public UserOutputMapperTest() {
 		user = new User(uid, email, password, userType, version);
 	}
-	
 	public void testInsert() throws IOException, SQLException {
 		// Use the UserOutputMapper to deconstruct the object and place it into the database
 		UserOutputMapper.insert(user);

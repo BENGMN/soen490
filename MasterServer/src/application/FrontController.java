@@ -59,8 +59,8 @@ public class FrontController extends HttpServlet {
 	public void init() throws ServletException {
 		try {
 			ServletInformation.getInstance().setServletContext(getServletContext());
-			if (!Database.getInstance().isDatabaseCreated())
-				Database.getInstance().createDatabase();
+			if (!Database.isDatabaseCreated())
+				Database.createDatabase();
 		}
 		catch (Exception E) {
 			throw new ServletException(E);
