@@ -72,7 +72,7 @@ public class UserTDGTest {
 		assertEquals(1, UserTDG.update(uid, version, email, password, type));
 		ResultSet rs = UserFinder.find(uid);
 		assertTrue(rs.next());
-		assertEquals(rs.getLong("u.uid"), uid);
+		assertEquals(rs.getBigDecimal("u.uid").toBigInteger(), uid);
 		assertEquals(rs.getString("u.email"), email);
 		assertEquals(rs.getString("u.password"), password);
 		assertEquals(rs.getInt("u.version"), version+1);
