@@ -16,14 +16,12 @@
 package foundation;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -49,6 +47,7 @@ public class Database {
 			// This will load the MySQL driver, each DB has its own driver
 			Class.forName("com.mysql.jdbc.Driver");
 			// Setup the connection with the DB
+			String server_path = ServletInformation.getInstance().resolvePath(PATH);
 			prop.load(new FileInputStream(PATH));
 			
 			String host = prop.getProperty("hostname");

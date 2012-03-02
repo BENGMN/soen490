@@ -66,7 +66,7 @@ public class UserInputMapperTest extends TestCase {
 		UserOutputMapper.insert(user);
 		
 		// Make sure a cache miss occurs
-		assertEquals(UserIdentityMap.get(uid), null);
+		assertEquals(UserIdentityMap.getUniqueInstance().get(uid), null);
 		
 		// Retrieve the user object from the database
 		User userCopy = UserInputMapper.find(uid);

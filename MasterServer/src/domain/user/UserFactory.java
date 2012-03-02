@@ -5,11 +5,9 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 
 import domain.user.mappers.UserOutputMapper;
 
-import foundation.UserFinder;
 
 public class UserFactory {
 	
@@ -30,9 +28,9 @@ public class UserFactory {
 		User usr = new User(createUniqueID(email,password), email, password, type, 1);
 		
 		// Put the new message in the identity map
-		UserIdentityMap.put(usr.getUid(), usr);
+		UserIdentityMap.getUniqueInstance().put(usr.getUid(), usr);
 		
-		// Persist the object to the database
+		// Persist the object to the database since it's new.
 		UserOutputMapper.insert(usr);
 		
 		return usr;
@@ -50,10 +48,12 @@ public class UserFactory {
 	 * @return User object that has been cached in the UserIdentityMap
 	 * @throws IOException
 	 */
-	public static User createClean(BigInteger uid, String email, String password, UserType type, int version) throws IOException {
+	public static User createClean(BigInteger uid, String email, String password, UserType type, int version) {
 		// Create a message object, passing the proxy as the owner
 		User usr = new User(uid, email, password, type, version);
-
+		
+		// Don't save to the database since we use this method for loading from the DB.
+		
 		// Put the loaded message in the identity map
 		UserIdentityMap.getUniqueInstance().put(uid, usr);
 		

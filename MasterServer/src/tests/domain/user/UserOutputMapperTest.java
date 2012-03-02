@@ -36,7 +36,7 @@ public class UserOutputMapperTest extends TestCase {
 		
 		// Delete the newly created record from the database and the identity map
 		assertEquals(UserTDG.delete(uid, version),1);
-		UserIdentityMap.remove(uid);
+		UserIdentityMap.getUniqueInstance().remove(uid);
 	}
 	
 	public void testUpdate() throws IOException, SQLException {

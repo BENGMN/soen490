@@ -27,15 +27,15 @@ public class UserIdentityMap {
 		userMap = new HashMap<BigInteger, User>();
 	}
 	
-	public static User get(BigInteger uid) {
+	public User get(BigInteger uid) {
 		return userMap.get(uid);
 	}
 	
-	public static void put(BigInteger uid, User user) {
+	public void put(BigInteger uid, User user) {
 			userMap.put(uid, user);
 	}
 	
-	public static void remove(BigInteger uid) {
+	public void remove(BigInteger uid) {
 		userMap.remove(uid);
 	}
 	

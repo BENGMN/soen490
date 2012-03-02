@@ -40,7 +40,7 @@ public class UserInputMapper {
 	 * @throws IOException
 	 */
 	public static User find(BigInteger uid) throws IOException {
-		User mappedUser = UserIdentityMap.get(uid);
+		User mappedUser = UserIdentityMap.getUniqueInstance().get(uid);
 		if (mappedUser != null)
 			return mappedUser;
 		
@@ -73,7 +73,7 @@ public class UserInputMapper {
 			ResultSet rs = UserFinder.find(email);
 			if (rs.next()) {
 				BigInteger uid = rs.getBigDecimal(1).toBigInteger();
-				User mappedUser = UserIdentityMap.get(uid);
+				User mappedUser = UserIdentityMap.getUniqueInstance().get(uid);
 				if (mappedUser != null)
 					return mappedUser;
 				int version = rs.getInt(2);
