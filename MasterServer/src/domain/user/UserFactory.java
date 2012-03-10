@@ -6,8 +6,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
-import domain.user.mappers.UserOutputMapper;
-
 
 public class UserFactory {
 	
@@ -27,12 +25,16 @@ public class UserFactory {
 		// Create a new user with a unique ID
 		User usr = new User(createUniqueID(email,password), email, password, type, 1);
 		
-		// Put the new message in the identity map
-		UserIdentityMap.getUniqueInstance().put(usr.getUid(), usr);
-		
-		// Persist the object to the database since it's new.
-		UserOutputMapper.insert(usr);
-		
+		/**
+		 * TODO: These methods are not being used right now
+		 * Also it is arguable that these responsibilities are not that of the Factory.
+		 * 
+		 * // Put the new message in the identity map
+		 * UserIdentityMap.getUniqueInstance().put(usr.getUid(), usr);
+		 * 
+		 * Persist the object to the database since it's new.
+		 * UserOutputMapper.insert(usr);
+		**/
 		return usr;
 	}
 
@@ -52,10 +54,13 @@ public class UserFactory {
 		// Create a message object, passing the proxy as the owner
 		User usr = new User(uid, email, password, type, version);
 		
-		// Don't save to the database since we use this method for loading from the DB.
-		
-		// Put the loaded message in the identity map
-		UserIdentityMap.getUniqueInstance().put(uid, usr);
+		/**
+		 * TODO: Remove the code and comments below as the Factory should not place items
+		 * in the IdentityMap
+		 * Don't save to the database since we use this method for loading from the DB.
+		 * Put the loaded message in the identity map
+		*/
+		// UserIdentityMap.getUniqueInstance().put(uid, usr);
 		
 		return usr;
 	}
