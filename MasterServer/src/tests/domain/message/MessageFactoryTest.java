@@ -35,8 +35,7 @@ public class MessageFactoryTest extends TestCase {
 		Message newMsg = new Message(mid, owner, message, speed, latitude, longitude, createdAt, userRating);
 		Message factoryMsg = MessageFactory.createClean(mid, uid, message, speed, latitude, longitude, createdAt, userRating);
 		assertEquals("Message created using constructor should be identical to that the factory produces", newMsg.equals(factoryMsg), true);
-		MessageIdentityMap.getUniqueInstance();
-		assertEquals("Message created using constructor should be identical to that the factory produces and stores in the MessageIdentityMap", newMsg.equals(MessageIdentityMap.get(mid)), true);
+		assertEquals("Message created using constructor should be identical to that the factory produces and stores in the MessageIdentityMap", newMsg.equals(factoryMsg), true);
 	}
 	
 	public void testCreateNew() throws NoSuchAlgorithmException, IOException, SQLException {
