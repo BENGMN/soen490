@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_9" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+  http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+	<display-name>Servlet 2.4 application</display-name>
+	<servlet>
+		<servlet-name>frontController</servlet-name>
+		<servlet-class>application.FrontController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>frontController</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+</web-app>

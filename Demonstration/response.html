@@ -1,0 +1,16 @@
+<html><head><title>Apache Tomcat/6.0.35 - Error report</title><style><!--H1 {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;font-size:22px;} H2 {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;font-size:16px;} H3 {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;font-size:14px;} BODY {font-family:Tahoma,Arial,sans-serif;color:black;background-color:white;} B {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;} P {font-family:Tahoma,Arial,sans-serif;background:white;color:black;font-size:12px;}A {color : black;}A.name {color : black;}HR {color : #525D76;}--></style> </head><body><h1>HTTP Status 500 - </h1><HR size="1" noshade="noshade"><p><b>type</b> Exception report</p><p><b>message</b> <u></u></p><p><b>description</b> <u>The server encountered an internal error () that prevented it from fulfilling this request.</u></p><p><b>exception</b> <pre>javax.servlet.ServletException: org.msgpack.MessageTypeException: Cannot find template for class java.io.DataOutputStream class.  Try to add @Message annotation to the class or call MessagePack.register(Type).
+	application.FrontController.handleRequest(FrontController.java:84)
+	application.FrontController.doGet(FrontController.java:89)
+	javax.servlet.http.HttpServlet.service(HttpServlet.java:617)
+	javax.servlet.http.HttpServlet.service(HttpServlet.java:717)
+</pre></p><p><b>root cause</b> <pre>org.msgpack.MessageTypeException: Cannot find template for class java.io.DataOutputStream class.  Try to add @Message annotation to the class or call MessagePack.register(Type).
+	org.msgpack.template.TemplateRegistry.lookup(TemplateRegistry.java:242)
+	org.msgpack.MessagePack.write(MessagePack.java:195)
+	org.msgpack.MessagePack.pack(MessagePack.java:639)
+	domain.message.Message.writeListClient(Message.java:139)
+	application.GetMessagesCommand.execute(GetMessagesCommand.java:43)
+	application.FrontController.handleRequest(FrontController.java:71)
+	application.FrontController.doGet(FrontController.java:89)
+	javax.servlet.http.HttpServlet.service(HttpServlet.java:617)
+	javax.servlet.http.HttpServlet.service(HttpServlet.java:717)
+</pre></p><p><b>note</b> <u>The full stack trace of the root cause is available in the Apache Tomcat/6.0.35 logs.</u></p><HR size="1" noshade="noshade"><h3>Apache Tomcat/6.0.35</h3></body></html>
