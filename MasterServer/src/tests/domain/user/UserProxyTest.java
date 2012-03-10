@@ -22,6 +22,7 @@ import java.sql.SQLException;
 
 import domain.user.User;
 import domain.user.UserFactory;
+import domain.user.UserIdentityMap;
 import domain.user.UserProxy;
 import domain.user.UserType;
 import junit.framework.TestCase;
@@ -29,7 +30,6 @@ import junit.framework.TestCase;
 
 public class UserProxyTest extends TestCase {
 	
-	private final BigInteger uid = new BigInteger("3425635465657");
 	private final String email = "example@example.com";
 	private final String password = "password";
 	private final UserType userType = UserType.USER_NORMAL;
@@ -41,6 +41,10 @@ public class UserProxyTest extends TestCase {
 	
 	public void testSetters() throws IOException, SQLException, NoSuchAlgorithmException {
 		realUser = UserFactory.createNew(email, password, userType);
+		UserIdentityMap.getUniqueInstance().put(realUser.getUid(), realUser);
+		
+		// Get the UID from the user object since it's generated in it's constructor
+		BigInteger uid = realUser.getUid();
 		
 		userProxy = new UserProxy(uid);
 		userProxy.setEmail(email);
@@ -58,10 +62,10 @@ public class UserProxyTest extends TestCase {
 	public void testGetters() throws IOException, SQLException, NoSuchAlgorithmException {
 		// First we create an object via the factory so it get's sent to the IdentityMap as well
 		realUser = UserFactory.createNew(email, password, userType);
+		UserIdentityMap.getUniqueInstance().put(realUser.getUid(), realUser);
+		
 		// Create a proxy for the real object
 		userProxy = new UserProxy(realUser.getUid());
-		
-		System.out.println(userProxy.getEmail());
 		
 		assertEquals(userProxy.getUid(), realUser.getUid());
 		
@@ -72,7 +76,7 @@ public class UserProxyTest extends TestCase {
 	}
 	
 	public void testEquals() {
-		userProxy = new UserProxy(uid);
+		userProxy = new UserProxy(new BigInteger("564646747777443"));
 		UserProxy userProxy1 = new UserProxy(new BigInteger("5555635465657")); // Different UserID specified here
 		assertEquals("Should return false when compared null", userProxy.equals(null),false);
 		assertEquals("Should return false when compared to a different object", userProxy.equals(userProxy1),false);

@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
 
 public class MessageTDGTest {
 
-	static BigInteger mid = new BigInteger("158749857935");
+	static BigInteger mid = new BigInteger("158339857935");
 	static BigInteger uid = new BigInteger("158749857934");
 
 	@Test
@@ -56,7 +56,9 @@ public class MessageTDGTest {
 		assertFalse(MessageFinder.find(mid).next());
 		assertEquals(MessageTDG.insert(mid, uid, message, speed,
 				latitude, longitude, createdDate, user_rating), 1);
+		
 		ResultSet rs = MessageFinder.find(mid);
+		
 		assertTrue(rs.next());
 		assertEquals(rs.getBigDecimal("m.mid").toBigInteger(), mid);
 		assertEquals(rs.getBigDecimal("m.uid").toBigInteger(), uid);
