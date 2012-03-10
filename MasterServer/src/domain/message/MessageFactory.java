@@ -33,10 +33,7 @@ public class MessageFactory {
 		
 		// Create a message object, passing the proxy as the owner
 		Message msg = new Message(mid, user, message, speed, latitude, longitude, createdDate, userRating);
-		
-		// Put the loaded message in the identity map
-		MessageIdentityMap.put(mid, msg);
-		
+				
 		return msg;
 	}
 	

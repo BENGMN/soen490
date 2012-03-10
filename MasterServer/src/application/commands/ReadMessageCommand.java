@@ -23,6 +23,7 @@ public class ReadMessageCommand extends FrontCommand {
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, IOException, UnrecognizedUserException, NoSuchAlgorithmException, SQLException {
 		// Get parameter of pipe ('|') separated message id values
 		String separatedIDs = request.getParameter("messageid");
+		
 		// Split the ids
 		String[] individualIDs = separatedIDs.split("|");
 		

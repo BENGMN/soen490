@@ -68,11 +68,11 @@ public class CreateMessageCommand extends FrontCommand {
 		
 		Message msg = MessageFactory.createNew(user.getUid(), messageBytes, speed, latitude, longitude, new Timestamp(GregorianCalendar.getInstance().getTimeInMillis()), 0);
 		
-		// TODO remove these statements from messagefactory
 		// Put the new message in the identity map and insert into db
 		MessageIdentityMap.put(msg.getMid(), msg);		 
 		MessageOutputMapper.insert(msg);
 		
+		//TODO change this sht
 		// Write the id of the newly created message to the http response
 		MessagePack messagePack = new MessagePack();
 		Packer packer = messagePack.createPacker(response.getOutputStream());

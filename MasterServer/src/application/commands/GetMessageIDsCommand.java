@@ -1,8 +1,10 @@
 package application.commands;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,15 +33,24 @@ public class GetMessageIDsCommand extends FrontCommand{
 			throw new ParameterException("Must pass in the mid to downvote.");
 		
 		double speed = 0;
-		// Get speed from request object
-		if ((stringSpeed = request.getParameter("speed")) != null)
-			speed = Double.parseDouble(stringSpeed);
-				
-		double longitude = Double.parseDouble(stringLongitude);
-		double latitude = Double.parseDouble(stringLatitude);
+		double longitude;
+		double latitude;
 		
-		MessageInputMapper.findIdsInProximity(longitude, latitude, speed);		
+		try {
+			// Get speed from request object
+			if ((stringSpeed = request.getParameter("speed")) != null)
+				speed = Double.parseDouble(stringSpeed);
+			
+			longitude = Double.parseDouble(stringLongitude);
+			latitude = Double.parseDouble(stringLatitude);
+		} catch (NumberFormatException e) {
+			// TODO Log this shit
+			throw new ParameterException("Longitude, latitude, and/or speed number format exception.", e);
+		}
 		
+		List<BigInteger> ids = MessageInputMapper.findIdsInProximity(longitude, latitude, speed);		
+		
+		// TODO write these ids to the response stream
 	}
 
 	

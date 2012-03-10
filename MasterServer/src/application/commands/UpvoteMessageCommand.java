@@ -43,7 +43,7 @@ public class UpvoteMessageCommand extends FrontCommand {
 		if (request.getParameter("messageid") == null)
 			throw new ParameterException("Must pass in the mid to downvote.");
 		
-		BigInteger mid = new BigInteger(request.getParameter("mid"));
+		BigInteger mid = new BigInteger(request.getParameter("messageid"));
 		
 		// get the requested message
 		// the input mapper will either pull or put the message in the identity map

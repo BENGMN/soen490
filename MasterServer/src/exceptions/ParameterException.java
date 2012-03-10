@@ -19,7 +19,7 @@ package exceptions;
 public class ParameterException extends Exception {
 	
 	private static final long serialVersionUID = -1553684524957058659L;
-
+	
 	public ParameterException()	{
 		super();
 	}
@@ -30,5 +30,9 @@ public class ParameterException extends Exception {
 	
 	public ParameterException(String message) {
 		super(message);
+	}
+
+	public ParameterException(String message, Exception e) {
+		super(message, e);
 	}
 }

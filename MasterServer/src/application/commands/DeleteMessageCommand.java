@@ -23,7 +23,6 @@ public class DeleteMessageCommand extends FrontCommand {
 		
 		BigInteger mid = new BigInteger(request.getParameter("messageid"));
 		
-		// TODO make mapper throw mapper exception if mid doesn't exist
 		// Throws MapperException if mid doesn't exist
 		Message message = MessageInputMapper.find(mid);
 		
