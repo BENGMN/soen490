@@ -39,7 +39,8 @@ public class MessageTest extends TestCase {
 	// Attributes for a Message
 	private BigInteger mid = new BigInteger("158749857935");
 	private IUser owner = new User(uid, email, password, userType, userVersion);
-	private byte[] message = { 1, 2, 3, 4, 5, 6 };
+	private byte[] message1 = { 1, 2, 3, 4, 5, 6 };
+	private byte[] message2 = { 1, 2, 3, 4, 5, 6 };
 	private float speed = 5.5f;
 	final double latitude = 29.221;
 	final double longitude = 35.134;
@@ -47,10 +48,10 @@ public class MessageTest extends TestCase {
 	private int userRating = 7;
 	
 	public void testGetters() {
-		Message msg = new Message(mid, owner, message, speed, latitude, longitude, createdAt, userRating);
+		Message msg = new Message(mid, owner, message1, speed, latitude, longitude, createdAt, userRating);
 		assertEquals(msg.getMid(), mid);
 		assertEquals(msg.getOwner(), owner);
-		assertEquals(msg.getMessage(), message);
+		assertEquals(msg.getMessage(), message1);
 		assertEquals(msg.getSpeed(), speed);
 		assertEquals(msg.getLatitude(), latitude);
 		assertEquals(msg.getLongitude(),  longitude);
@@ -59,18 +60,20 @@ public class MessageTest extends TestCase {
 	}
 	
 	public void testSetters() {
-		Message msg = new Message(mid, owner, message, speed, latitude, longitude, createdAt, userRating);
+		Message msg = new Message(mid, owner, message1, speed, latitude, longitude, createdAt, userRating);
 		msg.setUserRating(10);
 		
 		assertEquals(msg.getUserRating(), 10);
 	}
 	
 	public void testEquals() {
-		Message m1 = new Message(mid, owner, message, speed, latitude, longitude, createdAt, userRating);
-		Message m2 = new Message(mid, owner, message, 10.0f, latitude, longitude, createdAt, userRating);
+		Message m1 = new Message(mid, owner, message1, speed, latitude, longitude, createdAt, userRating);
+		Message m2 = new Message(mid, owner, message1, 10.0f, latitude, longitude, createdAt, userRating);
+		Message m3 = new Message(mid, owner, message2, speed, latitude, longitude, createdAt, userRating);
 		
 		assertEquals("Should return false when compared to a null",m1.equals(null), false);
 		assertEquals("Should return false when compared to a different object", m1.equals(m2), false);
 		assertEquals("Should return true when compared with the same object", m1.equals(m1), true);
+		assertEquals("Should return true when compared with another object with the same attributes", m1.equals(m3), true);
 	}
 }
