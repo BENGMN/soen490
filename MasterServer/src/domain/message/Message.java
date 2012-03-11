@@ -95,16 +95,29 @@ public class Message {
 			// Test all of the particulars
 			return (
 		       		((Message)o).getMid().equals(this.getMid()) &&
-		       		((Message)o).getMessage().equals(this.getMessage()) &&
+		       		java.util.Arrays.equals(((Message)o).getMessage(),(this.getMessage())) &&
 		       		((Message)o).getSpeed() == this.getSpeed() &&
 		       		((Message)o).getLatitude() == this.getLatitude() &&
 		       		((Message)o).getLongitude() == this.getLongitude() &&
-		       		((Message)o).getCreatedAt() == this.getCreatedAt() &&
+		       		((Message)o).getCreatedAt().equals(this.getCreatedAt()) &&
 		       		((Message)o).getUserRating() == this.getUserRating() &&
-		       		((Message)o).getOwner().getUid() == this.getOwner().getUid()
+		       		((Message)o).getOwner().getUid().equals(this.getOwner().getUid())
 	            	);
 	        }
 			return false; // if we made it here we failed above
+	}
+	
+	@Override
+	public String toString() {
+		return "MessageID: "+getMid()+
+				" Message: "+java.util.Arrays.toString(getMessage())+
+				" Speed: "+getSpeed()+
+				" Latitude: "+getLatitude()+
+				" Longitude: "+getLongitude()+
+				" UserRating: "+getUserRating()+
+				" Owner: "+getOwner().getUid()+
+				" CreatedAt: "+getCreatedAt()
+				;
 	}
 	
 	public void writeServer(DataOutputStream out) throws IOException
