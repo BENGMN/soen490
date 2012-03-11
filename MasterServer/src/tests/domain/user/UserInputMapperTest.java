@@ -45,14 +45,14 @@ public class UserInputMapperTest extends TestCase {
 		// b) persisted to the database
 		User user = UserFactory.createNew(email, password, userType);
 		
+		// Place the user into the identity map
+		UserIdentityMap.getUniqueInstance().put(user.getUid(), user);
+		
 		// Get a copy of the newly created object from the datastore
 		User userCopy = UserInputMapper.find(user.getUid());
 		
 		// Make sure the copy is equivalent to the original
 		assertEquals(user.equals(userCopy), true);
-		
-		// Remove the test record from the database, which also confirms it was persisted.
-		assertEquals(UserOutputMapper.delete(user), 1);
 	}
 	
 	public void testFindUserCacheMiss() throws IOException {
@@ -83,6 +83,9 @@ public class UserInputMapperTest extends TestCase {
 		// a) it is placed in the UserIdentityMap and
 		// b) persisted to the database
 		User user = UserFactory.createNew(email, password, userType);
+		
+		// Insert the object into the datastore
+		UserOutputMapper.insert(user);
 		
 		// Get a copy of the newly created object from the datastore
 		User userCopy = UserInputMapper.findByEmail(user.getEmail());
