@@ -2,7 +2,8 @@
  * SOEN 490
  * Capstone 2011
  * Test for MessageIdentityMapTest.
- * Team members: 	Sotirios Delimanolis
+ * Team members: 	
+ * 			Sotirios Delimanolis
  * 			Filipe Martinho
  * 			Adam Harrison
  * 			Vahe Chahinian
@@ -33,15 +34,14 @@ public class MessageIdentityMapTest {
 	@Test
 	public void testFunctionality()
 	{
-		MessageIdentityMap map = MessageIdentityMap.getUniqueInstance();
 		Message message = MessageFactory.createClean(mid, new BigInteger("0"), messageData, 10.0f, 10.0, 10.0, new Timestamp(GregorianCalendar.getInstance().getTimeInMillis()),0);
 		
 		// Make sure the map put method works
-		map.put(mid, message);
-		assertEquals(map.get(mid), message);
+		MessageIdentityMap.put(mid, message);
+		assertEquals(MessageIdentityMap.get(mid), message);
 		
 		// Make sure the remove method works
-		map.remove(mid);
-		assertNull(map.get(mid));
+		MessageIdentityMap.remove(mid);
+		assertNull(MessageIdentityMap.get(mid));
 	}
 }

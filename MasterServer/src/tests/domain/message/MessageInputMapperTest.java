@@ -24,8 +24,10 @@ import java.sql.Timestamp;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+
 import domain.message.Message;
 import domain.message.MessageFactory;
+import domain.message.MessageIdentityMap;
 import domain.message.mappers.MessageInputMapper;
 import domain.message.mappers.MessageOutputMapper;
 import domain.user.IUser;
@@ -38,7 +40,7 @@ import junit.framework.TestCase;
 public class MessageInputMapperTest extends TestCase {
 
 	// Data members for a Message
-	private BigInteger mid = new BigInteger("158749857935");
+	private BigInteger mid = new BigInteger("159949857935");
 	private final byte[] message = {0,1,2,3,4,5};
 	private final float speed = 10.0f;
 	private final double latitude = 20.0;
@@ -53,24 +55,39 @@ public class MessageInputMapperTest extends TestCase {
 	private final UserType userType = UserType.USER_NORMAL;
 	private final int version = 1;
 	
-	public void testFind() throws IOException, SQLException, MapperException {
+	public void testFind() throws IOException, SQLException {
 		// Make sure that the message does not already exist in the database
-		assertNull(MessageInputMapper.find(mid));
-		
-		// Create a new message using the factory createClean method to ensure it does not do the insertion into the database
+		try {
+			MessageInputMapper.find(mid);
+			fail("Mapper Exception should have been thrown");
+		}
+		catch(MapperException e) {
+			// If we make it here the test passes
+		}
+
+		// Create a new message using the factory createClean method, ensure it does not do the insertion into the database
 		Message newMessage = MessageFactory.createClean(mid, uid, message, speed, latitude, longitude, createdDate, userRating);
 		
 		// Insert the message into the database
 		MessageOutputMapper.insert(newMessage);
 		
-		// Find the message in the database and compare it to the original
-		Message oldMessage = MessageInputMapper.find(mid);
-		assertEquals(newMessage, oldMessage);
+		Message oldMessage = null;
+		
+		try {
+			// Find the message in the database and compare it to the original
+			oldMessage = MessageInputMapper.find(mid);
+			assertEquals(newMessage.equals(oldMessage), true);
+		} 
+		catch(MapperException e) {
+			fail("MapperException thrown when it should not have");
+		}
 		
 		// Remove the message from the database
 		assertEquals(MessageOutputMapper.delete(oldMessage), 1);
+		
 	}
 	
+
 	public void testFindByUser() throws NoSuchAlgorithmException, IOException, SQLException {
 		// Create some custom data for the messages
 		final byte[] message1 = {0,1,2,3,4};
@@ -86,6 +103,9 @@ public class MessageInputMapperTest extends TestCase {
 		// Create some messages and save them to the database so we can find them
 		Message m1 = MessageFactory.createNew(uid, message1, speed, latitude, longitude, createdDate1, userRating);
 		Message m2 = MessageFactory.createNew(uid, message2, speed, latitude, longitude, createdDate2, userRating);
+		
+		MessageOutputMapper.insert(m1);
+		MessageOutputMapper.insert(m2);
 		
 		// Find the messages from the database and make sure they match the ones we created
 		List<Message> messages = MessageInputMapper.findByUser(user);
@@ -110,6 +130,9 @@ public class MessageInputMapperTest extends TestCase {
 		// Create some messages and save them to the database so we can find them
 		Message m1 = MessageFactory.createNew(uid, message1, speed, latitude, longitude, createdDate1, userRating);
 		Message m2 = MessageFactory.createNew(uid, message2, speed, latitude, longitude, createdDate2, userRating);
+		
+		MessageOutputMapper.insert(m1);
+		MessageOutputMapper.insert(m2);
 		
 		// Find all of the messages from the database and make sure they match the ones we created
 		List<Message> messages = MessageInputMapper.findAll();
