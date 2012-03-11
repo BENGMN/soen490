@@ -22,13 +22,18 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+
 import foundation.Database;
 
 public class DatabaseTest {
 
 	@Test
 	public void testTables() throws IOException, SQLException
-	{
+	{		
 		partTestCreateTable();
 		partTestDeleteTable();
 	}

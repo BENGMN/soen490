@@ -28,6 +28,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Logger;
 
 import exceptions.MapperException;
 import exceptions.ParameterException;
@@ -47,14 +50,11 @@ import foundation.ServletInformation;
 public class FrontController extends HttpServlet {
 
 	private static final long serialVersionUID = 8691536805973858130L;
+	private Logger logger;
 	
 	// map that holds all the command to be executed depending on the passed command string in the request url
 	private HashMap<String, FrontCommand> commandMap = null;
-	
-	// TODO remove this possibly
-	// if the command string doesn't map to anything, we have an unknown command
-	//private UnknownCommand unknownCommand = null;
-	
+		
 	// Overridden to make sure that we have a database.
 	public void init() throws ServletException {
 		try {
@@ -63,7 +63,7 @@ public class FrontController extends HttpServlet {
 				Database.createDatabase();
 		}
 		catch (Exception E) {
-			throw new ServletException(E);
+			//throw new ServletException(E);
 		}
 	}
 	
@@ -72,6 +72,7 @@ public class FrontController extends HttpServlet {
 	 * Initialises the commands in the command map. It will be used to determine the right command to execute depending on the command parameter in the query string
 	 */
 	public FrontController() {
+		
 		commandMap = new HashMap<String, FrontCommand>();
 		
 		// Command for creating a new message from an uploaded audio file
@@ -88,6 +89,10 @@ public class FrontController extends HttpServlet {
 		
 		// command for downvoting a message
 		commandMap.put("POST.downvote", new DownvoteMessageCommand());
+		
+		// Initialise the logger
+		logger = (Logger)LoggerFactory.getLogger("application");
+		logger.debug("Starting application");
 	}
 	
 	/**
@@ -110,7 +115,7 @@ public class FrontController extends HttpServlet {
 	private void handleRequest(HttpServletRequest request, HttpServletResponse response, String httpMethod) throws ServletException {
 		
 		Connection conn = null;
-		
+
 		try {
 			conn = Database.getConnection();
 			conn.setAutoCommit(false);

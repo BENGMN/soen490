@@ -20,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
@@ -40,15 +41,16 @@ public class Database {
 	private static BoneCP connectionPool = null;
 	
 	// File path to properties file
-	private static final String PATH  = "Database.properties";
+	private static final String PATH = "Database.properties";
 	
 	static {
 		try {
 			// This will load the MySQL driver, each DB has its own driver
 			Class.forName("com.mysql.jdbc.Driver");
 			// Setup the connection with the DB
-			String server_path = ServletInformation.getInstance().resolvePath(PATH);
-			prop.load(new FileInputStream(PATH));
+			//InputStream server_path = ServletInformation.getInstance().resolvePath(PATH);
+			
+			prop.load(Database.class.getClassLoader().getResourceAsStream(PATH));
 			
 			String host = prop.getProperty("hostname");
 			String db = prop.getProperty("database");
@@ -74,12 +76,13 @@ public class Database {
 			e.printStackTrace();
 		} 
 	}
+
 	
 	// If we want to pool connections we'd put the code in here; create at startup, and allocate connections on getConnection and freeConnection.
 	private Database() throws IOException {
 		// Note: The path cannot be resolved properly unless the container is running
 		// LOCAL HACK: cd to MasterServer then ln -s /WebContent/WEB-INF (creates a symbolic link)
-		String path = ServletInformation.getInstance().resolvePath("WEB-INF/Database.properties");
+		//String path = ServletInformation.getInstance().resolvePath("WEB-INF/Database.properties");
 		
 	}
 	

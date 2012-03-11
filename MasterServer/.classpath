@@ -13,6 +13,7 @@
 	<classpathentry kind="lib" path="lib/slf4j-api-1.6.4.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-ext-1.6.4.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-migrator-1.6.4.jar"/>
+	<classpathentry kind="lib" path="lib/spring-core-3.1.0.RELEASE.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="lib" path="lib/annotations-api.jar"/>
@@ -42,7 +43,6 @@
 	<classpathentry kind="lib" path="lib/commons-fileupload-1.2.2.jar"/>
 	<classpathentry kind="lib" path="lib/spring-test-3.1.0.RELEASE.jar"/>
 	<classpathentry kind="lib" path="lib/spring-beans-3.1.0.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/spring-core-3.1.0.RELEASE.jar"/>
 	<classpathentry kind="lib" path="lib/spring-web-3.1.0.RELEASE.jar"/>
 	<classpathentry kind="lib" path="lib/commons-io-2.1.jar"/>
 	<classpathentry kind="lib" path="lib/javassist.jar"/>
