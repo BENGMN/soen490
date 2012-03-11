@@ -116,9 +116,10 @@ public class User implements IUser {
 		if ((o != null) && (o.getClass().equals(this.getClass()))) {
             // Test all of the particulars
 			return (
-	            		((User)o).getEmail().equals(this.getEmail()) &&
+						((User)o).getUid().equals(this.getUid()) &&
+						((User)o).getEmail().equals(this.getEmail()) &&
 	            		((User)o).getPassword().equals(this.getPassword()) &&
-	            		((User)o).getType() == this.getType() &&
+	            		((User)o).getType().equals(this.getType()) &&
 	            		((User)o).getVersion() == this.getVersion()
             		);
         }
