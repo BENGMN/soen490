@@ -48,9 +48,22 @@ public class GetMessageIDsCommand extends FrontCommand{
 			throw new ParameterException("Longitude, latitude, and/or speed number format exception.", e);
 		}
 		
-		List<BigInteger> ids = MessageInputMapper.findIdsInProximity(longitude, latitude, speed);		
+		List<BigInteger> ids = MessageInputMapper.findIdsInProximity(longitude, latitude, speed);	
+		//Imploding the biginteger ids with a "|" delimiter
+		String implodedId ="";
 		
-		// TODO write these ids to the response stream
+		for(BigInteger id: ids)
+		{
+			if(implodedId.equals(""))
+				implodedId = id.toString();
+			implodedId += "|"+id.toString();
+			
+		}
+		
+		response.setContentType("text/plain");
+		response.getOutputStream().print("implodedId");
+		response.setStatus(HttpServletResponse.SC_OK);
+		
 	}
 
 	

@@ -1,0 +1,5 @@
+This project is for our load-balancing service.
+
+For load-balancing, we will be using Apache's mod_proxy; see here: http://httpd.apache.org/docs/2.2/mod/mod_proxy.html. This has a dependency on mod_status; this should come with a normal install of apache.
+
+Our server will be configured as a reverse-proxy (or gateway)_to the rest of the system.

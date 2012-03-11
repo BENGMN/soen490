@@ -119,4 +119,16 @@ public class HttpMessageTest  {
 		HttpResponse response = httpClient.execute(httpPost);
 		assertEquals("HTTP/1.1 202 Accepted", response.getStatusLine());
 	}
+	
+	private ArrayList<BigInteger> getMessageIDsCommand() throws URISyntaxException, ClientProtocolException, IOException
+	{
+		int port = 8080;
+		URI getMessageIDURI = URIUtils.createURI("http", "localhost", port, serverUrl, 
+			    "command=GetMessageIDsCommand&longitude=10&latitude=10&speed=10", null);
+		HttpClient httpClient = new DefaultHttpClient();
+		HttpPost httpPost = new HttpPost(getMessageIDURI);
+		HttpResponse response = httpClient.execute(httpPost);
+		assertEquals("HTTP/1.1 202 Accepted", response.getStatusLine());
+		return null;
+	}
 }
