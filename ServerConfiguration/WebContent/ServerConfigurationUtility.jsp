@@ -7,34 +7,21 @@
 <title>Server Configuration Utility</title>
 </head>
 <body>
-	<form method="GET" action='ConfigurationController' name="ServerConfiguration">
+	<form method="POST" action='ConfigurationController' name="POST.updateServerConfiguration">
 		<table border="1">
 			<tr>
-				<td>Minimum message size</td>
-				<td><input type="text" name="MinMessageSize" /></td>
-			</tr>
-			<tr>
-				<td>Maximum Message Size</td>
-				<td><input type="text" name="MaxMessageSize" /></td>
-			</tr>
-			<tr>
-				<td>Regular message lifetime</td>
-				<td><input type="text" name="RegMessageLife" /></td>
-			</tr>
-			<tr>
-				<td>Advertiser message lifetime</td>
-				<td><input type="text" name="AdvMessageLife" /></td>
-			</tr>
-			<tr>
-				<td>Minimum user password length</td>
-				<td><input type="text" name="MinPasswordLength" /></td>
-			</tr>
-			<tr>
+			<%
+			    for(int i = 0; i < )
+			    if (rand < .1) {
+			        out.println("you win!");
+			    } else {
+			        out.println("try again");
+			    }
+			%>
 				<td>Maximum user password length</td>
 				<td><input type="text" name="MaxPasswordLength" /></td>
 			</tr>
 		</table>
-		
 		<p><input type="submit" name="Update Server Configuration" value="ServerConfiguration" /></p>
 	</form>
 </body>
