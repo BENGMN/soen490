@@ -20,15 +20,25 @@ public class DeleteMessageCommand extends FrontCommand {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, IOException, UnrecognizedUserException, NoSuchAlgorithmException, SQLException {
+		String strId = request.getParameter("messageid");
 		
-		BigInteger mid = new BigInteger(request.getParameter("messageid"));
+		if ("".equals(strId))
+			throw new ParameterException("Missing 'messageid' parameter.");
+		
+		BigInteger mid = null;
+		
+		try {
+			mid = new BigInteger(strId);
+		} catch (NumberFormatException e) {
+			throw new ParameterException("Parameter 'messageid' is badly formatted.");
+		}
 		
 		// Throws MapperException if mid doesn't exist
 		Message message = MessageInputMapper.find(mid);
 		
-		// TODO possible check for threading issues, delete returns 0 if no message was found
 		MessageOutputMapper.delete(message);
 		
+		// TODO possibly return success message
 		response.setStatus(HttpServletResponse.SC_OK);
 	}
 

@@ -51,7 +51,7 @@ public class UserTDG {
 	 * @param type User type as an integer
 	 * @throws SQLException
 	 */
-	public static int insert(BigInteger uid, int version, String email, String password, int type) throws SQLException, IOException {
+	public static int insert(BigInteger uid, int version, String email, String password, int type) throws SQLException {
 		Connection connection = Database.getConnection();
 		PreparedStatement ps = connection.prepareStatement(INSERT);
 		
@@ -86,7 +86,7 @@ public class UserTDG {
 	 * @return Returns the number of rows affected by the update.
 	 * @throws SQLException
 	 */
-	public static int update(BigInteger uid, int version, String email, String password, int type) throws SQLException, IOException {
+	public static int update(BigInteger uid, int version, String email, String password, int type) throws SQLException {
 		Connection connection = Database.getConnection();
 		PreparedStatement ps = connection.prepareStatement(UPDATE);
 		
@@ -112,7 +112,7 @@ public class UserTDG {
 	 * @return Returns the number of rows affected by the delete.
 	 * @throws SQLException
 	 */
-	public static int delete(BigInteger uid, int version) throws SQLException, IOException {
+	public static int delete(BigInteger uid, int version) throws SQLException {
 		Connection connection = Database.getConnection();
 		PreparedStatement ps = connection.prepareStatement(DELETE);
 		ps.setBigDecimal(1, new BigDecimal(uid));
@@ -130,7 +130,7 @@ public class UserTDG {
 	 * Creates the table User in the database.
 	 * @throws SQLException 
 	 */
-	public static void create() throws SQLException, IOException {
+	public static void create() throws SQLException {
 		Connection connection = Database.getConnection();
 		PreparedStatement ps = connection.prepareStatement(CREATE_TABLE);
 
@@ -145,7 +145,7 @@ public class UserTDG {
 	 * Drops the table User from the database.
 	 * @throws SQLException
 	 */
-	public static void drop() throws SQLException, IOException {
+	public static void drop() throws SQLException {
 		Connection connection = Database.getConnection();
 		PreparedStatement ps = connection.prepareStatement(DROP_TABLE);
 		

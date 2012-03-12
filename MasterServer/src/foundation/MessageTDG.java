@@ -61,7 +61,7 @@ public class MessageTDG {
 	 * @return Returns 1 if the insert succeeded. 
 	 * @throws SQLException
 	 */
-	public static int insert(BigInteger mid, BigInteger uid, byte[] message, float speed, double latitude , double longitude , Timestamp created_at , int user_rating) throws SQLException, IOException {
+	public static int insert(BigInteger mid, BigInteger uid, byte[] message, float speed, double latitude , double longitude , Timestamp created_at , int user_rating) throws SQLException {
 		Connection connection = Database.getConnection();
 		PreparedStatement ps = connection.prepareStatement(INSERT);
 		
@@ -92,7 +92,7 @@ public class MessageTDG {
 	 * @return Returns the number of rows updated, should be 1.
 	 * @throws SQLException
 	 */
-	public static int update(BigInteger mid, int user_rating) throws SQLException, IOException {
+	public static int update(BigInteger mid, int user_rating) throws SQLException {
 		Connection connection = Database.getConnection();
 		PreparedStatement ps = connection.prepareStatement(UPDATE);
 		
@@ -113,7 +113,7 @@ public class MessageTDG {
 	 * @return Returns 1 if the operation was successful, 0 if it no rows were affected.
 	 * @throws SQLException
 	 */
-	public static int delete(BigInteger mid) throws SQLException, IOException {
+	public static int delete(BigInteger mid) throws SQLException {
 		Connection connection = Database.getConnection();
 		PreparedStatement ps = connection.prepareStatement(DELETE);
 		
@@ -141,7 +141,7 @@ public class MessageTDG {
 	 * Creates the table Message in the database.
 	 * @throws SQLException 
 	 */
-	public static void create() throws SQLException, IOException {
+	public static void create() throws SQLException {
 		Connection connection = Database.getConnection();
 		PreparedStatement ps = connection.prepareStatement(CREATE_TABLE);
 		
@@ -156,7 +156,7 @@ public class MessageTDG {
 	 * Drops the table Message from the database.
 	 * @throws SQLException
 	 */
-	public static void drop() throws SQLException, IOException {
+	public static void drop() throws SQLException {
 		Connection connection = Database.getConnection();
 		PreparedStatement ps = connection.prepareStatement(DROP_TABLE);
 		

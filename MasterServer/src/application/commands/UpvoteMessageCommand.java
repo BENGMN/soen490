@@ -39,11 +39,19 @@ public class UpvoteMessageCommand extends FrontCommand {
 
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, IOException, UnrecognizedUserException, NoSuchAlgorithmException, SQLException {
 		
-		// Get message id from request object
-		if (request.getParameter("messageid") == null)
-			throw new ParameterException("Must pass in the mid to downvote.");
+		String strId;
 		
-		BigInteger mid = new BigInteger(request.getParameter("messageid"));
+		// Get message id from request object
+		if ((strId = request.getParameter("messageid")) == null)
+			throw new ParameterException("Missing 'messageid' parameter.");
+		
+		BigInteger mid = null;
+		
+		try {
+			mid = new BigInteger(strId);
+		} catch (NumberFormatException e) {
+			throw new ParameterException("Parameter 'messageid' is badly formatted.");
+		}
 		
 		// get the requested message
 		// the input mapper will either pull or put the message in the identity map
@@ -58,6 +66,7 @@ public class UpvoteMessageCommand extends FrontCommand {
 		// update the message in the database
 		MessageOutputMapper.update(message);
 		
+		// TODO Possibly return success message
 		response.setStatus(HttpServletResponse.SC_OK);
 	}
 }

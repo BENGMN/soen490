@@ -54,7 +54,7 @@ public class MessageFinder {
 		 * m.mid, m.uid, m.message, m.speed, m.latitude, m.longitude, m.created_at, m.user_rating, m.version
 		 * @throws SQLException
 		 */
-		public static ResultSet findAll() throws SQLException, IOException {
+		public static ResultSet findAll() throws SQLException {
 			Connection connection = Database.getConnection();
 			PreparedStatement ps = connection.prepareStatement(SELECT_ALL);
 			
@@ -81,7 +81,7 @@ public class MessageFinder {
 		 * m.mid, m.uid, m.message, m.speed, m.latitude, m.longitude, m.created_at, m.user_rating, m.version
 		 * @throws SQLException
 		 */
-		public static ResultSet find(BigInteger mid) throws SQLException, IOException {
+		public static ResultSet find(BigInteger mid) throws SQLException {
 			Connection connection = Database.getConnection();
 			PreparedStatement ps = connection.prepareStatement(SELECT);
 			
@@ -93,7 +93,7 @@ public class MessageFinder {
 		private static final String SELECT_BY_EMAIL =
 				"SELECT * FROM " + MessageTDG.TABLE + " AS m WHERE m.uid = ?;";
 
-		public static ResultSet findByUser(BigInteger uid) throws SQLException, IOException {
+		public static ResultSet findByUser(BigInteger uid) throws SQLException {
 			Connection connection = Database.getConnection();
 			PreparedStatement ps = connection.prepareStatement(SELECT_BY_EMAIL);
 			
@@ -116,7 +116,7 @@ public class MessageFinder {
 				"SELECT m.mid, m.uid, m.message, m.speed, m.latitude, m.longitude, m.created_at, m.user_rating, m.version " +
 				"FROM " + MessageTDG.TABLE + " AS m " + "WHERE m.longitude BETWEEN ? AND ? AND m.latitude BETWEEN ? AND ?;";
 
-		public static ResultSet findInProximity(double longitude, double latitude, double radius) throws SQLException, IOException {
+		public static ResultSet findInProximity(double longitude, double latitude, double radius) throws SQLException {
 			Connection connection = Database.getConnection();
 			PreparedStatement ps = connection.prepareStatement(SELECT_BY_RADIUS);
 			
@@ -244,7 +244,7 @@ public class MessageFinder {
 		 * @throws SQLException
 		 * @throws IOException
 		 */
-		public static ResultSet findExpired(int timeToLive) throws SQLException, IOException {
+		public static ResultSet findExpired(int timeToLive) throws SQLException {
 			Connection connection = Database.getConnection();
 			PreparedStatement ps = connection.prepareStatement(SELECT_BY_DATE);	
 			

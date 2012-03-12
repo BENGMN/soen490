@@ -175,7 +175,7 @@ public class Database {
 	}
 
 
-	public static void createDatabase() throws SQLException, IOException
+	public static void createDatabase() throws SQLException
 	{
 		if (!hasTable(UserTDG.TABLE))
 			UserTDG.create();
@@ -183,7 +183,7 @@ public class Database {
 			MessageTDG.create();
 	}
 	
-	public static void dropDatabase() throws SQLException, IOException
+	public static void dropDatabase() throws SQLException
 	{
 		if (hasTable(UserTDG.TABLE))
 			UserTDG.drop();

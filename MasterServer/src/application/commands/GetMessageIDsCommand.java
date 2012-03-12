@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.msgpack.MessagePack;
+import org.msgpack.packer.Packer;
 
-import domain.message.Packer;
 import domain.message.mappers.MessageInputMapper;
 
 import exceptions.MapperException;
@@ -27,22 +27,22 @@ public class GetMessageIDsCommand extends FrontCommand{
 		String stringLatitude;
 		String stringSpeed;
 		
+		float speed = 0;
+		double longitude;
+		double latitude;
+		
 		// Get message longitude from request object
 		if ((stringLongitude = request.getParameter("longitude")) == null)
-			throw new ParameterException("Must pass in the mid to downvote.");
+			throw new ParameterException("Missing 'longitude' parameter.");
 		
 		// Get message latitude from request object
 		if ((stringLatitude = request.getParameter("latitude")) == null)
-			throw new ParameterException("Must pass in the mid to downvote.");
-		
-		double speed = 0;
-		double longitude;
-		double latitude;
+			throw new ParameterException("Missing 'latitude' parameter.");
 		
 		try {
 			// Get speed from request object
 			if ((stringSpeed = request.getParameter("speed")) != null)
-				speed = Double.parseDouble(stringSpeed);
+				speed = Float.parseFloat(stringSpeed);
 			
 			longitude = Double.parseDouble(stringLongitude);
 			latitude = Double.parseDouble(stringLatitude);
@@ -52,13 +52,15 @@ public class GetMessageIDsCommand extends FrontCommand{
 		}
 		
 		List<BigInteger> ids = MessageInputMapper.findIdsInProximity(longitude, latitude, speed);	
-		//Imploding the biginteger ids with a "|" delimiter
+		
+		// TODO probably remove
+		// Imploding the BigInteger IDs with a "|" delimiter
 		String implodedId ="";
 		
 		response.setContentType("text/plain");
 		response.setStatus(HttpServletResponse.SC_OK);
 		
-		Packer packer = (new MessagePack()).createPacker(getOutputStream());
+		Packer packer = (new MessagePack()).createPacker(response.getOutputStream());
 		packer.write(ids.size());
 		for(BigInteger id: ids) {
 			packer.write(id.toString());
