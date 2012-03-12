@@ -25,8 +25,8 @@ import java.sql.Timestamp;
 import org.junit.Test;
 
 import foundation.Database;
-import foundation.MessageFinder;
-import foundation.MessageTDG;
+import foundation.finder.MessageFinder;
+import foundation.tdg.MessageTDG;
 import static org.junit.Assert.*;
 
 public class MessageTDGTest {

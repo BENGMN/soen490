@@ -20,7 +20,7 @@ import java.sql.SQLException;
 
 import domain.user.User;
 import domain.user.UserType;
-import foundation.UserTDG;
+import foundation.tdg.UserTDG;
 
 
 public class UserOutputMapper {

@@ -28,7 +28,7 @@ import java.util.List;
 import domain.message.Message;
 import domain.message.MessageFactory;
 import domain.message.mappers.MessageOutputMapper;
-import foundation.MessageFinder;
+import foundation.finder.MessageFinder;
 
 import junit.framework.TestCase;
 

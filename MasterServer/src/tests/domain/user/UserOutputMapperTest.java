@@ -9,7 +9,7 @@ import domain.user.UserIdentityMap;
 import domain.user.mappers.UserInputMapper;
 import domain.user.mappers.UserOutputMapper;
 import domain.user.UserType;
-import foundation.UserTDG;
+import foundation.tdg.UserTDG;
 import junit.framework.TestCase;
 
 public class UserOutputMapperTest extends TestCase {
