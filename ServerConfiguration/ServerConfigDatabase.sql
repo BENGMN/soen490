@@ -34,4 +34,7 @@ VALUES ('speedThreshold', 15);
 
 INSERT INTO ServerConfiguration
 VALUES ('defaultMessageRadiusMeters', 100);
+<<<<<<< HEAD
 
+=======
+>>>>>>> e91d034f340dbc7ef1c505a490bc3f78ca9bdac7
