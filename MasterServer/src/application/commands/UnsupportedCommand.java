@@ -31,7 +31,7 @@ public class UnsupportedCommand extends FrontCommand {
 	public UnsupportedCommand(String httpMethod, String commandString) {
 		this.httpMethod = httpMethod;
 		if (commandString == null)
-			this.commandString = "missing command";
+			this.commandString = "Missing 'command' parameter.";
 		else
 			this.commandString = commandString;
 	}

@@ -46,6 +46,7 @@ import application.commands.CreateMessageCommand;
 import application.commands.DeleteMessageCommand;
 import application.commands.DownvoteMessageCommand;
 import application.commands.FrontCommand;
+import application.commands.GetMessageIDsCommand;
 import application.commands.ReadMessageCommand;
 import application.commands.UnsupportedCommand;
 import application.commands.UpvoteMessageCommand;
@@ -94,9 +95,13 @@ public class FrontController extends HttpServlet {
 		// Command for upvoting a message
 		commandMap.put("POST.upvote", new UpvoteMessageCommand());
 		
-		// command for downvoting a message
+		// Command for downvoting a message
 		commandMap.put("POST.downvote", new DownvoteMessageCommand());
 
+		// Command for getting message ids 
+		// This should be called before readmessage
+		commandMap.put("GET.getmessageids", new GetMessageIDsCommand());
+		
 		// Initialise the logger
 		logger = (Logger)LoggerFactory.getLogger("application");
 		logger.info("Starting Application Server. FrontController started.");
@@ -121,7 +126,10 @@ public class FrontController extends HttpServlet {
 	 */
 	private void handleRequest(HttpServletRequest request, HttpServletResponse response, String httpMethod) throws ServletException {
 		Connection conn = null;
-
+		
+		logger.trace("handleRequest() starting.");
+		
+		// TODO might not need transaction
 		try {
 			conn = Database.getConnection();
 			conn.setAutoCommit(false);
@@ -129,7 +137,6 @@ public class FrontController extends HttpServlet {
 			ps.execute();
 			ps.close();
 		} catch (SQLException e1) {
-			// TODO LOG
 			logger.debug("SQL exception occured when starting transaction {}", e1);
 			e1.printStackTrace();
 		}
@@ -141,21 +148,29 @@ public class FrontController extends HttpServlet {
 		FrontCommand command = getCommand(httpMethod, commandString);
 		
 		try {
-			try {
+			try {				
+				logger.trace("Executing command {}", command);
+				
 				// Execute the command
 				command.execute(request, response);
 			} catch (SQLException e) {
+				logger.debug("The following SQLException occured", e);
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
 			} catch (IOException e) {
+				logger.debug("The following IOException occured", e);
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
 			} catch (ParameterException e) {
+				logger.debug("The following ParameterException occured", e);
 				response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.toString());
 				// TODO would the below be bad requests as well
 			} catch (NoSuchAlgorithmException e) {
+				logger.debug("The following NoSuchAlgorithmException occured", e);
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
 			} catch (MapperException e) {
+				logger.debug("The following MapperException occured", e);
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
 			} catch (UnrecognizedUserException e) {
+				logger.debug("The following UnrecognizedUserException occured", e);
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
 			}
 		} catch (IOException e) {
@@ -167,18 +182,19 @@ public class FrontController extends HttpServlet {
 			PreparedStatement ps = conn.prepareStatement("COMMIT;");
 			ps.execute();
 			ps.close();
-		} catch (SQLException e1) {
-			// TODO LOG
-			e1.printStackTrace();
+		} catch (SQLException e) {
+			logger.debug("The following SQLException occured", e);				
+			e.printStackTrace();
 		} finally {
 			try {
 				Database.freeConnection();
-				
-			} catch (SQLException e1) {
-				// TODO LOG
-				e1.printStackTrace();
+			} catch (SQLException e) {
+				logger.debug("The following SQLException occured", e);				
+				e.printStackTrace();
 			}
 		}
+		
+		logger.trace("handleRequest() ending.");
 	}
 	
 	/*

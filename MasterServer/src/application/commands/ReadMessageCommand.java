@@ -25,25 +25,35 @@ public class ReadMessageCommand extends FrontCommand {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, IOException, UnrecognizedUserException, NoSuchAlgorithmException, SQLException {
-		// Get parameter of pipe ('|') separated message id values
-		String separatedIDs = request.getParameter("messageid");
 
+		String separatedIDs;
+		
+		// Get parameter of pipe ('|') separated message id values
+		if ((separatedIDs = request.getParameter("messageid")) == null)
+			throw new ParameterException("Missing 'messageid' parameter.");
+		
 		// Split the ids, split takes a regex, so we need to escape the pipe character
 		String[] individualIDs = separatedIDs.split("\\|");
+		
+		BigInteger mid = null;
 		
 		// Max array of length
 		List<Message> messages = new ArrayList<Message>(individualIDs.length);
 		
 		for (String id: individualIDs) {
-			BigInteger mid = new BigInteger(id);
 			try {
+				mid = new BigInteger(id);
 				Message message = MessageInputMapper.find(mid);
 				messages.add(message);
 			} catch (MapperException e) {
-				// TODO Log that a message was not found
-				// but continue
+				// TODO get logger some other way
+				Logger logger = (Logger)LoggerFactory.getLogger("application");
+				logger.debug("Message with id {} was not found.", mid.toString());
+				// ID was not found, ignore it, on to the next one
 				continue;
-			}	
+			} catch (NumberFormatException e) {
+				throw new ParameterException("Parameter 'messageid' is badly formatted.");
+			}
 		}
 		
 		// TODO write message list to response but not the way we are doing it below

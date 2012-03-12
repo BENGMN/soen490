@@ -44,17 +44,33 @@ public class CreateMessageCommand extends FrontCommand {
 		if (multipartFile == null)
 			throw new ParameterException("Put requests must have 'bin' as a multipart file upload.");
 		
+		// TODO this needs to change to the ServletParameters class
 		if (multipartFile.getSize() > (Long)request.getSession(true).getServletContext().getAttribute("MAX_UPLOAD_SIZE")) {
-			// TODO throw some exception on size
+			throw new ParameterException("Upload file's size is too large.");
 		}
 				
 		byte[] messageBytes = null;
 		messageBytes = multipartFile.getBytes();
 		
 		// Get location information
-		double longitude = Double.parseDouble(multipartRequest.getParameter("longitude"));
-		double latitude = Double.parseDouble(multipartRequest.getParameter("latitude"));
-		float speed = Float.parseFloat(multipartRequest.getParameter("speed"));
+		String strLongitude = multipartRequest.getParameter("longitude");
+		String strSpeed = multipartRequest.getParameter("speed");
+		String strLatitude = multipartRequest.getParameter("latitude");
+		
+		double longitude;
+		double latitude;
+		float speed = 0;
+		
+		try {
+			// Get speed from request object
+			if ((strSpeed = request.getParameter("speed")) != null)
+				speed = Float.parseFloat(strSpeed);
+			
+			longitude = Double.parseDouble(strLongitude);
+			latitude = Double.parseDouble(strLatitude);
+		} catch (NumberFormatException e) {
+			throw new ParameterException("Longitude, latitude, and/or speed number format exception.", e);
+		}
 		
 		String email = multipartRequest.getParameter("email");
 		
@@ -68,11 +84,11 @@ public class CreateMessageCommand extends FrontCommand {
 		
 		Message msg = MessageFactory.createNew(user.getUid(), messageBytes, speed, latitude, longitude, new Timestamp(GregorianCalendar.getInstance().getTimeInMillis()), 0);
 		
-		// Put the new message in the identity map and insert into db
+		// Put the new message in the identity map and insert into database
 		MessageIdentityMap.put(msg.getMid(), msg);		 
 		MessageOutputMapper.insert(msg);
 		
-		//TODO change this sht
+		//TODO change this shit
 		// Write the id of the newly created message to the http response
 		MessagePack messagePack = new MessagePack();
 		Packer packer = messagePack.createPacker(response.getOutputStream());

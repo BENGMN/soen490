@@ -40,7 +40,7 @@ public class UserFinder {
 	 * @return Returns the ResultSet containing the user information as u.uid, u.version, u.email, u.password, u.type.
 	 * @throws SQLException
 	 */
-	public static ResultSet find(BigInteger uid) throws SQLException, IOException {
+	public static ResultSet find(BigInteger uid) throws SQLException {
 		Connection connection = Database.getConnection();
 		PreparedStatement ps = connection.prepareStatement(SELECT);
 
@@ -61,7 +61,7 @@ public class UserFinder {
 	 * @return Returns the ResultSet containing the user information as u.uid, u.version, u.email, u.password, u.type.
 	 * @throws SQLException
 	 */
-	public static ResultSet find(String email, String password) throws SQLException, IOException {
+	public static ResultSet find(String email, String password) throws SQLException {
 		Connection connection = Database.getConnection();
 		PreparedStatement ps = connection.prepareStatement(SELECT_BY_EMAIL_AND_PASSWORD);
 		
@@ -82,7 +82,7 @@ public class UserFinder {
 	 * @return Returns the ResultSet containing the user information as u.uid, u.version, u.email, u.password, u.type.
 	 * @throws SQLException
 	 */
-	public static ResultSet find(String email) throws SQLException, IOException {
+	public static ResultSet find(String email) throws SQLException {
 		Connection connection = Database.getConnection();
 		PreparedStatement ps = connection.prepareStatement(SELECT_BY_EMAIL);
 		
@@ -100,7 +100,7 @@ public class UserFinder {
 	 * @return Returns the ResultSet containing the user information as u.uid, u.version, u.email, u.password, u.type.
 	 * @throws SQLException
 	 */
-	public static ResultSet findAll() throws SQLException, IOException {
+	public static ResultSet findAll() throws SQLException {
 		Connection connection = Database.getConnection();
 		PreparedStatement ps = connection.prepareStatement(SELECT_ALL);
 		
@@ -116,7 +116,7 @@ public class UserFinder {
 	 * @return Returns a unique ID that is not shared by any user in the database.
 	 * @throws SQLException
 	 */
-	public static long findUniqueId() throws SQLException, IOException { 
+	public static long findUniqueId() throws SQLException { 
 		Connection connection = Database.getConnection();
 		PreparedStatement ps = connection.prepareStatement(SELECT_UNIQUE_ID);
 
