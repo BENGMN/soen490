@@ -25,7 +25,7 @@ public class ServerParametersFinder {
 	 * @return Returns ResultSet containing all the server parameters in the ServerConfiguration table
 	 * @throws SQLException
 	 */
-	public ResultSet findALL() throws SQLException {
+	public static ResultSet findALL() throws SQLException {
 		Connection connection = Database.getConnection();
 		PreparedStatement ps = connection.prepareStatement(SELECT_ALL);
 		
@@ -45,7 +45,7 @@ public class ServerParametersFinder {
 	 * @return Returns ResultSet containing the server parameter referenced by the passed variable name
 	 * @throws SQLException
 	 */
-	public ResultSet find(String variableName) throws SQLException {
+	public static ResultSet find(String variableName) throws SQLException {
 		Connection connection = Database.getConnection();
 		PreparedStatement ps = connection.prepareStatement(SELECT);
 		

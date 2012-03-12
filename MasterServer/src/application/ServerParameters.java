@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 
 import foundation.Database;
+import foundation.finder.ServerParametersFinder;
 import foundation.tdg.ServerParametersTDG;
 
 /**
@@ -46,11 +47,9 @@ public class ServerParameters {
 	 * Grabs all the parameters from the database and stores them in the HashMap.
 	 * @throws SQLException
 	 */
-	private void populateVariables() throws SQLException {
-		Connection connection = Database.getConnection();
-		PreparedStatement ps = connection.prepareStatement(SELECT);
+	protected void populateVariables() throws SQLException {
+		ResultSet rs = ServerParametersFinder.findALL();
 		
-		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
 			String variableName = rs.getString("variableName");
 			double value = rs.getDouble("value");
@@ -58,7 +57,7 @@ public class ServerParameters {
 			parameters.put(variableName, value);
 		}
 		
-		ps.close();
+		rs.close();
 		
 		// Frees the connection from the conenction pool
 		Database.freeConnection();
