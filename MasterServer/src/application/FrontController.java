@@ -16,18 +16,15 @@
 
 package application;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
+
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.net.URL;
+
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.Scanner;
+
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -36,7 +33,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 
 import exceptions.MapperException;
@@ -51,8 +47,6 @@ import application.commands.ReadMessageCommand;
 import application.commands.UnsupportedCommand;
 import application.commands.UpvoteMessageCommand;
 import foundation.Database;
-import foundation.ServletInformation;
-
 
 
 public class FrontController extends HttpServlet {

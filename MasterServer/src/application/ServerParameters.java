@@ -12,36 +12,31 @@ import foundation.finder.ServerParametersFinder;
 import foundation.tdg.ServerParametersTDG;
 
 /**
- * Singleton class that holds all the server parameters.
+ * Singleton class that holds all the server parameters as a HashMap, 
+ * where the key is the parameter name and the value is its value.
  * @author Anthony
  *
  */
-public class ServerParameters {
+public class ServerParameters extends HashMap<String, Double> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	/**
 	 * Singleton instance
 	 */
 	private static ServerParameters uniqueInstance = null;
-
-	/**
-	 * HashMap holding all the server parameters, where the key is the parameter name and the value is its value.
-	 */
-	private HashMap<String, Double> parameters;
 	
 	/**
 	 * Constructs the unique instance.
 	 * @throws SQLException
 	 */
 	private ServerParameters() throws SQLException {
-		parameters = new HashMap<String, Double>();
+		super();
 		populateVariables();
 	}
-	/**
-	 * SQL query for selecting all variable names and their values.
-	 */
-	private final static String SELECT = 
-			"SELECT * " + 
-			"FROM " + ServerParametersTDG.TABLE + ";";
 
 	/**
 	 * Grabs all the parameters from the database and stores them in the HashMap.
@@ -54,24 +49,16 @@ public class ServerParameters {
 			String variableName = rs.getString("variableName");
 			double value = rs.getDouble("value");
 			
-			parameters.put(variableName, value);
+			this.put(variableName, value);
 		}
 		
 		rs.close();
 		
-		// Frees the connection from the conenction pool
+		// Frees the connection from the connection pool
+		// TODO change this
 		Database.freeConnection();
 	}
-	
-	/**
-	 * Getter method for individual parameters.
-	 * @param parameterName Name of the parameter
-	 * @return Returns the value for given parameter
-	 */
-	public double getValue(String parameterName) {
-		return parameters.get(parameterName);
-	}
-	
+		
 	/**
 	 * Getter to retrieve the ServerParameters unique instance.
 	 * @return Returns singleton ServerParameters instance
