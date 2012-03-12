@@ -33,7 +33,6 @@ public class PurgeMonitor {
 	private final int delay;// in seconds
 	private final ScheduledExecutorService  scheduler = Executors.newSingleThreadScheduledExecutor(); // Only 1 thread is used to perform this task
 
-	
 	public PurgeMonitor(int initialDelay, int delay) {
 		this.initialDelay = initialDelay;
 		this.delay = delay;
