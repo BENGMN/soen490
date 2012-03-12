@@ -2,31 +2,51 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
-    <Button
+    <ImageButton
+        android:id="@+id/upvote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dip"
+        android:src="@drawable/upvote"
+        android:background="@drawable/round_button"/>
+   	<ImageButton
+        android:id="@+id/downvote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dip"
+        android:layout_toRightOf="@id/upvote"
+        android:src="@drawable/downvote"
+        android:background="@drawable/round_button"/>
+    <ImageButton
         android:id="@+id/prev"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dip"
-        android:text="Prev" />
-    <Button
+        android:layout_below="@id/upvote"
+        android:src="@drawable/prev"
+        android:background="@drawable/round_button"/>
+    <ImageButton
         android:id="@+id/action"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dip"
         android:layout_toRightOf="@id/prev"
-        android:text="Play" />
-    <Button
+        android:src="@drawable/play"
+        android:background="@drawable/round_button"/>
+    <ImageButton
         android:id="@+id/next"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dip"
         android:layout_toRightOf="@id/action"
-        android:text="Next" />
-   <Button
+        android:src="@drawable/next"
+        android:background="@drawable/round_button"/>
+   <ImageButton
         android:id="@+id/record"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dip"
         android:layout_below="@id/action"
-        android:text="Record" />
+        android:src="@drawable/record"
+        android:background="@drawable/round_button"/>
 </RelativeLayout>
