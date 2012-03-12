@@ -9,6 +9,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.msgpack.MessagePack;
+
+import domain.message.Packer;
 import domain.message.mappers.MessageInputMapper;
 
 import exceptions.MapperException;
@@ -52,18 +55,14 @@ public class GetMessageIDsCommand extends FrontCommand{
 		//Imploding the biginteger ids with a "|" delimiter
 		String implodedId ="";
 		
-		for(BigInteger id: ids)
-		{
-			if(implodedId.equals(""))
-				implodedId = id.toString();
-			implodedId += "|"+id.toString();
-			
-		}
-		
 		response.setContentType("text/plain");
-		response.getOutputStream().print("implodedId");
 		response.setStatus(HttpServletResponse.SC_OK);
 		
+		Packer packer = (new MessagePack()).createPacker(getOutputStream());
+		packer.write(ids.size());
+		for(BigInteger id: ids) {
+			packer.write(id.toString());
+		}		
 	}
 
 	
