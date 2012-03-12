@@ -4,20 +4,23 @@ import java.io.IOException;
 
 import ericsson.thinClient.R;
 import ericsson.thinClient.domain.Control;
+import ericsson.thinClient.domain.Message;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 public class ThinClientActivity extends Activity  implements OnClickListener, Control.Listener {
-    /** Called when the activity is first created. */
+	
     ImageButton actionButton;
     ImageButton prevButton;
     ImageButton nextButton;
     ImageButton recordButton;
     ImageButton upvoteButton;
     ImageButton downvoteButton;
+    TextView statusView;
     
     private static ThinClientActivity singleton = null;
     
@@ -36,7 +39,7 @@ public class ThinClientActivity extends Activity  implements OnClickListener, Co
         recordButton = (ImageButton)findViewById(R.id.record);
         upvoteButton = (ImageButton)findViewById(R.id.upvote);
         downvoteButton = (ImageButton)findViewById(R.id.downvote);
-        
+        statusView = (TextView)findViewById(R.id.status);
         
         recordButton.setOnClickListener(this);
         actionButton.setOnClickListener(this);
@@ -45,7 +48,12 @@ public class ThinClientActivity extends Activity  implements OnClickListener, Co
         upvoteButton.setOnClickListener(this);
         downvoteButton.setOnClickListener(this);     
         
+        statusView.setText("sldfhjasdlfjlskdgjflaskg");
+        
         Control.getInstance().addListener(this);
+        updatePlayButton();
+        updateRecordButton();
+        updateVotingButtons();
     }
 
 	@Override
@@ -87,6 +95,14 @@ public class ThinClientActivity extends Activity  implements OnClickListener, Co
 
 	@Override
 	public void updateVotingButtons() {
-		
+		Message selected = Control.getInstance().getSelectedMessage(); 
+		if (selected == null) {
+			upvoteButton.setEnabled(false);
+			downvoteButton.setEnabled(false);
+		}
+		else {
+			upvoteButton.setEnabled(!selected.getRatingModified());
+			downvoteButton.setEnabled(!selected.getRatingModified());
+		}
 	}
 }

@@ -24,6 +24,8 @@ public class HttpInterface {
 	private static final int entrypointPort = 8080;
 	private AndroidHttpClient client;
 	
+	
+	// Should use intents to open up a web browser. Otherwise an execption is thrown.
 	private HttpInterface()
 	{
 		client = AndroidHttpClient.newInstance(clientName);
@@ -38,7 +40,7 @@ public class HttpInterface {
 	
 	public InputStream getMessageIDs(double longitude, double latitude, float speed) throws IOException
 	{
-		final String url = entrypointHostname + ":" + entrypointPort + "/frontController/getmessageids";
+		final String url = "http://" + entrypointHostname + ":" + entrypointPort + "/frontController/getmessageids";
 		HttpGet request = new HttpGet(url);
 		BasicHttpParams params = new BasicHttpParams();
 		params.setDoubleParameter("longitude", longitude);
@@ -51,7 +53,7 @@ public class HttpInterface {
 	
 	public InputStream getMessages(List<BigInteger> ids) throws IOException
 	{
-		final String url = entrypointHostname + ":" + entrypointPort + "/frontController/getmessages";
+		final String url = "http://" + entrypointHostname + ":" + entrypointPort + "/frontController/getmessages";
 		HttpGet request = new HttpGet(url);
 		BasicHttpParams params = new BasicHttpParams();
 		request.setParams(params);
@@ -61,7 +63,7 @@ public class HttpInterface {
 	
 	public boolean uploadMessage(File file, double longitude, double latitude, float speed, String email) throws UnsupportedEncodingException, IOException
 	{
-		final String url = entrypointHostname + ":" + entrypointPort + "/frontController/createmessage";
+		final String url = "http://" + entrypointHostname + ":" + entrypointPort + "/frontController/createmessage";
 		HttpPut httpPut = new HttpPut(url);
 		
 		MultipartEntity entity = new MultipartEntity();
@@ -79,7 +81,7 @@ public class HttpInterface {
 	
 	public boolean upvoteMessage(BigInteger id) throws IOException
 	{
-		final String url = entrypointHostname + ":" + entrypointPort + "/frontController/upvote";
+		final String url = "http://" + entrypointHostname + ":" + entrypointPort + "/frontController/upvote";
 		HttpPost request = new HttpPost(url);
 		BasicHttpParams params = new BasicHttpParams();
 		params.setParameter("mid", id);
@@ -91,7 +93,7 @@ public class HttpInterface {
 	
 	public boolean downvoteMessage(BigInteger id) throws IOException
 	{
-		final String url = entrypointHostname + ":" + entrypointPort + "/frontController/downvote";
+		final String url = "http://" + entrypointHostname + ":" + entrypointPort + "/frontController/downvote";
 		HttpPost request = new HttpPost(url);
 		BasicHttpParams params = new BasicHttpParams();
 		params.setParameter("mid", id);

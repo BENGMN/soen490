@@ -23,18 +23,27 @@ public final class R {
         public static final int upvote=0x7f020009;
     }
     public static final class id {
-        public static final int action=0x7f050003;
-        public static final int downvote=0x7f050001;
-        public static final int next=0x7f050004;
-        public static final int prev=0x7f050002;
-        public static final int record=0x7f050005;
-        public static final int upvote=0x7f050000;
+        public static final int action=0x7f050006;
+        public static final int downvote=0x7f050002;
+        public static final int middleBox=0x7f050004;
+        public static final int next=0x7f050007;
+        public static final int prev=0x7f050005;
+        public static final int record=0x7f050008;
+        public static final int status=0x7f050003;
+        public static final int topBox=0x7f050000;
+        public static final int upvote=0x7f050001;
     }
     public static final class layout {
         public static final int main=0x7f030000;
     }
     public static final class string {
         public static final int app_name=0x7f040001;
+        public static final int downvote=0x7f040003;
         public static final int hello=0x7f040000;
+        public static final int next=0x7f040005;
+        public static final int playpause=0x7f040007;
+        public static final int prev=0x7f040004;
+        public static final int record=0x7f040006;
+        public static final int upvote=0x7f040002;
     }
 }

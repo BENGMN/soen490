@@ -1,3 +1,3 @@
 The thin client will be created using android. Essentially, it'll be a simple app that makes GET and POST requests to the various servers in the system.
 
-For information on how to install either the linux (tar.gz), or the windows (.exe) versions of the SDK; see here: http://developer.android.com/sdk/installing.html.
+For information on how to install either the linux (tar.gz), or the windows (.exe) versions of the SDK; see here: http://developer.android.com/sdk/installing.html. The SDK is set up inside the dep folder, for me.

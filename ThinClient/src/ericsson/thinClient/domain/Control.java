@@ -14,10 +14,14 @@ import ericsson.thinClient.technical.HttpInterface;
 import ericsson.thinClient.technical.AndroidPlayer;
 import ericsson.thinClient.view.ThinClientActivity;
 
+// Apparently actual assertions don't work for some strange reason.
+// So we have to use the junit ones.
+import static junit.framework.Assert.*;
+
 public class Control extends TimerTask implements AndroidPlayer.Listener {
 	private static Control singleton = null;
 	private static long recordingTime = 30 * 1000;
-	public Timer recordingTimer;
+	private Timer recordingTimer;
 	
 	public interface Listener {
 		public void updatePlayButton();
@@ -28,7 +32,7 @@ public class Control extends TimerTask implements AndroidPlayer.Listener {
 	private ArrayList<Listener> listeners;
 	
 	// We can have one recorded message stored while we're deciding what to do with it.
-	public File recordedMessage;
+	private File recordedMessage;
 	
 	public static Control getInstance()
 	{
@@ -42,9 +46,9 @@ public class Control extends TimerTask implements AndroidPlayer.Listener {
 		STATUS_PAUSED
 	}
 	
-	boolean recording;
-	Message selectedMessage;
-	EControlStatus status;
+	private boolean recording;
+	private Message selectedMessage;
+	private EControlStatus status;
 	
 	private Control() {
 		status = EControlStatus.STATUS_PAUSED;
@@ -66,6 +70,10 @@ public class Control extends TimerTask implements AndroidPlayer.Listener {
 		return recording;
 	}
 	
+	public Message getSelectedMessage() {
+		return selectedMessage;
+	}
+	
 	private void startPlaying() throws IllegalArgumentException, IllegalStateException, FileNotFoundException, IOException	{
 		status = EControlStatus.STATUS_PLAYING;
 		if (selectedMessage == null)
@@ -77,7 +85,7 @@ public class Control extends TimerTask implements AndroidPlayer.Listener {
 	
 	private void stopPlaying()
 	{
-		assert(status == EControlStatus.STATUS_PLAYING);
+		assertTrue(status == EControlStatus.STATUS_PLAYING);
 		AndroidPlayer.getInstance().stop();
 		for (Listener listener : listeners)
 			listener.updatePlayButton();
@@ -93,7 +101,7 @@ public class Control extends TimerTask implements AndroidPlayer.Listener {
 	
 	public void startRecording() throws IllegalStateException, IOException
 	{
-		assert(!recording);
+		assertTrue(!recording);
 		recording = true;
 		recordingTimer.schedule(this, recordingTime);
 		AndroidRecorder.getInstance().start();
@@ -112,7 +120,7 @@ public class Control extends TimerTask implements AndroidPlayer.Listener {
 	
 	public void stopRecording() throws IOException
 	{
-		assert(recording);
+		assertTrue(recording);
 		recording = false;
 		recordingTimer.cancel();
 		recordedMessage = AndroidRecorder.getInstance().stop();
@@ -130,19 +138,19 @@ public class Control extends TimerTask implements AndroidPlayer.Listener {
 	
 	public void prev() throws IOException
 	{
-		assert(!isRecording() && selectedMessage != null);
+		assertTrue(!isRecording() && selectedMessage != null);
 		selectedMessage = MessagesCached.getInstance().getPrevMessage(selectedMessage);
 	}
 	
 	public void next() throws IOException
 	{
-		assert(!isRecording() && selectedMessage != null);
+		assertTrue(!isRecording() && selectedMessage != null);
 		selectedMessage = MessagesCached.getInstance().getNextMessage(selectedMessage);
 	}
 	
 	public void upvoteSelected() throws IOException
 	{
-		assert(!isRecording() && selectedMessage != null);
+		assertTrue(!isRecording() && selectedMessage != null);
 		HttpInterface.getInstance().downvoteMessage(selectedMessage.getMid());
 		for (Listener listener : listeners)
 			listener.updateVotingButtons();
@@ -150,7 +158,7 @@ public class Control extends TimerTask implements AndroidPlayer.Listener {
 	
 	public void downvoteSelected() throws IOException
 	{
-		assert(!isRecording() && selectedMessage != null);
+		assertTrue(!isRecording() && selectedMessage != null);
 		HttpInterface.getInstance().upvoteMessage(selectedMessage.getMid());
 		for (Listener listener : listeners)
 			listener.updateVotingButtons();
@@ -158,7 +166,7 @@ public class Control extends TimerTask implements AndroidPlayer.Listener {
 	
 	public void uploadRecording() throws UnsupportedEncodingException, IOException
 	{
-		assert(recordedMessage != null);
+		assertTrue(recordedMessage != null);
 		HttpInterface.getInstance().uploadMessage(recordedMessage,
 				AndroidLocation.getInstance().getLongitude(),
 				AndroidLocation.getInstance().getLatitude(),
@@ -168,7 +176,7 @@ public class Control extends TimerTask implements AndroidPlayer.Listener {
 	
 	public void discardRecording()
 	{
-		assert(recordedMessage != null);
+		assertTrue(recordedMessage != null);
 		recordedMessage.delete();
 		recordedMessage = null;
 	}

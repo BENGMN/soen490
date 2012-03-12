@@ -19,10 +19,13 @@ public class Message {
 	private Timestamp createdAt;
 	private int userRating;
 	private File message;
+	
+	// For internal use only; determines whether or not we've modified the rating.
+	private boolean ratingModified;
 		
 		
 	private Message() {
-		
+		ratingModified = false;
 	}
 	
 	static Message createFromResponse(InputStream in) throws IOException {
@@ -90,5 +93,9 @@ public class Message {
 
 	public File getMessage() {
 		return message;
+	}
+	
+	public boolean getRatingModified() {
+		return ratingModified;
 	}
 }

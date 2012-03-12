@@ -3,5 +3,11 @@
 
     <string name="hello">Hello World, ThinClientActivity!</string>
     <string name="app_name">ThinClient</string>
+    <string name="upvote">Upvote</string>
+    <string name="downvote">Downvote</string>
+    <string name="prev">Previous</string>
+    <string name="next">Next</string>
+    <string name="record">Record</string>
+    <string name="playpause">Play/Pause</string>
 
 </resources>
