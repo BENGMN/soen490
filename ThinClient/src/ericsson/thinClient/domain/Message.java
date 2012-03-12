@@ -33,4 +33,9 @@ public class Message {
 		message.userRating = unpacker.readInt();
 		return message;
 	}
+	
+	public BigInteger getMid()
+	{
+		return mid;
+	}
 }
