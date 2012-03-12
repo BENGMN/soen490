@@ -1,23 +1,24 @@
 CREATE TABLE ServerConfiguration
 (
-variable varchar(255),
-value double
+variableName varchar(255),
+value double NOT NULL, 
+PRIMARY KEY (variableName)
 );
 
 INSERT INTO ServerConfiguration
-VALUES ('minMessageSize', 20.0);
+VALUES ('minMessageSizeBytes', 10000.0);
 
 INSERT INTO ServerConfiguration
-VALUES ('maxMessageSize', 1500.0);
+VALUES ('maxMessageSizeBytes', 50000.0);
 
 INSERT INTO ServerConfiguration
-VALUES ('messageLife', 7);
+VALUES ('messageLifeDays', 7);
 
 INSERT INTO ServerConfiguration
-VALUES ('mdvMessageLife', 30);
+VALUES ('advertiserMessageLifeDays', 30);
 
 INSERT INTO ServerConfiguration
-VALUES ('minEmailLength', 3);
+VALUES ('minEmailLength', 15);
 
 INSERT INTO ServerConfiguration
 VALUES ('maxEmailLength', 50);
@@ -26,11 +27,11 @@ INSERT INTO ServerConfiguration
 VALUES ('minPasswordLength', 6);
 
 INSERT INTO ServerConfiguration
-VALUES ('minPasswordLength', 20);
+VALUES ('maxPasswordLength', 20);
 
 INSERT INTO ServerConfiguration
-VALUES ('speedThreshhold', 15);
+VALUES ('speedThreshold', 15);
 
 INSERT INTO ServerConfiguration
-VALUES ('defaultMessageRadius', 100);
+VALUES ('defaultMessageRadiusMeters', 100);
 
