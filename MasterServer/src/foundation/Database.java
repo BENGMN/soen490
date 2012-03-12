@@ -41,22 +41,22 @@ public class Database {
 	private static BoneCP connectionPool = null;
 	
 	// File path to properties file
-	private static final String PATH = "Database.properties";
+	private static final String FILENAME = "Database.properties";
 	
 	static {
 		try {
 			// This will load the MySQL driver, each DB has its own driver
 			Class.forName("com.mysql.jdbc.Driver");
-			// Setup the connection with the DB
-			//InputStream server_path = ServletInformation.getInstance().resolvePath(PATH);
 			
-			prop.load(Database.class.getClassLoader().getResourceAsStream(PATH));
+			// Loads properties file
+			prop.load(Database.class.getClassLoader().getResourceAsStream(FILENAME));
 			
 			String host = prop.getProperty("hostname");
 			String db = prop.getProperty("database");
 			String username = prop.getProperty("username");
 			String password = prop.getProperty("password");
 			
+			// Setup the connection with the DB
 			BoneCPConfig config = new BoneCPConfig();
 			config.setJdbcUrl("jdbc:mysql://" + host + "/" + db);
 			config.setUsername(username);

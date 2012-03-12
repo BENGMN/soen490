@@ -11,6 +11,10 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Logger;
+
 import exceptions.MapperException;
 import exceptions.ParameterException;
 import exceptions.UnrecognizedUserException;
@@ -23,9 +27,9 @@ public class ReadMessageCommand extends FrontCommand {
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, IOException, UnrecognizedUserException, NoSuchAlgorithmException, SQLException {
 		// Get parameter of pipe ('|') separated message id values
 		String separatedIDs = request.getParameter("messageid");
-		
-		// Split the ids
-		String[] individualIDs = separatedIDs.split("|");
+
+		// Split the ids, split takes a regex, so we need to escape the pipe character
+		String[] individualIDs = separatedIDs.split("\\|");
 		
 		// Max array of length
 		List<Message> messages = new ArrayList<Message>(individualIDs.length);

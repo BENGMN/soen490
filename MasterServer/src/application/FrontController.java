@@ -16,12 +16,18 @@
 
 package application;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Scanner;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -30,6 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 
 import exceptions.MapperException;
@@ -66,7 +73,7 @@ public class FrontController extends HttpServlet {
 			//throw new ServletException(E);
 		}
 	}
-	
+
 	/**
 	 * Constructor
 	 * Initialises the commands in the command map. It will be used to determine the right command to execute depending on the command parameter in the query string
@@ -89,10 +96,10 @@ public class FrontController extends HttpServlet {
 		
 		// command for downvoting a message
 		commandMap.put("POST.downvote", new DownvoteMessageCommand());
-		
+
 		// Initialise the logger
 		logger = (Logger)LoggerFactory.getLogger("application");
-		logger.debug("Starting application");
+		logger.info("Starting Application Server. FrontController started.");
 	}
 	
 	/**
@@ -110,10 +117,9 @@ public class FrontController extends HttpServlet {
 	// TODO log some errors
 	
 	/**
-	 * This method handles all request 
+	 * This method handles all request s
 	 */
 	private void handleRequest(HttpServletRequest request, HttpServletResponse response, String httpMethod) throws ServletException {
-		
 		Connection conn = null;
 
 		try {
@@ -124,6 +130,7 @@ public class FrontController extends HttpServlet {
 			ps.close();
 		} catch (SQLException e1) {
 			// TODO LOG
+			logger.debug("SQL exception occured when starting transaction {}", e1);
 			e1.printStackTrace();
 		}
 		
