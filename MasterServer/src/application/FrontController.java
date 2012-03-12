@@ -66,7 +66,6 @@ public class FrontController extends HttpServlet {
 	// Overridden to make sure that we have a database.
 	public void init() throws ServletException {
 		try {
-			ServletInformation.getInstance().setServletContext(getServletContext());
 			if (!Database.isDatabaseCreated())
 				Database.createDatabase();
 		}
@@ -104,7 +103,7 @@ public class FrontController extends HttpServlet {
 		
 		// Initialise the logger
 		logger = (Logger)LoggerFactory.getLogger("application");
-		logger.info("Starting Application Server. FrontController started.");
+		logger.trace("Starting Application Server. FrontController started.");
 	}
 	
 	/**

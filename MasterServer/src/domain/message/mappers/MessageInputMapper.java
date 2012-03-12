@@ -28,7 +28,7 @@ import exceptions.MapperException;
 import domain.message.Message;
 import domain.message.MessageFactory;
 import domain.message.MessageIdentityMap;
-import foundation.MessageFinder;
+import foundation.finder.MessageFinder;
 import domain.user.IUser;
 
 /**

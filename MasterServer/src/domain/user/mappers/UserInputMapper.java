@@ -24,7 +24,7 @@ import domain.user.User;
 import domain.user.UserFactory;
 import domain.user.UserIdentityMap;
 import domain.user.UserType;
-import foundation.UserFinder;
+import foundation.finder.UserFinder;
 
 
 

@@ -21,7 +21,7 @@ import java.sql.SQLException;
 
 import domain.message.Message;
 import domain.message.MessageIdentityMap;
-import foundation.MessageTDG;
+import foundation.tdg.MessageTDG;
 
 /**
  * Message output mapper

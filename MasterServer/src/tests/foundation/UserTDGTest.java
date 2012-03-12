@@ -24,8 +24,8 @@ import java.sql.SQLException;
 import org.junit.Test;
 
 import foundation.Database;
-import foundation.UserFinder;
-import foundation.UserTDG;
+import foundation.finder.UserFinder;
+import foundation.tdg.UserTDG;
 
 public class UserTDGTest {
 	
