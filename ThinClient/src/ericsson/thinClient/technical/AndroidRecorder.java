@@ -1,7 +1,6 @@
 package ericsson.thinClient.technical;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -11,10 +10,10 @@ import android.media.MediaRecorder;
 
 public class AndroidRecorder {
 	static AndroidRecorder singleton = null;
-	static String temporaryPath;
 	final static float maxTime = 30.0f;
 	
-	MediaRecorder recorder;
+	private MediaRecorder recorder;
+	private File recordingFile;
 	
 	public static AndroidRecorder getInstance()
 	{
@@ -25,14 +24,14 @@ public class AndroidRecorder {
 	
 	private AndroidRecorder()
 	{
-		recorder = null;
-		File cache = ThinClientActivity.getInstance().getCacheDir();
-		temporaryPath = cache.getAbsolutePath() + "/recording.amr";
+		recorder = new MediaRecorder();
+		recordingFile = null;
 	}
 	
 	public void start() throws IllegalStateException, IOException
 	{	
-		FileOutputStream stream = ThinClientActivity.getInstance().openFileOutput(temporaryPath, Context.MODE_PRIVATE);
+		recordingFile = File.createTempFile("ericssonMessage", null);
+		FileOutputStream stream = ThinClientActivity.getInstance().openFileOutput(recordingFile.getAbsolutePath(), Context.MODE_PRIVATE);
 		recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
 		recorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_WB);
 		recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_WB);
@@ -41,19 +40,9 @@ public class AndroidRecorder {
 		recorder.start();		
 	}
 	
-	public byte[] stop() throws IOException
+	public File stop() throws IOException
 	{
 		recorder.stop();
-		recorder.release();
-		File file = new File(temporaryPath);
-		FileInputStream stream = ThinClientActivity.getInstance().openFileInput(temporaryPath);
-		long size = file.length();
-		if (size <= 0)
-			return null;
-		byte[] bytes = new byte[(int)size];
-		stream.read(bytes);
-		stream.close();
-		file.delete();
-		return bytes;
+		return recordingFile;
 	}
 }

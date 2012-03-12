@@ -8,16 +8,16 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
+import android.widget.ImageButton;
 
-public class ThinClientActivity extends Activity  implements OnClickListener {
+public class ThinClientActivity extends Activity  implements OnClickListener, Control.Listener {
     /** Called when the activity is first created. */
-    Button actionButton;
-    Button prevButton;
-    Button nextButton;
-    Button recordButton;
-    Button upvoteButton;
-    Button downvoteButton;
+    ImageButton actionButton;
+    ImageButton prevButton;
+    ImageButton nextButton;
+    ImageButton recordButton;
+    ImageButton upvoteButton;
+    ImageButton downvoteButton;
     
     private static ThinClientActivity singleton = null;
     
@@ -30,12 +30,12 @@ public class ThinClientActivity extends Activity  implements OnClickListener {
         super.onCreate(savedInstanceState);
         singleton = this;
         setContentView(R.layout.main);
-        actionButton = (Button) findViewById(R.id.action);
-        prevButton = (Button)findViewById(R.id.prev);
-        nextButton = (Button)findViewById(R.id.next);
-        recordButton = (Button)findViewById(R.id.record);
-        upvoteButton = (Button)findViewById(R.id.upvote);
-        downvoteButton = (Button)findViewById(R.id.downvote);
+        actionButton = (ImageButton) findViewById(R.id.action);
+        prevButton = (ImageButton)findViewById(R.id.prev);
+        nextButton = (ImageButton)findViewById(R.id.next);
+        recordButton = (ImageButton)findViewById(R.id.record);
+        upvoteButton = (ImageButton)findViewById(R.id.upvote);
+        downvoteButton = (ImageButton)findViewById(R.id.downvote);
         
         
         recordButton.setOnClickListener(this);
@@ -43,34 +43,22 @@ public class ThinClientActivity extends Activity  implements OnClickListener {
         prevButton.setOnClickListener(this);
         nextButton.setOnClickListener(this);
         upvoteButton.setOnClickListener(this);
-        downvoteButton.setOnClickListener(this);      
+        downvoteButton.setOnClickListener(this);     
+        
+        Control.getInstance().addListener(this);
     }
 
 	@Override
 	public void onClick(View v) {
 		try {
-			if (v == actionButton) {
+			if (v == actionButton)
 				Control.getInstance().action();
-				if (Control.getInstance().isPlaying())
-					actionButton.setText("Pause");
-				else if (Control.getInstance().isPaused())
-					actionButton.setText("Play");
-				else
-					actionButton.setText("Unknown");
-			}
-			else if (v == nextButton) {
+			else if (v == nextButton)
 				Control.getInstance().next();
-			}
-			else if (v == prevButton) {
+			else if (v == prevButton)
 				Control.getInstance().prev();
-			}
-			else if (v == recordButton) {
+			else if (v == recordButton)
 				Control.getInstance().record();
-				if (Control.getInstance().isRecording())
-					recordButton.setText("Stop");
-				else
-					recordButton.setText("Record");
-			}
 			else if (v == upvoteButton)
 				Control.getInstance().upvoteSelected();
 			else if (v == downvoteButton)
@@ -79,5 +67,26 @@ public class ThinClientActivity extends Activity  implements OnClickListener {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void updatePlayButton() {
+		if (Control.getInstance().isPlaying())
+			actionButton.setImageResource(R.drawable.pause);
+		else if (Control.getInstance().isPaused())
+			actionButton.setImageResource(R.drawable.play);
+	}
+
+	@Override
+	public void updateRecordButton() {
+		if (Control.getInstance().isRecording())
+			recordButton.setImageResource(R.drawable.record);
+		else
+			recordButton.setImageResource(R.drawable.stoprecord);
+	}
+
+	@Override
+	public void updateVotingButtons() {
+		
 	}
 }

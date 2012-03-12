@@ -1,4 +1,5 @@
 package ericsson.thinClient.technical;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -10,7 +11,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.params.BasicHttpParams;
 
@@ -58,13 +59,13 @@ public class HttpInterface {
 		return response.getEntity().getContent();
 	}
 	
-	public boolean uploadMessage(byte[] data, double longitude, double latitude, float speed, String email) throws UnsupportedEncodingException, IOException
+	public boolean uploadMessage(File file, double longitude, double latitude, float speed, String email) throws UnsupportedEncodingException, IOException
 	{
 		final String url = entrypointHostname + ":" + entrypointPort + "/frontController/createmessage";
 		HttpPut httpPut = new HttpPut(url);
 		
 		MultipartEntity entity = new MultipartEntity();
-		entity.addPart("bin", new ByteArrayBody(data, "bin"));	
+		entity.addPart("bin", new FileBody(file, "bin"));	
 		entity.addPart("longitude", new StringBody(String.valueOf(longitude)));
 		entity.addPart("latitude", new StringBody(String.valueOf(latitude)));
 		entity.addPart("speed", new StringBody(String.valueOf(speed)));

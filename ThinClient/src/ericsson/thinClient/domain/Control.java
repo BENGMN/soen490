@@ -1,21 +1,34 @@
 package ericsson.thinClient.domain;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import ericsson.thinClient.technical.AndroidLocation;
 import ericsson.thinClient.technical.AndroidRecorder;
 import ericsson.thinClient.technical.HttpInterface;
+import ericsson.thinClient.technical.AndroidPlayer;
+import ericsson.thinClient.view.ThinClientActivity;
 
-public class Control extends TimerTask {
+public class Control extends TimerTask implements AndroidPlayer.Listener {
 	private static Control singleton = null;
 	private static long recordingTime = 30 * 1000;
 	public Timer recordingTimer;
 	
+	public interface Listener {
+		public void updatePlayButton();
+		public void updateRecordButton();
+		public void updateVotingButtons();
+	}
+	
+	private ArrayList<Listener> listeners;
+	
 	// We can have one recorded message stored while we're deciding what to do with it.
-	public byte[] recordedMessage;
+	public File recordedMessage;
 	
 	public static Control getInstance()
 	{
@@ -38,34 +51,39 @@ public class Control extends TimerTask {
 		recording = false;
 		selectedMessage = null;
 		recordingTimer = new Timer();
+		listeners = new ArrayList<Listener>();
 	}
 	
-	public boolean isPlaying()
-	{
+	public boolean isPlaying() {
 		return status == EControlStatus.STATUS_PLAYING;
 	}
 	
-	public boolean isPaused()
-	{
+	public boolean isPaused() {
 		return status == EControlStatus.STATUS_PAUSED;
 	}
 	
-	public boolean isRecording()
-	{
+	public boolean isRecording() {
 		return recording;
 	}
 	
-	private void startPlaying()
-	{
+	private void startPlaying() throws IllegalArgumentException, IllegalStateException, FileNotFoundException, IOException	{
 		status = EControlStatus.STATUS_PLAYING;
+		if (selectedMessage == null)
+			selectedMessage = MessagesCached.getInstance().getNextMessage(selectedMessage);
+		AndroidPlayer.getInstance().play(ThinClientActivity.getInstance().openFileInput(selectedMessage.getFile().getAbsolutePath()));
+		for (Listener listener : listeners)
+			listener.updatePlayButton();
 	}
 	
 	private void stopPlaying()
 	{
-		status = EControlStatus.STATUS_PAUSED;
+		assert(status == EControlStatus.STATUS_PLAYING);
+		AndroidPlayer.getInstance().stop();
+		for (Listener listener : listeners)
+			listener.updatePlayButton();
 	}
 	
-	public void action()
+	public void action() throws IllegalArgumentException, IllegalStateException, FileNotFoundException, IOException
 	{
 		if (isPlaying())
 			stopPlaying();
@@ -98,6 +116,8 @@ public class Control extends TimerTask {
 		recording = false;
 		recordingTimer.cancel();
 		recordedMessage = AndroidRecorder.getInstance().stop();
+		for (Listener listener : listeners)
+			listener.updateRecordButton();
 	}
 	
 	public void record() throws IllegalStateException, IOException
@@ -124,12 +144,16 @@ public class Control extends TimerTask {
 	{
 		assert(!isRecording() && selectedMessage != null);
 		HttpInterface.getInstance().downvoteMessage(selectedMessage.getMid());
+		for (Listener listener : listeners)
+			listener.updateVotingButtons();
 	}
 	
 	public void downvoteSelected() throws IOException
 	{
 		assert(!isRecording() && selectedMessage != null);
 		HttpInterface.getInstance().upvoteMessage(selectedMessage.getMid());
+		for (Listener listener : listeners)
+			listener.updateVotingButtons();
 	}
 	
 	public void uploadRecording() throws UnsupportedEncodingException, IOException
@@ -144,6 +168,22 @@ public class Control extends TimerTask {
 	
 	public void discardRecording()
 	{
+		assert(recordedMessage != null);
+		recordedMessage.delete();
 		recordedMessage = null;
+	}
+
+	public void onStop() {
+		status = EControlStatus.STATUS_PAUSED;
+	}
+	
+	public void addListener(Listener listener)
+	{
+		listeners.add(listener);
+	}
+	
+	public void removeListener(Listener listener)
+	{
+		listeners.remove(listener);
 	}
 }
