@@ -6,6 +6,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.util.List;
 
+import org.apache.http.client.HttpClient;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -18,20 +19,19 @@ import org.apache.http.params.BasicHttpParams;
 import android.net.http.AndroidHttpClient;
 
 public class HttpInterface {
-	private static HttpInterface singleton = null;
 	private static final String clientName = "Ericsson Client"; 
 	private static final String entrypointHostname = "localhost";
 	private static final int entrypointPort = 8080;
-	private AndroidHttpClient client;
+	private HttpClient client;
 	
+	private static HttpInterface singleton = null;
 	
-	// Should use intents to open up a web browser. Otherwise an execption is thrown.
 	private HttpInterface()
 	{
 		client = AndroidHttpClient.newInstance(clientName);
 	}
 	
-	public static HttpInterface getInstance()
+	static public HttpInterface getInstance()
 	{
 		if (singleton == null)
 			singleton = new HttpInterface();
@@ -47,8 +47,11 @@ public class HttpInterface {
 		params.setDoubleParameter("latitude", latitude);
 		params.setDoubleParameter("speed", speed);
 		request.setParams(params);
+		
 		HttpResponse response = client.execute(request);
-		return response.getEntity().getContent();
+		if (response.getStatusLine().getStatusCode() == 200)
+			return response.getEntity().getContent();
+		return null;
 	}
 	
 	public InputStream getMessages(List<BigInteger> ids) throws IOException
@@ -57,14 +60,17 @@ public class HttpInterface {
 		HttpGet request = new HttpGet(url);
 		BasicHttpParams params = new BasicHttpParams();
 		request.setParams(params);
+		
 		HttpResponse response = client.execute(request);
-		return response.getEntity().getContent();
+		if (response.getStatusLine().getStatusCode() == 200)
+			return response.getEntity().getContent();
+		return null;
 	}
 	
 	public boolean uploadMessage(File file, double longitude, double latitude, float speed, String email) throws UnsupportedEncodingException, IOException
 	{
 		final String url = "http://" + entrypointHostname + ":" + entrypointPort + "/frontController/createmessage";
-		HttpPut httpPut = new HttpPut(url);
+		HttpPut request = new HttpPut(url);
 		
 		MultipartEntity entity = new MultipartEntity();
 		entity.addPart("bin", new FileBody(file, "bin"));	
@@ -72,11 +78,9 @@ public class HttpInterface {
 		entity.addPart("latitude", new StringBody(String.valueOf(latitude)));
 		entity.addPart("speed", new StringBody(String.valueOf(speed)));
 		entity.addPart("email", new StringBody(email));
-
-		httpPut.setEntity(entity);
-		HttpResponse response = client.execute(httpPut);
 		
-		return response.getStatusLine().getStatusCode() == 200;
+		HttpResponse response = client.execute(request);
+		return response.getStatusLine().getStatusCode() == 202;
 	}
 	
 	public boolean upvoteMessage(BigInteger id) throws IOException
@@ -86,8 +90,8 @@ public class HttpInterface {
 		BasicHttpParams params = new BasicHttpParams();
 		params.setParameter("mid", id);
 		request.setParams(params);
-		HttpResponse response = client.execute(request);
 		
+		HttpResponse response = client.execute(request);
 		return response.getStatusLine().getStatusCode() == 202;
 	}
 	
@@ -98,8 +102,8 @@ public class HttpInterface {
 		BasicHttpParams params = new BasicHttpParams();
 		params.setParameter("mid", id);
 		request.setParams(params);
-		HttpResponse response = client.execute(request);
 		
+		HttpResponse response = client.execute(request);
 		return response.getStatusLine().getStatusCode() == 202;
 	}
 }

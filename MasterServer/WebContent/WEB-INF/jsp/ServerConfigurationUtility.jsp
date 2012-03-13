@@ -9,13 +9,13 @@
 </head>
 <body>
 
-	<form method="POST" action='?command=updateserverparameters' name="POST.updateServerConfiguration">
-		<p>Server Configuration Utility</p>
+	<form method="POST" action="${pageContext.request.contextPath}/controller?command=updateserverparameters" name="POST.updateServerConfiguration">
+		<p>Server Configuration Utility ${pageContext.request.contextPath}</p>
 		<table border="1">
 			<tr>
 			<%
 			    HashMap<String,Double> params = (HashMap<String,Double>)request.getAttribute("serverConfiguration");
-			
+				
 				Iterator it = params.entrySet().iterator();
 			    while (it.hasNext()) {
 			        Map.Entry pairs = (Map.Entry)it.next();

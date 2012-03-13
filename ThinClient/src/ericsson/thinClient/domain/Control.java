@@ -1,10 +1,8 @@
 package ericsson.thinClient.domain;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -23,14 +21,6 @@ public class Control extends TimerTask implements AndroidPlayer.Listener {
 	private static long recordingTime = 30 * 1000;
 	private Timer recordingTimer;
 	
-	public interface Listener {
-		public void updatePlayButton();
-		public void updateRecordButton();
-		public void updateVotingButtons();
-	}
-	
-	private ArrayList<Listener> listeners;
-	
 	// We can have one recorded message stored while we're deciding what to do with it.
 	private File recordedMessage;
 	
@@ -43,19 +33,17 @@ public class Control extends TimerTask implements AndroidPlayer.Listener {
 	
 	enum EControlStatus {
 		STATUS_PLAYING,
-		STATUS_PAUSED
+		STATUS_PAUSED,
+		STATUS_RECORDING
 	}
 	
-	private boolean recording;
 	private Message selectedMessage;
 	private EControlStatus status;
 	
 	private Control() {
 		status = EControlStatus.STATUS_PAUSED;
-		recording = false;
 		selectedMessage = null;
 		recordingTimer = new Timer();
-		listeners = new ArrayList<Listener>();
 	}
 	
 	public boolean isPlaying() {
@@ -67,31 +55,36 @@ public class Control extends TimerTask implements AndroidPlayer.Listener {
 	}
 	
 	public boolean isRecording() {
-		return recording;
+		return status == EControlStatus.STATUS_RECORDING;
 	}
 	
 	public Message getSelectedMessage() {
 		return selectedMessage;
 	}
 	
-	private void startPlaying() throws IllegalArgumentException, IllegalStateException, FileNotFoundException, IOException	{
+	private void startPlaying()	{
+		assertTrue(canStartPlaying());
 		status = EControlStatus.STATUS_PLAYING;
-		if (selectedMessage == null)
-			selectedMessage = MessagesCached.getInstance().getNextMessage(selectedMessage);
-		AndroidPlayer.getInstance().play(ThinClientActivity.getInstance().openFileInput(selectedMessage.getFile().getAbsolutePath()));
-		for (Listener listener : listeners)
-			listener.updatePlayButton();
+		try {
+			if (selectedMessage == null)
+				selectedMessage = MessagesCached.getInstance().getNextMessage(selectedMessage);
+			AndroidPlayer.getInstance().play(ThinClientActivity.getInstance().openFileInput(selectedMessage.getFile().getAbsolutePath()));
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			stopPlaying();
+		}
+			
 	}
 	
 	private void stopPlaying()
 	{
-		assertTrue(status == EControlStatus.STATUS_PLAYING);
+		assertTrue(canStopPlaying());
 		AndroidPlayer.getInstance().stop();
-		for (Listener listener : listeners)
-			listener.updatePlayButton();
+		status = EControlStatus.STATUS_PAUSED;
 	}
 	
-	public void action() throws IllegalArgumentException, IllegalStateException, FileNotFoundException, IOException
+	public void action()
 	{
 		if (isPlaying())
 			stopPlaying();
@@ -99,38 +92,44 @@ public class Control extends TimerTask implements AndroidPlayer.Listener {
 			startPlaying();
 	}
 	
-	public void startRecording() throws IllegalStateException, IOException
+	public void startRecording()
 	{
-		assertTrue(!recording);
-		recording = true;
-		recordingTimer.schedule(this, recordingTime);
-		AndroidRecorder.getInstance().start();
+		assertTrue(canStartRecording());
+		status = EControlStatus.STATUS_RECORDING;
+		try {
+			AndroidRecorder.getInstance().start();
+			recordingTimer.schedule(this, recordingTime);
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			stopRecording();
+		}
 	}
 	
 	// This method is our cutoff for the recording.
 	public void run()
 	{
-		try {
-			stopRecording();
-		}
-		catch (Exception e) {
-			
-		}
+		stopRecording();
 	}
 	
-	public void stopRecording() throws IOException
+	public void stopRecording()
 	{
-		assertTrue(recording);
-		recording = false;
-		recordingTimer.cancel();
-		recordedMessage = AndroidRecorder.getInstance().stop();
-		for (Listener listener : listeners)
-			listener.updateRecordButton();
+		assertTrue(canStopRecording());
+		try {
+			recordedMessage = AndroidRecorder.getInstance().stop();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		finally {
+			status = EControlStatus.STATUS_PAUSED;
+			recordingTimer.cancel();
+		}
 	}
 	
 	public void record() throws IllegalStateException, IOException
 	{
-		if (isRecording())
+		if (!isRecording())
 			startRecording();
 		else
 			stopRecording();
@@ -138,30 +137,26 @@ public class Control extends TimerTask implements AndroidPlayer.Listener {
 	
 	public void prev() throws IOException
 	{
-		assertTrue(!isRecording() && selectedMessage != null);
+		assertTrue(canPrev());
 		selectedMessage = MessagesCached.getInstance().getPrevMessage(selectedMessage);
 	}
 	
 	public void next() throws IOException
 	{
-		assertTrue(!isRecording() && selectedMessage != null);
+		assertTrue(canNext());
 		selectedMessage = MessagesCached.getInstance().getNextMessage(selectedMessage);
 	}
 	
 	public void upvoteSelected() throws IOException
 	{
-		assertTrue(!isRecording() && selectedMessage != null);
+		assertTrue(canUpvote());
 		HttpInterface.getInstance().downvoteMessage(selectedMessage.getMid());
-		for (Listener listener : listeners)
-			listener.updateVotingButtons();
 	}
 	
 	public void downvoteSelected() throws IOException
 	{
-		assertTrue(!isRecording() && selectedMessage != null);
+		assertTrue(canDownvote());
 		HttpInterface.getInstance().upvoteMessage(selectedMessage.getMid());
-		for (Listener listener : listeners)
-			listener.updateVotingButtons();
 	}
 	
 	public void uploadRecording() throws UnsupportedEncodingException, IOException
@@ -185,13 +180,39 @@ public class Control extends TimerTask implements AndroidPlayer.Listener {
 		status = EControlStatus.STATUS_PAUSED;
 	}
 	
-	public void addListener(Listener listener)
-	{
-		listeners.add(listener);
+	public boolean canVote() {
+		return selectedMessage != null && !selectedMessage.getRatingModified();
 	}
 	
-	public void removeListener(Listener listener)
-	{
-		listeners.remove(listener);
+	public boolean canUpvote() {
+		return canVote();
+	}
+	
+	public boolean canDownvote() {
+		return canVote();
+	}
+	
+	public boolean canNext() {
+		return !isRecording() && selectedMessage != null;
+	}
+	
+	public boolean canPrev() {
+		return !isRecording() && selectedMessage != null;
+	}
+	
+	public boolean canStopPlaying() {
+		return status == EControlStatus.STATUS_PLAYING;
+	}
+	
+	public boolean canStartPlaying() {
+		return status == EControlStatus.STATUS_PAUSED;
+	}
+	
+	public boolean canStartRecording() {
+		return status == EControlStatus.STATUS_PAUSED || status == EControlStatus.STATUS_PLAYING;
+	}
+	
+	public boolean canStopRecording() {
+		return status == EControlStatus.STATUS_RECORDING;
 	}
 }
