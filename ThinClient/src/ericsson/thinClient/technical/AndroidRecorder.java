@@ -14,6 +14,7 @@ public class AndroidRecorder {
 	
 	private MediaRecorder recorder;
 	private File recordingFile;
+	private boolean recording;
 	
 	public static AndroidRecorder getInstance()
 	{
@@ -26,23 +27,29 @@ public class AndroidRecorder {
 	{
 		recorder = new MediaRecorder();
 		recordingFile = null;
+		recording = false;
 	}
 	
 	public void start() throws IllegalStateException, IOException
 	{	
-		recordingFile = File.createTempFile("ericssonMessage", null);
+		File outputDir = ThinClientActivity.getInstance().getCacheDir();
+		recordingFile = File.createTempFile("ericssonMessage", "amr", outputDir);
 		FileOutputStream stream = ThinClientActivity.getInstance().openFileOutput(recordingFile.getAbsolutePath(), Context.MODE_PRIVATE);
 		recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
 		recorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_WB);
 		recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_WB);
 		recorder.setOutputFile(stream.getFD());
 		recorder.prepare();
-		recorder.start();		
+		recorder.start();
+		recording = true;
 	}
 	
 	public File stop() throws IOException
 	{
-		recorder.stop();
-		return recordingFile;
+		if (recording) {
+			recorder.stop();
+			return recordingFile;
+		}
+		return null;
 	}
 }
