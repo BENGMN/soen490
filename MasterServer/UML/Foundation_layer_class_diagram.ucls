@@ -1,6 +1,6 @@
 <class-diagram version="1.0.6" icons="true" always-add-relationships="true" generalizations="true" realizations="true" 
   associations="true" dependencies="true" nesting-relationships="true">  
-  <class id="1" corner="BOTTOM_RIGHT" language="java" name="foundation.UserTDG" project="MasterServer" 
+  <class id="1" corner="BOTTOM_RIGHT" language="java" name="foundation.tdg.UserTDG" project="MasterServer" 
     file="/MasterServer/src/foundation/UserTDG.java" binary="false">    
     <position height="-1" width="-1" x="666" y="475"/>    
     <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
@@ -16,7 +16,7 @@
       <operations public="true" package="true" protected="true" private="true"/>    
     </display>  
   </class>  
-  <class id="3" corner="BOTTOM_RIGHT" language="java" name="foundation.MessageFinder" project="MasterServer" 
+  <class id="3" corner="BOTTOM_RIGHT" language="java" name="foundation.finder.MessageFinder" project="MasterServer" 
     file="/MasterServer/src/foundation/MessageFinder.java" binary="false">    
     <position height="-1" width="-1" x="373" y="446"/>    
     <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
@@ -24,7 +24,7 @@
       <operations public="true" package="true" protected="true" private="true"/>    
     </display>  
   </class>  
-  <class id="4" corner="BOTTOM_RIGHT" language="java" name="foundation.UserFinder" project="MasterServer" 
+  <class id="4" corner="BOTTOM_RIGHT" language="java" name="foundation.finder.UserFinder" project="MasterServer" 
     file="/MasterServer/src/foundation/UserFinder.java" binary="false">    
     <position height="-1" width="-1" x="597" y="188"/>    
     <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
@@ -32,7 +32,7 @@
       <operations public="true" package="true" protected="true" private="true"/>    
     </display>  
   </class>  
-  <class id="5" corner="BOTTOM_RIGHT" language="java" name="foundation.MessageTDG" project="MasterServer" 
+  <class id="5" corner="BOTTOM_RIGHT" language="java" name="foundation.tdg.MessageTDG" project="MasterServer" 
     file="/MasterServer/src/foundation/MessageTDG.java" binary="false">    
     <position height="241" width="349" x="1696" y="167"/>    
     <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      

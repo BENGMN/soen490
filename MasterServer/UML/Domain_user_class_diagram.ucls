@@ -56,7 +56,7 @@
       <operations public="true" package="true" protected="true" private="true"/>    
     </display>  
   </class>  
-  <class id="8" corner="BOTTOM_RIGHT" language="java" name="foundation.UserFinder" project="MasterServer" 
+  <class id="8" corner="BOTTOM_RIGHT" language="java" name="foundation.finder.UserFinder" project="MasterServer" 
     file="/MasterServer/src/foundation/UserFinder.java" binary="false">    
     <position height="225" width="254" x="145" y="390"/>    
     <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      

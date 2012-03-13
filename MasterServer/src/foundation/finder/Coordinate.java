@@ -1,4 +1,6 @@
-package technical;
+package foundation.finder;
+
+import technical.Location;
 
 public class Coordinate implements Location {
 

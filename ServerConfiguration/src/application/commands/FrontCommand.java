@@ -25,8 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import exceptions.MapperException;
 import exceptions.ParameterException;
-import exceptions.UnrecognizedUserException;
 
 public abstract class FrontCommand {
-	abstract public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, IOException, UnrecognizedUserException, NoSuchAlgorithmException, SQLException;
+	abstract public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, IOException, NoSuchAlgorithmException, SQLException;
 }

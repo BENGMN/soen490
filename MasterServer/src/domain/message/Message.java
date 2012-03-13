@@ -25,9 +25,13 @@ import java.util.List;
 import org.msgpack.MessagePack;
 import org.msgpack.packer.Packer;
 import org.msgpack.unpacker.Unpacker;
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Logger;
 
 import domain.user.IUser;
 import domain.user.UserProxy;
+import exceptions.MapperException;
 
 public class Message {	
 	private BigInteger mid;
@@ -160,7 +164,12 @@ public class Message {
 		MessagePack pack = new MessagePack();
 		Packer packer = pack.createPacker(out);
 		packer.write(mid.toString());
-		packer.write(getOwner().getEmail());
+		try {
+			packer.write(getOwner().getEmail());
+		} catch (MapperException e) {
+			Logger logger = (Logger)LoggerFactory.getLogger("application");
+			logger.error("MapperException occurred when writing to client: {}", e);
+		}
 		packer.write(message);
 		packer.write(speed);
 		packer.write(getCreatedAt().getTime());

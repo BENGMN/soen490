@@ -19,8 +19,9 @@ package tests.technical;
 import java.text.DecimalFormat;
 import java.util.List;
 
-import technical.Coordinate;
-import technical.GeoSpatialSearch;
+import foundation.finder.Coordinate;
+import foundation.finder.GeoSpatialSearch;
+
 import junit.framework.TestCase;
 
 

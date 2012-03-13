@@ -25,6 +25,7 @@ import domain.user.UserFactory;
 import domain.user.UserIdentityMap;
 import domain.user.UserProxy;
 import domain.user.UserType;
+import exceptions.MapperException;
 import junit.framework.TestCase;
 
 
@@ -39,7 +40,7 @@ public class UserProxyTest extends TestCase {
 	private UserProxy userProxy = null;		// Create a proxy for the real object
 	
 	
-	public void testSetters() throws IOException, SQLException, NoSuchAlgorithmException {
+	public void testSetters() throws IOException, SQLException, NoSuchAlgorithmException, MapperException {
 		realUser = UserFactory.createNew(email, password, userType);
 		UserIdentityMap.getUniqueInstance().put(realUser.getUid(), realUser);
 		
@@ -59,7 +60,7 @@ public class UserProxyTest extends TestCase {
 		assertEquals(userProxy.getType(), userType);
 	}
 	
-	public void testGetters() throws IOException, SQLException, NoSuchAlgorithmException {
+	public void testGetters() throws IOException, SQLException, NoSuchAlgorithmException, MapperException {
 		// First we create an object via the factory so it get's sent to the IdentityMap as well
 		realUser = UserFactory.createNew(email, password, userType);
 		UserIdentityMap.getUniqueInstance().put(realUser.getUid(), realUser);

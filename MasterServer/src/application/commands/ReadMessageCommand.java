@@ -24,7 +24,7 @@ import domain.message.mappers.MessageInputMapper;
 public class ReadMessageCommand extends FrontCommand {
 
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, IOException, UnrecognizedUserException, NoSuchAlgorithmException, SQLException {
+	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, IOException, UnrecognizedUserException, SQLException {
 
 		String separatedIDs;
 		

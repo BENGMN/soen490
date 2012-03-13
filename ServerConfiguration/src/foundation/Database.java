@@ -16,11 +16,11 @@
 package foundation;
 
 import java.io.BufferedReader;
-
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
@@ -30,9 +30,6 @@ import java.util.Properties;
 
 import com.jolbox.bonecp.BoneCP;
 import com.jolbox.bonecp.BoneCPConfig;
-
-import foundation.tdg.MessageTDG;
-import foundation.tdg.UserTDG;
 
 
 

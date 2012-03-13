@@ -2,7 +2,6 @@ package application.commands;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -21,7 +20,7 @@ import exceptions.UnrecognizedUserException;
 public class GetMessageIDsCommand extends FrontCommand{
 
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, IOException, UnrecognizedUserException, NoSuchAlgorithmException, SQLException {
+	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, UnrecognizedUserException, SQLException, IOException {
 		
 		String stringLongitude;
 		String stringLatitude;

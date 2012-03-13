@@ -17,7 +17,6 @@ package application.commands;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,7 +36,7 @@ import domain.message.mappers.MessageOutputMapper;
  */
 public class UpvoteMessageCommand extends FrontCommand {
 
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, IOException, UnrecognizedUserException, NoSuchAlgorithmException, SQLException {
+	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, IOException, UnrecognizedUserException, SQLException {
 		
 		String strId;
 		
