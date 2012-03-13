@@ -42,24 +42,7 @@ public class Message {
 		this.createdAt = createdAt;
 		this.userRating = userRating;
 	}
-	
-	public Message(InputStream in, String fileName, String fileType) throws IOException
-	{
-		Unpacker unpacker = (new MessagePack()).createUnpacker(in);
-		mid = new BigInteger(unpacker.readString());	
-		byte[] byteMessage = unpacker.readByteArray();		
-		speed = unpacker.readFloat();
-		createdAt = unpacker.read(Timestamp.class);
-		longitude = unpacker.readDouble();
-		latitude = unpacker.readDouble();
-		userRating = unpacker.readInt();
 		
-		message = File.createTempFile(fileName, fileType);
-		FileOutputStream output = new FileOutputStream(message);
-		output.write(byteMessage);
-		output.close();
-	}
-	
 	// Getters and Setters
 	public BigInteger getMid() {
 		return mid;
@@ -92,7 +75,7 @@ public class Message {
 	public void setUserRating(int userRating) {
 		this.userRating = userRating;
 	}
-		
+	
 	@Override
 	public String toString() {
 		return "MessageID: "+getMid()+
@@ -102,5 +85,24 @@ public class Message {
 				"\nUserRating: "+getUserRating()+
 				"\nCreatedAt: "+getCreatedAt()
 				;
+	}
+	
+	public static Message createMessage(InputStream in, String fileName, String fileType) throws IOException
+	{
+		Unpacker unpacker = (new MessagePack()).createUnpacker(in);
+		BigInteger mid = new BigInteger(unpacker.readString());	
+		byte[] byteMessage = unpacker.readByteArray();		
+		Float speed = unpacker.readFloat();
+		Timestamp createdAt = unpacker.read(Timestamp.class);
+		double longitude = unpacker.readDouble();
+		double latitude = unpacker.readDouble();
+		int userRating = unpacker.readInt();
+		
+		File message = File.createTempFile(fileName, fileType);
+		FileOutputStream output = new FileOutputStream(message);
+		output.write(byteMessage);
+		output.close();
+		
+		return new Message(mid, message, speed, latitude, longitude, createdAt, userRating);
 	}
 }

@@ -152,10 +152,10 @@ public class MessageFinder {
 		Connection connection = Database.getConnection();
 		
 		//To be remove when we have a config system///////////////////////////
-		String PATH  = "tempConfigFile.properties";
-		Properties prop = new Properties();
-		prop.load(new FileInputStream(PATH));
-		int minMessages  = Integer.parseInt(prop.getProperty("minMessages"));
+	//	String PATH  = "tempConfigFile.properties";
+	//	Properties prop = new Properties();
+	//	prop.load(new FileInputStream(PATH));
+		int minMessages  = 10;//Integer.parseInt(prop.getProperty("minMessages"));
 		//////////////////////////////////////////////////////////////////////
 		
 		double radius = 0;

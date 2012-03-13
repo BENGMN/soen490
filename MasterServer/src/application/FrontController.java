@@ -79,7 +79,7 @@ public class FrontController extends HttpServlet {
 		commandMap = new HashMap<String, FrontCommand>();
 		
 		// Command for creating a new message from an uploaded audio file
-		commandMap.put("PUT.createmessage", new CreateMessageCommand());
+		commandMap.put("POST.createmessage", new CreateMessageCommand());
 		
 		// Command for deleting a message
 		commandMap.put("DELETE.deletemessage", new DeleteMessageCommand());

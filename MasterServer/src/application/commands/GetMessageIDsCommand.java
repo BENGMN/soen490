@@ -1,6 +1,8 @@
 package application.commands;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.List;
@@ -59,10 +61,24 @@ public class GetMessageIDsCommand extends FrontCommand{
 		response.setContentType("text/plain");
 		response.setStatus(HttpServletResponse.SC_OK);
 		
+		int size = 0;
+		   
+		/*
+		OutputStreamWriter out = new OutputStreamWriter(response.getOutputStream());
+		for (BigInteger id:ids) {
+			out.write(id.toString());
+			size += id.toString().length();
+		}
+		
+		response.setContentLength(size);
+		out.flush();
+		out.close();
+		
+		*/
 		Packer packer = (new MessagePack()).createPacker(response.getOutputStream());
 		packer.write(ids.size());
 		for(BigInteger id: ids) {
-			packer.write(id.toString());
+		packer.write(id.toString());
 		}		
 	}
 

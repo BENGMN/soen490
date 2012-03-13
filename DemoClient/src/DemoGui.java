@@ -59,7 +59,7 @@ public class DemoGui extends JFrame {
 	}
 	
 	public void createAndShowGui() {
-		fileChooser = new JFileChooser();
+		fileChooser = new JFileChooser(".\\src\\");
 		fileChooser.setAcceptAllFileFilterUsed(false);
 		fileChooser.setFileFilter(new AudioFilter());
 		listOfFiles = new JList();		
@@ -80,8 +80,8 @@ public class DemoGui extends JFrame {
 				 if (fileChooserValue == JFileChooser.APPROVE_OPTION) {
 					 try {
 						 //send file
-						String response = fileTransfer.uploadFile(fileChooser.getSelectedFile());
-						statusField.setText(response);
+						int response = fileTransfer.uploadFile(fileChooser.getSelectedFile());
+						statusField.setText("Status Code: " + response);
 					} catch (ClientProtocolException e1) {
 						e1.printStackTrace();
 					} catch (IOException e1) {

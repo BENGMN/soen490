@@ -48,9 +48,9 @@ public class CreateMessageCommand extends FrontCommand {
 			throw new ParameterException("Put requests must have 'bin' as a multipart file upload.");
 		
 		// TODO this needs to change to the ServletParameters class
-		if (multipartFile.getSize() > (Long)request.getSession(true).getServletContext().getAttribute("MAX_UPLOAD_SIZE")) {
-			throw new ParameterException("Upload file's size is too large.");
-		}
+	//	if (multipartFile.getSize() > (Long)request.getSession(true).getServletContext().getAttribute("MAX_UPLOAD_SIZE")) {
+	//		throw new ParameterException("Upload file's size is too large.");
+	//	}
 				
 		byte[] messageBytes = null;
 		messageBytes = multipartFile.getBytes();
