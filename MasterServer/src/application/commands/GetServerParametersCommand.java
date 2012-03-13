@@ -1,7 +1,6 @@
 package application.commands;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
 import javax.servlet.RequestDispatcher;
@@ -17,20 +16,23 @@ import exceptions.UnrecognizedUserException;
 
 public class GetServerParametersCommand extends FrontCommand {
 
-	private static String SERVER_PARAMETERS_JSP = "WebContent/WEB-INF/ServerConfigurationUtility.jsp";
+	private static String SERVER_PARAMETERS_JSP = "/WEB-INF/jsp/ServerConfigurationUtility.jsp";
 
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, IOException, UnrecognizedUserException, NoSuchAlgorithmException, SQLException {		
+	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, IOException, UnrecognizedUserException, SQLException, ServletException {		
 		
-		ServerParameters params = ServerParameters.getUniqueInstance();				
+		// TODO possibly user authentication
+		
+		// Get the singleton 
+		ServerParameters params = ServerParameters.getUniqueInstance();	
+		
+		// Give it to the request object to be unfolded in the jsp
 		request.setAttribute("serverConfiguration", params);
-		
+
+		// Get and forward to the jsp pages
 		RequestDispatcher view = request.getRequestDispatcher(SERVER_PARAMETERS_JSP);
-		try {
-			view.forward(request, response);
-		} catch (ServletException e) {
-			e.printStackTrace();
-		}
+		view.forward(request, response);
+		
 	}
 
 }

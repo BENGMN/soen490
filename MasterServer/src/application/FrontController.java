@@ -97,7 +97,7 @@ public class FrontController extends HttpServlet {
 		commandMap.put("GET.getmessageids", new GetMessageIDsCommand());
 		
 		// Command for downloading messages
-		commandMap.put("GET.serverParameters", new GetServerParametersCommand());
+		commandMap.put("GET.getserverparameters", new GetServerParametersCommand());
 
 		// Initialise the logger
 		logger = (Logger)LoggerFactory.getLogger("application");
@@ -160,9 +160,6 @@ public class FrontController extends HttpServlet {
 				logger.debug("The following ParameterException occured", e);
 				response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.toString());
 				// TODO would the below be bad requests as well
-			} catch (NoSuchAlgorithmException e) {
-				logger.debug("The following NoSuchAlgorithmException occured", e);
-				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
 			} catch (MapperException e) {
 				logger.debug("The following MapperException occured", e);
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());

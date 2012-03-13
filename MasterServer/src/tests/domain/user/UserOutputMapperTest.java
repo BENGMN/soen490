@@ -9,6 +9,7 @@ import domain.user.UserIdentityMap;
 import domain.user.mappers.UserInputMapper;
 import domain.user.mappers.UserOutputMapper;
 import domain.user.UserType;
+import exceptions.MapperException;
 import foundation.tdg.UserTDG;
 import junit.framework.TestCase;
 
@@ -24,7 +25,7 @@ public class UserOutputMapperTest extends TestCase {
 	public UserOutputMapperTest() {
 		user = new User(uid, email, password, userType, version);
 	}
-	public void testInsert() throws IOException, SQLException {
+	public void testInsert() throws IOException, SQLException, MapperException {
 		// Use the UserOutputMapper to deconstruct the object and place it into the database
 		UserOutputMapper.insert(user);
 		
@@ -39,7 +40,7 @@ public class UserOutputMapperTest extends TestCase {
 		UserIdentityMap.getUniqueInstance().remove(uid);
 	}
 	
-	public void testUpdate() throws IOException, SQLException {
+	public void testUpdate() throws IOException, SQLException, MapperException {
 		// Use the UserOutputMapper to deconstruct the object and place it into the database
 		UserOutputMapper.insert(user);
 		
@@ -48,7 +49,7 @@ public class UserOutputMapperTest extends TestCase {
 		user.setEmail(newEmail);
 		
 		// update the user in the database
-		UserOutputMapper.update(user);
+		UserOutputMapper.update(user); 
 		
 		// retrieve the object from the database
 		User userCopy = UserInputMapper.find(uid);
@@ -64,7 +65,7 @@ public class UserOutputMapperTest extends TestCase {
 		assertEquals(UserTDG.delete(uid, 2),1);	
 	}
 
-	public void testDelete() throws IOException {
+	public void testDelete() throws IOException, SQLException {
 		// Use the UserOutputMapper to deconstruct the object and place it into the database
 		UserOutputMapper.insert(user);
 		

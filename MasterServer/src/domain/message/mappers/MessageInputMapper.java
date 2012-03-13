@@ -45,7 +45,7 @@ public class MessageInputMapper {
 	 * @return Returns a list of message objects approximately within the radius.
 	 * @throws SQLException, IOException
 	 */
-	public static List<Message> findInProximity(double longitude, double latitude, double radius) throws IOException, SQLException {
+	public static List<Message> findInProximity(double longitude, double latitude, double radius) throws SQLException {
 		// TODO have not fixed this yet
 		
 		ResultSet rs = MessageFinder.findInProximity(longitude, latitude, radius);
@@ -63,7 +63,7 @@ public class MessageInputMapper {
 	 * @return Returns a message with the specified id
 	 * @throws SQLException, IOException, MapperException 
 	 */
-	public static Message find(BigInteger mid) throws IOException, SQLException, MapperException {
+	public static Message find(BigInteger mid) throws SQLException, MapperException {
 		Message message = null;
 		
 		// check if the message exists in the identity map
@@ -98,7 +98,7 @@ public class MessageInputMapper {
 	 * @throws SQLException, IOException
 	 * @throws MapperException 
 	 */
-	public static List<Message> findByUser(IUser user) throws IOException, SQLException {
+	public static List<Message> findByUser(IUser user) throws SQLException {
 		List<Message> messages = new LinkedList<Message>();
 		
 		// Call the db finder method 
@@ -135,7 +135,7 @@ public class MessageInputMapper {
 	 * @return Returns a list of all messages found.
 	 * @throws IOException, SQLException
 	 */
-	public static List<Message> findAll() throws IOException, SQLException {
+	public static List<Message> findAll() throws SQLException {
 		List<Message> messages = new LinkedList<Message>();
 		Message message = null;
 		
@@ -171,7 +171,7 @@ public class MessageInputMapper {
 	 * @throws IOException
 	 * @throws SQLException
 	 */
-	public static List<BigInteger> findExpiredMessages(int timeToLive) throws IOException, SQLException {
+	public static List<BigInteger> findExpiredMessages(int timeToLive) throws SQLException {
 		ResultSet rs = MessageFinder.findExpired(timeToLive);
 		List<BigInteger> messageIds = new LinkedList<BigInteger>();
 

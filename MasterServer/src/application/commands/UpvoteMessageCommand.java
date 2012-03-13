@@ -37,7 +37,7 @@ import domain.message.mappers.MessageOutputMapper;
  */
 public class UpvoteMessageCommand extends FrontCommand {
 
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, IOException, UnrecognizedUserException, NoSuchAlgorithmException, SQLException {
+	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, IOException, UnrecognizedUserException, SQLException {
 		
 		String strId;
 		

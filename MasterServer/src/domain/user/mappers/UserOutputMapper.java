@@ -15,7 +15,6 @@
 
 package domain.user.mappers;
 
-import java.io.IOException;
 import java.sql.SQLException;
 
 import domain.user.User;
@@ -25,30 +24,15 @@ import foundation.tdg.UserTDG;
 
 public class UserOutputMapper {
 	
-	public static int update(User user) throws IOException {
-		try	{
-			return UserTDG.update(user.getUid(), user.getVersion(), user.getEmail(), user.getPassword(), UserType.convertEnum(user.getType()));
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return -1;
+	public static int update(User user) throws SQLException {
+		return UserTDG.update(user.getUid(), user.getVersion(), user.getEmail(), user.getPassword(), UserType.convertEnum(user.getType()));
 	}
 	
-	public static int delete(User user) throws IOException	{
-		try	{
-			return UserTDG.delete(user.getUid(), user.getVersion());
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return -1;
+	public static int delete(User user) throws SQLException	{
+		return UserTDG.delete(user.getUid(), user.getVersion());
 	}
 	
-	public static void insert(User user) throws IOException
-	{
-		try	{
-			UserTDG.insert(user.getUid(), user.getVersion(), user.getEmail(), user.getPassword(), UserType.convertEnum(user.getType()));
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	public static int insert(User user) throws SQLException {
+		return UserTDG.insert(user.getUid(), user.getVersion(), user.getEmail(), user.getPassword(), UserType.convertEnum(user.getType()));
 	}
 }

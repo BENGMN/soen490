@@ -21,7 +21,7 @@ import exceptions.UnrecognizedUserException;
 public class GetMessageIDsCommand extends FrontCommand{
 
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, IOException, UnrecognizedUserException, NoSuchAlgorithmException, SQLException {
+	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, UnrecognizedUserException, SQLException, IOException {
 		
 		String stringLongitude;
 		String stringLatitude;

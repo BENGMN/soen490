@@ -11,10 +11,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.msgpack.MessagePack;
 import org.msgpack.packer.Packer;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+
+import ch.qos.logback.classic.Logger;
 
 import exceptions.MapperException;
 import exceptions.ParameterException;
@@ -29,7 +32,7 @@ import domain.user.mappers.UserInputMapper;
 public class CreateMessageCommand extends FrontCommand {
 
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, IOException, UnrecognizedUserException, NoSuchAlgorithmException, SQLException {
+	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, IOException, UnrecognizedUserException, SQLException {
 		MultipartResolver resolver = new CommonsMultipartResolver();
 		
 		// Make sure our request is multi-part; if it's not, then it's not properly formatted.
@@ -82,7 +85,14 @@ public class CreateMessageCommand extends FrontCommand {
 		if (user == null)
 			throw new UnrecognizedUserException("Unable to find user.");
 		
-		Message msg = MessageFactory.createNew(user.getUid(), messageBytes, speed, latitude, longitude, new Timestamp(GregorianCalendar.getInstance().getTimeInMillis()), 0);
+		Message msg = null;
+		
+		try {
+			msg = MessageFactory.createNew(user.getUid(), messageBytes, speed, latitude, longitude, new Timestamp(GregorianCalendar.getInstance().getTimeInMillis()), 0);
+		} catch (NoSuchAlgorithmException e) {
+			Logger logger = (Logger)LoggerFactory.getLogger("application");
+			logger.error("No such algorithm exception thrown when trying to create message: {}", e);
+		}
 		
 		// Put the new message in the identity map and insert into database
 		MessageIdentityMap.put(msg.getMid(), msg);		 
