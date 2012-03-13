@@ -16,10 +16,9 @@
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -28,6 +27,8 @@ import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -36,30 +37,39 @@ import org.apache.http.client.ClientProtocolException;
 
 public class DemoGui extends JFrame {
 	
-	private static final int WIDTH = 400;
-	private static final int HEIGHT = 250;
+	private static final int WIDTH = 300;
+	private static final int HEIGHT = 440;
 	private static final String PLAYER_PATH = "C:\\Program Files (x86)\\QuickTime\\QuickTimePlayer.exe"; //change this depending on your computer
 	private JButton uploadFileButton;
 	private JFileChooser fileChooser;
-	private JScrollPane audioFileChooser;
-	private List<File> listOfRetrievedFiles = new LinkedList<File>(); //temp
+	private JScrollPane listScrollPane;
 	private Vector<String> audioFileNames; 
+	private Map<String, Message> messages;
 	private JList listOfFiles;
     private String filePath;
 	private Process process;
 	private FileTransfer fileTransfer;
+	private JTextField statusField;
+	private JTextArea fileInfo;
+	private JScrollPane fileInfoScrollPane;
 	
 	public DemoGui( ) {
 		fileTransfer = new FileTransfer();
+		messages = new HashMap<String, Message>();
 	}
 	
 	public void createAndShowGui() {
 		fileChooser = new JFileChooser();
 		fileChooser.setAcceptAllFileFilterUsed(false);
-		fileChooser.setFileFilter(new AudioFilter());		
-		audioFileChooser = new JScrollPane(listOfFiles);
-		listOfFiles = new JList();
+		fileChooser.setFileFilter(new AudioFilter());
+		listOfFiles = new JList();		
+		listScrollPane = new JScrollPane(listOfFiles);	
 		audioFileNames = new Vector<String>();
+		statusField = new JTextField(23);
+		statusField.setEditable(false);
+		fileInfo = new JTextArea(10, 23);
+		fileInfo.setEditable(false);
+		fileInfoScrollPane = new JScrollPane(fileInfo);
 		
 		uploadFileButton = new JButton("Upload File");
 		uploadFileButton.addActionListener(new ActionListener() {
@@ -70,7 +80,8 @@ public class DemoGui extends JFrame {
 				 if (fileChooserValue == JFileChooser.APPROVE_OPTION) {
 					 try {
 						 //send file
-						fileTransfer.uploadFile(fileChooser.getSelectedFile());
+						String response = fileTransfer.uploadFile(fileChooser.getSelectedFile());
+						statusField.setText(response);
 					} catch (ClientProtocolException e1) {
 						e1.printStackTrace();
 					} catch (IOException e1) {
@@ -84,13 +95,21 @@ public class DemoGui extends JFrame {
 		retrieveFilesButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//TODO: retrieve audio files, put them in a list and put their names a string vector							
-				audioFileNames.add("First");
-				audioFileNames.add("El Michels Affair - C.R.E.A.M.mp3");
-				audioFileNames.add("Test.amr");
-				audioFileNames.add("Test2.amr");
+				//Retrieve audio files	
+				try {
+					messages = fileTransfer.downloadFiles();
+				} catch (ClientProtocolException e1) {
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				audioFileNames.clear();
+				for(String name: messages.keySet()) {
+					audioFileNames.add(name);
+				}
+
 				listOfFiles.setListData(audioFileNames);
-				audioFileChooser.validate();
+				listScrollPane.validate();
 				listOfFiles.setSelectedIndex(0); // ensures that a file is selected
 			}
 		});
@@ -104,7 +123,14 @@ public class DemoGui extends JFrame {
 					selectedFile = (String)listOfFiles.getSelectedValue();
 				}
 				
-				filePath = ".\\" + selectedFile;				
+				Message message = messages.get(selectedFile);
+				fileInfo.setText(message.toString());
+				//filePath = System.getProperty("user.dir") + "\\src\\"+ selectedFile;	
+				try {
+					filePath = message.getMessage().getCanonicalPath();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
 			}				
 		});
 
@@ -139,8 +165,11 @@ public class DemoGui extends JFrame {
 		fileButtonPanel.add(uploadFileButton);
 		fileButtonPanel.add(retrieveFilesButton);
 		
+		
 		JPanel fileChooserPanel = new JPanel();
-		fileChooserPanel.add(audioFileChooser);
+		fileChooserPanel.add(statusField);
+		fileChooserPanel.add(listScrollPane);
+		fileChooserPanel.add(fileInfoScrollPane);
 			
 		JPanel mediaButtonPanel = new JPanel();
 		mediaButtonPanel.add(playButton);
