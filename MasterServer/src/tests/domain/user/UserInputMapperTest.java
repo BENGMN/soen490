@@ -28,6 +28,7 @@ import domain.user.UserIdentityMap;
 import domain.user.mappers.UserInputMapper;
 import domain.user.mappers.UserOutputMapper;
 import domain.user.UserType;
+import exceptions.MapperException;
 import junit.framework.TestCase;
 
 public class UserInputMapperTest extends TestCase {
@@ -39,7 +40,7 @@ public class UserInputMapperTest extends TestCase {
 	private final BigInteger uid = new BigInteger("3785635465657");
 	
 
-	public void testFindUserCacheHit() throws IOException, SQLException, NoSuchAlgorithmException {
+	public void testFindUserCacheHit() throws IOException, SQLException, NoSuchAlgorithmException, MapperException {
 		// Create a new user with the factory to make sure
 		// a) it is placed in the UserIdentityMap and
 		// b) persisted to the database
@@ -55,7 +56,7 @@ public class UserInputMapperTest extends TestCase {
 		assertEquals(user.equals(userCopy), true);
 	}
 	
-	public void testFindUserCacheMiss() throws IOException {
+	public void testFindUserCacheMiss() throws IOException, SQLException, MapperException {
 		// Create a new user without the factory to make sure
 		// a) it is NOT placed in the UserIdentityMap and
 		// b) Manually persist the User to the database using the UserOutputMapper
@@ -78,7 +79,7 @@ public class UserInputMapperTest extends TestCase {
 		assertEquals(UserOutputMapper.delete(user), 1);
 	}
 	
-	public void testFindByEmail() throws IOException, SQLException, NoSuchAlgorithmException {
+	public void testFindByEmail() throws IOException, SQLException, NoSuchAlgorithmException, MapperException {
 		// Create a new user with the factory to make sure
 		// a) it is placed in the UserIdentityMap and
 		// b) persisted to the database

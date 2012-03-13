@@ -36,7 +36,7 @@ public class UnsupportedCommand extends FrontCommand {
 			this.commandString = commandString;
 	}
 
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ParameterException {
+	public void execute(HttpServletRequest request, HttpServletResponse response) throws ParameterException, IOException {
 		String text = "HTTP " + httpMethod + " method for '" + commandString + "' command is not supported.";
 		response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED, text);
 	}

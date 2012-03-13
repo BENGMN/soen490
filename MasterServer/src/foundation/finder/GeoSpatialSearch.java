@@ -14,10 +14,11 @@
  *
  */
 
-package technical;
+package foundation.finder;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class GeoSpatialSearch {
 	

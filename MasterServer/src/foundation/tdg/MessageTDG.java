@@ -14,7 +14,7 @@
  *
  */
 
-package foundation;
+package foundation.tdg;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -24,6 +24,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import javax.sql.rowset.serial.SerialBlob;
+
+import foundation.Database;
 
 
 /**

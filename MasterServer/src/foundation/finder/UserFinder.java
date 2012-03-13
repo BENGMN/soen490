@@ -14,15 +14,17 @@
  *
  */
 
-package foundation;
+package foundation.finder;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import foundation.Database;
+import foundation.tdg.UserTDG;
 
 /**
  * Foundation class for executing finds on Users.

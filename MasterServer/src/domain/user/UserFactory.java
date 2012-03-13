@@ -20,7 +20,7 @@ public class UserFactory {
 	 * @throws SQLException
 	 * @throws NoSuchAlgorithmException 
 	 */
-	public static User createNew(String email, String password, UserType type) throws IOException, SQLException, NoSuchAlgorithmException {
+	public static User createNew(String email, String password, UserType type) throws SQLException, NoSuchAlgorithmException {
 		
 		// Create a new user with a unique ID
 		User usr = new User(createUniqueID(email,password), email, password, type, 1);

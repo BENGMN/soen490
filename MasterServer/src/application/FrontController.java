@@ -16,18 +16,15 @@
 
 package application;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
+
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.net.URL;
+
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.Scanner;
+
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -36,7 +33,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 
 import exceptions.MapperException;
@@ -47,12 +43,12 @@ import application.commands.DeleteMessageCommand;
 import application.commands.DownvoteMessageCommand;
 import application.commands.FrontCommand;
 import application.commands.GetMessageIDsCommand;
+import application.commands.GetServerParametersCommand;
 import application.commands.ReadMessageCommand;
 import application.commands.UnsupportedCommand;
+import application.commands.UpdateServerParametersCommand;
 import application.commands.UpvoteMessageCommand;
 import foundation.Database;
-import foundation.ServletInformation;
-
 
 
 public class FrontController extends HttpServlet {
@@ -66,7 +62,6 @@ public class FrontController extends HttpServlet {
 	// Overridden to make sure that we have a database.
 	public void init() throws ServletException {
 		try {
-			ServletInformation.getInstance().setServletContext(getServletContext());
 			if (!Database.isDatabaseCreated())
 				Database.createDatabase();
 		}
@@ -102,9 +97,15 @@ public class FrontController extends HttpServlet {
 		// This should be called before readmessage
 		commandMap.put("GET.getmessageids", new GetMessageIDsCommand());
 		
+		// Command for displaying server parameters
+		commandMap.put("GET.getserverparameters", new GetServerParametersCommand());
+		
+		// Command for updating server parameters
+		commandMap.put("POST.updateserverparameters", new UpdateServerParametersCommand());
+		
 		// Initialise the logger
 		logger = (Logger)LoggerFactory.getLogger("application");
-		logger.info("Starting Application Server. FrontController started.");
+		logger.trace("Starting Application Server. FrontController started.");
 	}
 	
 	/**
@@ -163,9 +164,6 @@ public class FrontController extends HttpServlet {
 				logger.debug("The following ParameterException occured", e);
 				response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.toString());
 				// TODO would the below be bad requests as well
-			} catch (NoSuchAlgorithmException e) {
-				logger.debug("The following NoSuchAlgorithmException occured", e);
-				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
 			} catch (MapperException e) {
 				logger.debug("The following MapperException occured", e);
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());

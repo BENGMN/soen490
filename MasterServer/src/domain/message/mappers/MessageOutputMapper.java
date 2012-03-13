@@ -21,7 +21,7 @@ import java.sql.SQLException;
 
 import domain.message.Message;
 import domain.message.MessageIdentityMap;
-import foundation.MessageTDG;
+import foundation.tdg.MessageTDG;
 
 /**
  * Message output mapper
@@ -34,7 +34,7 @@ public class MessageOutputMapper {
 	 * @return the number of rows updated (1 for success, 0 for failure)
 	 * @throws SQLException
 	 */
-	public static int update(Message message) throws IOException, SQLException {
+	public static int update(Message message) throws SQLException {
 		int updated = MessageTDG.update(message.getMid(), message.getUserRating());
 		return updated;
 	}
@@ -45,12 +45,12 @@ public class MessageOutputMapper {
 	 * @return the number of rows updated (1 for success, 0 for failure) 
 	 * @throws SQLException
 	 */
-	public static int delete(Message message) throws IOException, SQLException {
+	public static int delete(Message message) throws SQLException {
 		MessageIdentityMap.remove(message.getMid());
 		return MessageTDG.delete(message.getMid());
 	}
 	
-	public static int delete(BigInteger messageID) throws IOException, SQLException {
+	public static int delete(BigInteger messageID) throws SQLException {
 		MessageIdentityMap.remove(messageID);
 		return MessageTDG.delete(messageID);
 	}
@@ -60,7 +60,7 @@ public class MessageOutputMapper {
 	 * @param message Message
 	 * @throws SQLException
 	 */
-	public static void insert(Message message) throws IOException, SQLException {
+	public static void insert(Message message) throws SQLException {
 		MessageTDG.insert(message.getMid(), message.getOwner().getUid(), message.getMessage(), message.getSpeed(), message.getLatitude(), message.getLongitude(), message.getCreatedAt(), message.getUserRating());
 	}
 }

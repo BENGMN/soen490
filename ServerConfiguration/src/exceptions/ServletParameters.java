@@ -1,10 +1,9 @@
-package application;
 /**
  * SOEN 490
  * Capstone 2011
  * Singleton class that holds all the servlet parameters.
- * Delegates to FrontCommands.
- * Team members: 	Sotirios Delimanolis
+ * Team members: 	
+ * 			Sotirios Delimanolis
  * 			Filipe Martinho
  * 			Adam Harrison
  * 			Vahe Chahinian
@@ -14,6 +13,8 @@ package application;
  * @author Capstone 490 Team Moving Target
  *
  */
+
+package exceptions;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

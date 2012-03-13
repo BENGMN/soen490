@@ -19,7 +19,7 @@ import domain.message.mappers.MessageOutputMapper;
 public class DeleteMessageCommand extends FrontCommand {
 
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, IOException, UnrecognizedUserException, NoSuchAlgorithmException, SQLException {
+	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, IOException, UnrecognizedUserException, SQLException {
 		String strId = request.getParameter("messageid");
 		
 		if ("".equals(strId))
