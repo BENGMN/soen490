@@ -8,7 +8,8 @@
 <title>Server Configuration Utility</title>
 </head>
 <body>
-	<form method="POST" action='ConfigurationController' name="POST.updateServerConfiguration">
+	<form method="POST" action='FrontController' name="POST.updateServerConfiguration">
+		<p>Server Configuration Utility</p>
 		<table border="1">
 			<tr>
 			<%
@@ -17,12 +18,15 @@
 				Iterator it = params.entrySet().iterator();
 			    while (it.hasNext()) {
 			        Map.Entry pairs = (Map.Entry)it.next();
-			        out.println("<tr> \n <td>" + pairs.getKey() + "</td> \n <input type='text' name='" + pairs.getKey() +"' value='" + pairs.getValue() + "'/></td>\n");
+			        out.println("<tr> \n");
+			        out.println("	<td>" + pairs.getKey() + "</td> \n");
+			        out.println("	<td><input type='text' name='" + pairs.getKey() +"' value='" + pairs.getValue() + "'/></td>");
+			        out.println("</tr> \n");
 			    }
 			%>
 			</tr>
 		</table>
-		<p><input type="submit" name="Update Server Configuration" value="ServerConfiguration" /></p>
+		<p><input type="submit" name="Update Server Configuration" value="Update" /></p>
 	</form>
 </body>
 </html>
