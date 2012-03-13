@@ -37,7 +37,7 @@ public class ServerParametersFinder {
 	 * SQL query for selecting a single server parameter
 	 */
 	protected final static String SELECT = 
-		"SELECT * FROM " + ServerParametersTDG.TABLE + " WHERE variableName = ?;";
+		"SELECT * FROM " + ServerParametersTDG.TABLE + " WHERE variableName = '?';";
 	
 	/**
 	 * Finder method for returning result set containing a single server parameter.

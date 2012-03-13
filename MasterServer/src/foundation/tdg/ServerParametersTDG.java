@@ -26,9 +26,9 @@ public class ServerParametersTDG {
 	 * @param value
 	 * @return Returns the number of rows that were affected by the SQL query.
 	 */
-	public int update (String variableName, double value) throws SQLException {
+	public static int update (String variableName, double value) throws SQLException {
 		Connection connection = Database.getConnection();
-		PreparedStatement ps = connection.prepareStatement(INSERT);
+		PreparedStatement ps = connection.prepareStatement(UPDATE);
 		
 		ps.setDouble(1, value);
 		ps.setString(2, variableName);
@@ -58,7 +58,7 @@ public class ServerParametersTDG {
 	 * @return Returns the number of rows that were affected by the SQL query.
 	 * @throws SQLException
 	 */
-	protected int insert (String variableName, double value) throws SQLException {
+	protected static int insert (String variableName, double value) throws SQLException {
 		Connection connection = Database.getConnection();
 		PreparedStatement ps = connection.prepareStatement(INSERT);
 		
@@ -83,9 +83,9 @@ public class ServerParametersTDG {
 	 * @return Returns the number of rows that were affected by the SQL query.
 	 * @throws SQLException
 	 */
-	protected int delete (String variableName) throws SQLException {
+	protected static int delete (String variableName) throws SQLException {
 		Connection connection = Database.getConnection();
-		PreparedStatement ps = connection.prepareStatement(INSERT);
+		PreparedStatement ps = connection.prepareStatement(DELETE);
 		
 		ps.setString(1, variableName);
 		

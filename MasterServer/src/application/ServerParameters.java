@@ -19,6 +19,8 @@ import foundation.tdg.ServerParametersTDG;
  */
 public class ServerParameters extends HashMap<String, Double> {
 
+	public final static String PREFIX = "PARAM";
+	
 	/**
 	 * 
 	 */
