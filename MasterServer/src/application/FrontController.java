@@ -46,6 +46,7 @@ import application.commands.GetMessageIDsCommand;
 import application.commands.GetServerParametersCommand;
 import application.commands.ReadMessageCommand;
 import application.commands.UnsupportedCommand;
+import application.commands.UpdateServerParametersCommand;
 import application.commands.UpvoteMessageCommand;
 import foundation.Database;
 
@@ -96,9 +97,12 @@ public class FrontController extends HttpServlet {
 		// This should be called before readmessage
 		commandMap.put("GET.getmessageids", new GetMessageIDsCommand());
 		
-		// Command for downloading messages
+		// Command for displaying server parameters
 		commandMap.put("GET.getserverparameters", new GetServerParametersCommand());
-
+		
+		// Command for updating server parameters
+		commandMap.put("POST.updateserverparameters", new UpdateServerParametersCommand());
+		
 		// Initialise the logger
 		logger = (Logger)LoggerFactory.getLogger("application");
 		logger.trace("Starting Application Server. FrontController started.");

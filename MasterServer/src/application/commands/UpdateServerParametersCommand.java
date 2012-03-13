@@ -1,8 +1,8 @@
 package application.commands;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -26,8 +26,10 @@ public class UpdateServerParametersCommand extends FrontCommand {
 		//Enumeration params = request.getParameterNames();
 		
 		Map params = request.getParameterMap();
-		
-		Set<Entry<String, Double>> set = params.entrySet();
+		Enumeration<String> str = request.getParameterNames();
+		while(str.hasMoreElements()) 
+			System.out.println(str.nextElement());
+		/*Set<Entry<String, Double>> set = params.entrySet();
 		Iterator<Entry<String, Double>> it = set.iterator();
 		
 		while (it.hasNext()) {
@@ -35,7 +37,7 @@ public class UpdateServerParametersCommand extends FrontCommand {
 			if (ServerParameters.getUniqueInstance().containsKey(e.getKey()));
 				ServerParameters.getUniqueInstance().put(e.getKey(), e.getValue());
 		}
-		
-		request.getRequestDispatcher("/ServerConfigurationUtility.jsp").forward(request, response);
+		*/
+		//request.getRequestDispatcher("/ServerConfigurationUtility.jsp").forward(request, response);
 	}
 }
