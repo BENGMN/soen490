@@ -37,7 +37,7 @@ public class UserOutputMapperTest extends TestCase {
 		
 		// Delete the newly created record from the database and the identity map
 		assertEquals(UserTDG.delete(uid, version),1);
-		UserIdentityMap.getUniqueInstance().remove(uid);
+		UserIdentityMap.remove(uid);
 	}
 	
 	public void testUpdate() throws IOException, SQLException, MapperException {
@@ -57,7 +57,7 @@ public class UserOutputMapperTest extends TestCase {
 		// Make sure the retrieved object was updated
 		assertEquals(userCopy.getUid(), uid);
 		assertEquals(userCopy.getEmail(),newEmail);		// Email changes
-		assertEquals(userCopy.getPassword(), password);
+		// assertEquals(userCopy.getPassword(), password); // Note the password is not returned by the UserInputMapper
 		assertEquals(userCopy.getType(), userType);
 		assertEquals(userCopy.getVersion(), 2);			// Version changes
 		
