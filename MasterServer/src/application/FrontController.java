@@ -43,6 +43,7 @@ import application.commands.DeleteMessageCommand;
 import application.commands.DownvoteMessageCommand;
 import application.commands.FrontCommand;
 import application.commands.GetMessageIDsCommand;
+import application.commands.GetServerParametersCommand;
 import application.commands.ReadMessageCommand;
 import application.commands.UnsupportedCommand;
 import application.commands.UpvoteMessageCommand;
@@ -95,6 +96,9 @@ public class FrontController extends HttpServlet {
 		// This should be called before readmessage
 		commandMap.put("GET.getmessageids", new GetMessageIDsCommand());
 		
+		// Command for downloading messages
+		commandMap.put("GET.serverParameters", new GetServerParametersCommand());
+
 		// Initialise the logger
 		logger = (Logger)LoggerFactory.getLogger("application");
 		logger.trace("Starting Application Server. FrontController started.");
