@@ -114,11 +114,10 @@ public class User implements IUser {
 	public boolean equals(Object o) {
         // If the object is not null and is of the type User
 		if ((o != null) && (o.getClass().equals(this.getClass()))) {
-            // Test all of the particulars
+            // Test all of the particulars, except the password
 			return (
 						((User)o).getUid().equals(this.getUid()) &&
 						((User)o).getEmail().equals(this.getEmail()) &&
-	            		((User)o).getPassword().equals(this.getPassword()) &&
 	            		((User)o).getType().equals(this.getType()) &&
 	            		((User)o).getVersion() == this.getVersion()
             		);
