@@ -27,7 +27,6 @@ import java.util.List;
 
 import domain.message.Message;
 import domain.message.MessageFactory;
-import domain.message.MessageIdentityMap;
 import domain.message.mappers.MessageInputMapper;
 import domain.message.mappers.MessageOutputMapper;
 import domain.user.IUser;
@@ -100,10 +99,11 @@ public class MessageInputMapperTest extends TestCase {
 		// Create a user object to associate the messages we are about to create to
 		IUser user = UserFactory.createClean(uid, email, password, userType, version);
 		
-		// Create some messages and save them to the database so we can find them
+		// Create some messages
 		Message m1 = MessageFactory.createNew(uid, message1, speed, latitude, longitude, createdDate1, userRating);
 		Message m2 = MessageFactory.createNew(uid, message2, speed, latitude, longitude, createdDate2, userRating);
 		
+		//  Save them to the database so we can find them
 		MessageOutputMapper.insert(m1);
 		MessageOutputMapper.insert(m2);
 		
