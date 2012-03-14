@@ -59,7 +59,7 @@ public class MessageOutputMapper {
 	 * @param message Message
 	 * @throws SQLException
 	 */
-	public static void insert(Message message) throws SQLException {
-		MessageTDG.insert(message.getMid(), message.getOwner().getUid(), message.getMessage(), message.getSpeed(), message.getLatitude(), message.getLongitude(), message.getCreatedAt(), message.getUserRating());
+	public static int insert(Message message) throws SQLException {
+		return MessageTDG.insert(message.getMid(), message.getOwner().getUid(), message.getMessage(), message.getSpeed(), message.getLatitude(), message.getLongitude(), message.getCreatedAt(), message.getUserRating());
 	}
 }
