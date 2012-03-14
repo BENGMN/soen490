@@ -57,7 +57,7 @@ public class UpvoteMessageCommand extends FrontCommand {
 		// so we are always affecting the same message
 		Message message = MessageInputMapper.find(mid);
 		
-		// decrement the message user rating
+		// increment the message user rating
 		synchronized(message) {
 			message.setUserRating(message.getUserRating() + 1);
 		}
