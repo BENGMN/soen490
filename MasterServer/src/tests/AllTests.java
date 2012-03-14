@@ -13,12 +13,13 @@ import tests.technical.GeoSpatialSearchTest;
 @RunWith(Suite.class)
 
 @SuiteClasses({
-		FrontControllerTest.class, 
-		HttpMessageTest.class,
-		UnsupportedCommandTest.class,
-		MessageCommandTest.class,
+		 FrontControllerTest.class, 
+		 HttpMessageTest.class,
+		 UnsupportedCommandTest.class,
+		 MessageCommandTest.class,
 		 MessageIdentityMapTest.class,
-		 MessageMapperTest.class,
+		 MessageInputMapperTest.class,
+		 MessageOutputMapperTest.class,
 		 MessageTest.class,
 		 MessageFactoryTest.class,
 		 UserFactoryTest.class,

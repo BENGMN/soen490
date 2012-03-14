@@ -11,7 +11,8 @@ import tests.domain.user.*;
 
 @SuiteClasses({ 
 		 MessageIdentityMapTest.class,
-		 MessageMapperTest.class,
+		 MessageInputMapperTest.class,
+		 MessageOutputMapperTest.class,
 		 MessageTest.class,
 		 MessageFactoryTest.class,
 		 UserFactoryTest.class,
