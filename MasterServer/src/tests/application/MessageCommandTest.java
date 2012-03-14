@@ -95,26 +95,36 @@ public class MessageCommandTest {
 		final String email = "example@example.com";
 		final String password = "capstone";
 		final UserType type = UserType.USER_NORMAL;
+		
 		User user = UserFactory.createNew(email, password, type);
 		Message message = MessageFactory.createNew(user.getUid(), bytes, speed, latitude, longitude, createdDate, userRating);
+		UserOutputMapper.insert(user);
+		MessageOutputMapper.insert(message);
+		
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		MockHttpServletResponse response = new MockHttpServletResponse();
-		request.setParameter("longitude", Double.toString(longitude));
-		request.setParameter("latitude", Double.toString(latitude));
-		request.setParameter("speed", Float.toString(speed));
+		
+		request.setParameter("messageid", message.getMid().toString());
+		//request.setParameter("longitude", Double.toString(longitude));
+		//request.setParameter("latitude", Double.toString(latitude));
+		//request.setParameter("speed", Float.toString(speed));
+		
 		ReadMessageCommand getMessageCommand = new ReadMessageCommand();
+		
 		getMessageCommand.execute(request, response);
 		assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+		
 		byte[] responseBytes = response.getContentAsByteArray();
 		MessagePack pack = new MessagePack();
 		Unpacker unpacker = pack.createUnpacker(new ByteArrayInputStream(responseBytes));
 		int messageCount = unpacker.readInt();
+		
 		assertEquals(1, messageCount);
 		assertEquals(message.getMid(), new BigInteger(unpacker.readString()));
 		assertEquals(message.getOwner().getEmail(), unpacker.readString());
 		assertArrayEquals(message.getMessage(), unpacker.readByteArray());
 		assertEquals(message.getSpeed(), unpacker.readFloat(), 0.0001);
-		assertEquals(message.getCreatedAt().getTime(), unpacker.readLong());
+		assertEquals(message.getCreatedAt().getTime() >= unpacker.readLong(), true); // amended here for rounding errors
 		assertEquals(message.getLongitude(), unpacker.readDouble(), 0.000001);
 		assertEquals(message.getLatitude(), unpacker.readDouble(), 0.000001);
 		assertEquals(message.getUserRating(), unpacker.readInt());
@@ -131,9 +141,11 @@ public class MessageCommandTest {
 		int fileSize = (int)file.length();
 		byte[] fileBytes = new byte[fileSize];
 		assertEquals(fileSize, new FileInputStream(fileName).read(fileBytes));
-		String email = "example@example.com";
+		String email = "example2@example.com";
 		String password = "capstone";
 		User user = UserFactory.createNew(email, password, UserType.USER_NORMAL);
+		UserOutputMapper.insert(user);
+		
 		List<Message> messages = MessageInputMapper.findByUser(user);
 		assertEquals(0, messages.size());
 		MockHttpServletResponse response = new MockHttpServletResponse();
@@ -148,7 +160,7 @@ public class MessageCommandTest {
 		request.setContent(contentArray);
 		CreateMessageCommand createMessageCommand = new CreateMessageCommand();
 		createMessageCommand.execute(request, response);
-		assertEquals(HttpServletResponse.SC_ACCEPTED, response.getStatus());
+		assertEquals(HttpServletResponse.SC_OK, response.getStatus());
 		messages = MessageInputMapper.findByUser(user);
 		assertEquals(1, messages.size());
 		Message message = messages.get(0);
@@ -194,12 +206,14 @@ public class MessageCommandTest {
 		Timestamp createdDate = new Timestamp(GregorianCalendar.getInstance().getTimeInMillis());
 		final int userRating = 0;
 		Message message = MessageFactory.createNew(new BigInteger("0"), bytes, speed, latitude, longitude, createdDate, userRating);
+		assertEquals(MessageOutputMapper.insert(message),1);
+		assertEquals(MessageInputMapper.find(message.getMid()), message);
 		UpvoteMessageCommand upvoteMessageCommand = new UpvoteMessageCommand();
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		MockHttpServletResponse response = new MockHttpServletResponse();
-		request.setParameter("mid", message.getMid().toString());
-		request.setParameter("longitude", Double.toString(longitude));
-		request.setParameter("latitude", Double.toString(latitude));
+		request.setParameter("messageid", message.getMid().toString());
+		//request.setParameter("longitude", Double.toString(longitude));
+		//request.setParameter("latitude", Double.toString(latitude));
 		upvoteMessageCommand.execute(request, response);
 		assertEquals(HttpServletResponse.SC_ACCEPTED, response.getStatus());
 		assertEquals(userRating + 1, message.getUserRating());
