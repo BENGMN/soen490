@@ -33,9 +33,8 @@ public class ServerParameterInputMapper {
 		
 		String description = rs.getString("description");
 		String value = rs.getString("value");
-		int version = rs.getInt("version");
 		
-		param = new ServerParameter(paramName, description, value, version);
+		param = new ServerParameter(paramName, description, value);
 		
 		return param;
 	}

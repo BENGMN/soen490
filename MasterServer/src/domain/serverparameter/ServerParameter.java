@@ -58,4 +58,18 @@ public class ServerParameter {
 	public String getParamName() {
 		return paramName;
 	}
+	
+	public boolean equals(Object o) {
+		if (o == null)
+			return false;
+		if (!(o instanceof ServerParameter))
+			return false;
+		if (!((ServerParameter)o).paramName.equals(this.paramName))
+			return false;
+		if (!((ServerParameter)o).description.equals(this.description))
+			return false;
+		if (!((ServerParameter)o).value.equals(this.value))
+			return false;
+		return true;
+	}
 }

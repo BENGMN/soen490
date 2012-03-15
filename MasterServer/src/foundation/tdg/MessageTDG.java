@@ -106,6 +106,39 @@ public class MessageTDG {
 		return count;	
 	}
 
+	/*
+	 * Two update methods for incrementing or decrementing the user rating.
+	 * These are needed so that SQL can take care of locking the row so that there is no lost modifications.
+	 * Having multiple application servers, you can't only load one instance of a message -> Identity map is useless
+	 */
+	private final static String UPDATE_DECREMENT =
+		"UPDATE " + TABLE + " " + 
+		"SET user_rating = user_rating - 1 " +
+		"WHERE mid = ?";
+	
+	public static int decrementRating (BigInteger mid) throws SQLException {
+		Connection connection = Database.getConnection();
+		PreparedStatement ps = connection.prepareStatement(UPDATE_DECREMENT);
+		ps.setBigDecimal(1, new BigDecimal(mid));
+		int count = ps.executeUpdate();
+		ps.close();
+		return count;
+	}
+	
+	private final static String UPDATE_INCREMENT =
+		"UPDATE " + TABLE + " " + 
+		"SET user_rating = user_rating + 1 " +
+		"WHERE mid = ?";
+	
+	public static int incrementRating (BigInteger mid) throws SQLException {
+		Connection connection = Database.getConnection();
+		PreparedStatement ps = connection.prepareStatement(UPDATE_INCREMENT);
+		ps.setBigDecimal(1, new BigDecimal(mid));
+		int count = ps.executeUpdate();
+		ps.close();
+		return count;
+	}
+	
 	private final static String DELETE = 
 		"DELETE FROM " + TABLE + " WHERE mid = ?";
 	
