@@ -27,7 +27,7 @@ public class GetServerParametersCommand extends FrontCommand {
 		ServerParameters params = ServerParameters.getUniqueInstance();	
 		
 		// Give it to the request object to be unfolded in the jsp
-		request.setAttribute("serverConfiguration", params);
+		request.setAttribute("serverParameters", params);
 
 		// Get and forward to the jsp pages
 		RequestDispatcher view = request.getRequestDispatcher(SERVER_PARAMETERS_JSP);

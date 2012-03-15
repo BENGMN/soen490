@@ -126,7 +126,7 @@ public class UserTDG {
 	}
 	
 	private final static String CREATE_TABLE =
-			"CREATE TABLE User (uid decimal(39) NOT NULL, email varchar(64) NOT NULL, password varchar(256) NOT NULL, type tinyint NOT NULL, version int NOT NULL, CONSTRAINT pk_uid PRIMARY KEY (uid));";
+			"CREATE TABLE " + TABLE + " (uid decimal(39) NOT NULL, email varchar(64) NOT NULL, password varchar(256) NOT NULL, type tinyint NOT NULL, version int NOT NULL, CONSTRAINT pk_uid PRIMARY KEY (uid));";
 		
 	/**
 	 * Creates the table User in the database.

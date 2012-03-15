@@ -16,7 +16,6 @@
 
 package foundation.finder;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -26,11 +25,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Properties;
 
 import foundation.Database;
 import foundation.tdg.MessageTDG;
-
 
 
 /**

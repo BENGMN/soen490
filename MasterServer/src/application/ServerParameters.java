@@ -1,26 +1,23 @@
 package application;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import java.util.HashMap;
+import java.util.List;
 
-import foundation.Database;
-import foundation.finder.ServerParametersFinder;
-import foundation.tdg.ServerParametersTDG;
+import domain.serverparameter.ServerParameter;
+import domain.serverparameter.mappers.ServerParameterInputMapper;
+
 
 /**
  * Singleton class that holds all the server parameters as a HashMap, 
  * where the key is the parameter name and the value is its value.
+ * The class also acts as an Identity Map so that parameter are only loaded once.
  * @author Anthony
  *
  */
-public class ServerParameters extends HashMap<String, Double> {
+public class ServerParameters extends HashMap<String, ServerParameter> {
 
-	public final static String PREFIX = "PARAM";
-	
 	/**
 	 * 
 	 */
@@ -37,28 +34,20 @@ public class ServerParameters extends HashMap<String, Double> {
 	 */
 	private ServerParameters() throws SQLException {
 		super();
-		populateVariables();
+		updateParameters();
 	}
 
 	/**
 	 * Grabs all the parameters from the database and stores them in the HashMap.
 	 * @throws SQLException
 	 */
-	protected void populateVariables() throws SQLException {
-		ResultSet rs = ServerParametersFinder.findALL();
+	public void updateParameters() throws SQLException {
+		List<ServerParameter> list = ServerParameterInputMapper.findAll();
 		
-		while (rs.next()) {
-			String variableName = rs.getString("variableName");
-			double value = rs.getDouble("value");
-			
-			this.put(variableName, value);
+		// for each item in the list, add it to this map
+		for(ServerParameter param: list) {
+			this.put(param.getParamName(), param);
 		}
-		
-		rs.close();
-		
-		// Frees the connection from the connection pool
-		// TODO change this
-		Database.freeConnection();
 	}
 		
 	/**

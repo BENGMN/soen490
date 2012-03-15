@@ -65,28 +65,18 @@ public class MessageInputMapper {
 	 */
 	public static Message find(BigInteger mid) throws SQLException, MapperException {
 		Message message = null;
+	
+		// find the message in the db
+		ResultSet rs = MessageFinder.find(mid);
 		
-		// check if the message exists in the identity map
-		message = MessageIdentityMap.get(mid);
+		// if it isn't found, throw mapper exception
+		if (!rs.next())
+			throw new MapperException("Message with id " + mid.toString() + " does not exist.");
 		
-		// if it doesn't, the above call returns null
-		if (message == null) {
-			
-			// find the message in the db
-			ResultSet rs = MessageFinder.find(mid);
-			
-			// if it isn't found, throw mapper exception
-			if (!rs.next())
-				throw new MapperException("Message with id " + mid.toString() + " does not exist.");
-			
-			// create the message found
-			message = getMessage(rs);
-			
-			// add it to the identity map
-			MessageIdentityMap.put(mid, message);
-			
-			rs.close();
-		}
+		// create the message found
+		message = getMessage(rs);
+		
+		rs.close();
 		
 		return message;		
 	}
@@ -107,19 +97,11 @@ public class MessageInputMapper {
 		Message message = null;
 		
 		while(rs.next()) {
-			
-			// get the message id
-			BigInteger mid = rs.getBigDecimal("m.mid").toBigInteger();
-			
-			// check if the message exists in the identity map
-			message = MessageIdentityMap.get(mid);
-			
-			// if it isn't, the above statement returned null, so create it
-			if (message == null) {
-				message = getMessage(rs);
-				// add the message to the identity map
-				MessageIdentityMap.put(mid, message);
-			}
+			// TODO
+			// CODE FOR IDENTITY MAP HAS BEEN REMOVED
+
+			// create message
+			message = getMessage(rs);
 			
 			// add the message to the list
 			messages.add(message);
@@ -142,18 +124,11 @@ public class MessageInputMapper {
 		ResultSet rs = MessageFinder.findAll();
 		
 		while(rs.next()) {
-			// get the message id
-			BigInteger mid = rs.getBigDecimal("m.mid").toBigInteger();
-			
-			// check if the message exists in the identity map
-			message = MessageIdentityMap.get(mid);
-			
-			// if it isn't, the above statement returned null, so create it
-			if (message == null) {
-				message = getMessage(rs);
-				// add the message to the identity map
-				MessageIdentityMap.put(mid, message);
-			}
+			// TODO
+			// CODE FOR IDENTITY MAP HAS BEEN REMOVED
+
+			// create message
+			message = getMessage(rs);
 			
 			// add the message to the list
 			messages.add(message);
@@ -179,6 +154,8 @@ public class MessageInputMapper {
 			messageIds.add(rs.getBigDecimal("m.mid").toBigInteger());
 		}
 
+		rs.close();
+		
 		return messageIds;
 	}
 	
@@ -200,6 +177,8 @@ public class MessageInputMapper {
 		while(rs.next()) {
 			messageIds.add(rs.getBigDecimal("m.mid").toBigInteger());
 		}
+		
+		rs.close();
 		
 		return messageIds;
 	}
