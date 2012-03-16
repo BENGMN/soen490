@@ -97,8 +97,7 @@ public class Message {
 				"\nOwner: "+ getOwnerEmail();
 	}
 	
-	public static Message createMessage(InputStream in, String fileType) throws IOException
-	{
+	public static Message createMessage(InputStream in, String fileName, String fileType) throws IOException {
 		Unpacker unpacker = (new MessagePack()).createUnpacker(in);
 		int size = unpacker.readInt();
 		BigInteger mid = new BigInteger(unpacker.readString());	
@@ -109,7 +108,7 @@ public class Message {
 		double longitude = unpacker.readDouble();
 		double latitude = unpacker.readDouble();
 		int userRating = unpacker.readInt();
-		File message = File.createTempFile(mid.toString(), fileType, new File(".\\src\\Retrieved Files\\"));
+		File message = File.createTempFile(fileName, fileType, new File(".\\src\\Retrieved Files\\"));
 		FileOutputStream output = new FileOutputStream( message);
 		output.write(byteMessage);
 		output.close();

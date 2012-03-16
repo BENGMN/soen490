@@ -84,7 +84,7 @@ public class FileTransfer {
 			readMessage = new HttpGet("http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=readmessage&messageid="+ id);		
 			readMessageResponse = httpgetMessageClient.execute(readMessage);
 			inputStream = readMessageResponse.getEntity().getContent();
-			Message message = Message.createMessage(inputStream, ".amr");
+			Message message = Message.createMessage(inputStream, "audio" + (i + 1), ".amr");
 			messages.put(message.getMessage().getName(), message);
 		}
 		
