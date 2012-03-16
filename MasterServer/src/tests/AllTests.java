@@ -6,6 +6,10 @@ import org.junit.runners.Suite.SuiteClasses;
 
 import tests.application.*;
 import tests.domain.message.*;
+import tests.domain.serverparameter.ServerParameterInputMapperTest;
+import tests.domain.serverparameter.ServerParameterOutputMapperTest;
+import tests.domain.serverparameter.ServerParameterTest;
+import tests.domain.serverparameter.ServerParametersTest;
 import tests.domain.user.*;
 import tests.foundation.*;
 import tests.technical.GeoSpatialSearchTest;
@@ -31,8 +35,15 @@ import tests.technical.GeoSpatialSearchTest;
 		 DatabaseTest.class,
 		 MessageTDGTest.class,
 		 UserTDGTest.class,
-		 GeoSpatialSearchTest.class
-
+		 GeoSpatialSearchTest.class,
+		 ServerParameterInputMapperTest.class,
+		 ServerParameterOutputMapperTest.class,
+		 ServerParametersTest.class,
+		 ServerParameterTest.class,
+		 ServerParameterTDGTest.class,
+		 ServerParameterFinderTest.class
+		 
+		 
 })
 
 public class AllTests {

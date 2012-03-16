@@ -33,9 +33,11 @@ public class UserTest {
 	private final int version = 1;
 	
 	@Test
-	public void testGetters()
-	{
+	public void testGetters() {
+		// create new object
 		User user = new User(uid, email, password, userType, version);
+		
+		// assertions on getters
 		assertEquals(user.getUid(), uid);
 		assertEquals(user.getEmail(), email);
 		assertEquals(user.getPassword(), password);
@@ -44,13 +46,15 @@ public class UserTest {
 	}
 	
 	@Test
-	public void testSetters()
-	{
+	public void testSetters() {
+		// create new object
 		User user = new User(uid, "", "", null, 0);
 		user.setEmail(email);
 		user.setPassword(password);
 		user.setVersion(version);
 		user.setType(userType);
+		
+		// assertions after setters
 		assertEquals(user.getEmail(), email);
 		assertEquals(user.getPassword(), password);
 		assertEquals(user.getVersion(), version);

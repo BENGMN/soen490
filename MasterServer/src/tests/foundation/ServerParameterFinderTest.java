@@ -7,7 +7,7 @@ import foundation.finder.ServerParameterFinder;
 import foundation.tdg.ServerParameterTDG;
 import junit.framework.TestCase;
 
-public class ServerParametersFinderTest extends TestCase {
+public class ServerParameterFinderTest extends TestCase {
 	// TODO THESE TESTS SHOULD NOT RUN IN THE SAME DB TABLES AS THE PROJECT
 	/**
 	 * Test to find one row in the table

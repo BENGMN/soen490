@@ -6,7 +6,7 @@ import foundation.Database;
 import foundation.tdg.ServerParameterTDG;
 import junit.framework.TestCase;
 
-public class ServerParametersTDGTest extends TestCase {
+public class ServerParameterTDGTest extends TestCase {
 	/**
 	 * Test to create the table
 	 */
