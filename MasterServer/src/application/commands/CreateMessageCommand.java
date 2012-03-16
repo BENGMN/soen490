@@ -1,5 +1,6 @@
 package application.commands;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
+import application.MessageHelper;
 import application.ServerParameters;
 
 import ch.qos.logback.classic.Logger;
@@ -109,9 +111,7 @@ public class CreateMessageCommand extends FrontCommand {
 		
 		//TODO change this shit
 		// Write the id of the newly created message to the http response
-		MessagePack messagePack = new MessagePack();
-		Packer packer = messagePack.createPacker(response.getOutputStream());
-		packer.write(msg.getMid().toString());
+		MessageHelper.setMessageIDToResponse(msg,new DataOutputStream(response.getOutputStream()));
 		response.setStatus(HttpServletResponse.SC_OK);
 	}
 	
