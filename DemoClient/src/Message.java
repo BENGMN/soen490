@@ -21,7 +21,11 @@ import java.math.BigInteger;
 import java.sql.Timestamp;
 
 import org.msgpack.MessagePack;
+import org.msgpack.packer.Packer;
 import org.msgpack.unpacker.Unpacker;
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Logger;
 
 public class Message {	
 	private BigInteger mid;
@@ -31,8 +35,9 @@ public class Message {
 	private Timestamp createdAt;
 	private int userRating;
 	private File message;
+	private String ownerEmail;
 	
-	public Message(BigInteger mid, File message, float speed, double latitude, double longitude, Timestamp createdAt, int userRating)
+	public Message(BigInteger mid, File message, float speed, double latitude, double longitude, Timestamp createdAt, int userRating, String ownerEmail)
 	{
 		this.mid = mid;
 		this.message = message;
@@ -41,6 +46,7 @@ public class Message {
 		this.longitude = longitude;
 		this.createdAt = createdAt;
 		this.userRating = userRating;
+		this.ownerEmail = ownerEmail;
 	}
 		
 	// Getters and Setters
@@ -72,6 +78,10 @@ public class Message {
 		return userRating;
 	}
 
+	public String getOwnerEmail() {
+		return ownerEmail;
+	}
+	
 	public void setUserRating(int userRating) {
 		this.userRating = userRating;
 	}
@@ -83,26 +93,29 @@ public class Message {
 				"\nLatitude: "+getLatitude()+
 				"\nLongitude: "+getLongitude()+
 				"\nUserRating: "+getUserRating()+
-				"\nCreatedAt: "+getCreatedAt()
+				"\nCreatedAt: "+getCreatedAt() +
+				"\nOwner: "+ getOwnerEmail()
 				;
 	}
 	
 	public static Message createMessage(InputStream in, String fileName, String fileType) throws IOException
 	{
 		Unpacker unpacker = (new MessagePack()).createUnpacker(in);
+		int size = unpacker.readInt();
 		BigInteger mid = new BigInteger(unpacker.readString());	
+		String email = unpacker.readString();
 		byte[] byteMessage = unpacker.readByteArray();		
 		Float speed = unpacker.readFloat();
-		Timestamp createdAt = unpacker.read(Timestamp.class);
+		Timestamp createdAt = new Timestamp(unpacker.readLong());//unpacker.read(Timestamp.class);
 		double longitude = unpacker.readDouble();
 		double latitude = unpacker.readDouble();
 		int userRating = unpacker.readInt();
-		
-		File message = File.createTempFile(fileName, fileType);
-		FileOutputStream output = new FileOutputStream(message);
+		File message = File.createTempFile(fileName, fileType, new File(".\\src\\Retrieved Files\\"));
+		FileOutputStream output = new FileOutputStream( message);
 		output.write(byteMessage);
 		output.close();
 		
-		return new Message(mid, message, speed, latitude, longitude, createdAt, userRating);
+		return new Message(mid, message, speed, latitude, longitude, createdAt, userRating, email);
+
 	}
 }

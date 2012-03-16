@@ -91,8 +91,8 @@ public class DemoGui extends JFrame {
 			}
 		});
 				
-		JButton retrieveFilesButton = new JButton("Retrieve Files");
-		retrieveFilesButton.addActionListener(new ActionListener() {
+		JButton retrieveFileButton = new JButton("Retrieve Files");
+		retrieveFileButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				//Retrieve audio files	
@@ -107,31 +107,31 @@ public class DemoGui extends JFrame {
 				for(String name: messages.keySet()) {
 					audioFileNames.add(name);
 				}
-
+						
 				listOfFiles.setListData(audioFileNames);
 				listScrollPane.validate();
 				listOfFiles.setSelectedIndex(0); // ensures that a file is selected
+				fileInfo.setText(messages.get((String)listOfFiles.getSelectedValue()).toString());
 			}
 		});
 		
 	    listOfFiles.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		listOfFiles.addListSelectionListener(new ListSelectionListener(){
+		listOfFiles.addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				String selectedFile = "";
-				if(!e.getValueIsAdjusting()) {
-					selectedFile = (String)listOfFiles.getSelectedValue();
-				}
-				
-				Message message = messages.get(selectedFile);
-				fileInfo.setText(message.toString());
-				//filePath = System.getProperty("user.dir") + "\\src\\"+ selectedFile;	
-				try {
-					filePath = message.getMessage().getCanonicalPath();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-			}				
+				if(e.getValueIsAdjusting()) {
+					String selectedFile = "";				
+					selectedFile = (String)listOfFiles.getSelectedValue();				
+					Message message = messages.get(selectedFile);
+					fileInfo.setText(message.toString());
+
+					try {
+						filePath = message.getMessage().getCanonicalPath();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				}				
+			}
 		});
 
 		JButton playButton = new JButton("Open Audio File");
@@ -163,7 +163,7 @@ public class DemoGui extends JFrame {
 				
 		JPanel fileButtonPanel = new JPanel();
 		fileButtonPanel.add(uploadFileButton);
-		fileButtonPanel.add(retrieveFilesButton);
+		fileButtonPanel.add(retrieveFileButton);
 		
 		
 		JPanel fileChooserPanel = new JPanel();
