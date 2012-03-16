@@ -17,6 +17,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
+import application.ServerParameters;
+
 import ch.qos.logback.classic.Logger;
 
 import exceptions.MapperException;
@@ -47,10 +49,17 @@ public class CreateMessageCommand extends FrontCommand {
 		if (multipartFile == null)
 			throw new ParameterException("Put requests must have 'bin' as a multipart file upload.");
 		
-		// TODO this needs to change to the ServletParameters class
-	//	if (multipartFile.getSize() > (Long)request.getSession(true).getServletContext().getAttribute("MAX_UPLOAD_SIZE")) {
-	//		throw new ParameterException("Upload file's size is too large.");
-	//	}
+		ServerParameters params = ServerParameters.getUniqueInstance();
+
+		// Check if file is to large
+		if (multipartFile.getSize() > Long.parseLong(params.get("maxMessageSizeBytes").getValue())) {
+			throw new ParameterException("Uploaded file's size is too large.");
+		}
+		
+		// Check if file is too small
+		if (multipartFile.getSize() < Long.parseLong(params.get("minMessageSizeBytes").getValue())) {
+			throw new ParameterException("Uploaded file's size is too large.");
+		}
 				
 		byte[] messageBytes = null;
 		messageBytes = multipartFile.getBytes();
