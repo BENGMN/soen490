@@ -64,7 +64,7 @@ public class ServerListTDG {
 	 * SQL query for deleting an existing server parameter
 	 */
 	protected final static String DELETE =
-		"DELETE FROM " + TABLE + " WHERE paramName = ?;";
+		"DELETE FROM " + TABLE + " WHERE hostname = ?;";
 	
 	/**
 	 * TDG function for deleting existing server parameters
@@ -72,11 +72,11 @@ public class ServerListTDG {
 	 * @return Returns the number of rows that were affected by the SQL query.
 	 * @throws SQLException
 	 */
-	public static int delete (String paramName) throws SQLException {
+	public static int delete (String hostname) throws SQLException {
 		Connection connection = Database.getConnection();
 		PreparedStatement ps = connection.prepareStatement(DELETE);
 		
-		ps.setString(1, paramName);
+		ps.setString(1, hostname);
 		
 		int rows = ps.executeUpdate();
 		ps.close();
