@@ -144,8 +144,7 @@ public class DemoGui extends JFrame {
 					//If a file is currently playing, close the application playing it. 
 					if(process != null) {
 						process.destroy();
-					}
-					
+					}		
 					process = processBuilder.start();
 				} catch (IOException e1) {
 					e1.printStackTrace();
