@@ -103,6 +103,12 @@ public class FrontController extends HttpServlet {
 		// Command for updating server parameters
 		commandMap.put("POST.updateserverparameters", new UpdateServerParametersCommand());
 		
+		ServerParameters params = ServerParameters.getUniqueInstance();
+	
+		// TODO ADD the params object to the application context
+		// Frees the connection from the connection pool
+		Database.freeConnection();
+		
 		// Initialise the logger
 		logger = (Logger)LoggerFactory.getLogger("application");
 		logger.trace("Starting Application Server. FrontController started.");

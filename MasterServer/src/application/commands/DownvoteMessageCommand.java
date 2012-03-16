@@ -53,17 +53,13 @@ public class DownvoteMessageCommand extends FrontCommand {
 		}
 		
 		// get the requested message
-		// the input mapper will either pull or put the message in the identity map
-		// so we are always affecting the same message
 		Message message = MessageInputMapper.find(mid);
 		
-		// decrement the message user rating
-		synchronized(message) {
-			message.setUserRating(message.getUserRating() - 1);
-		}
+		// TODO remove this line, serves no purpose
+		message.setUserRating(message.getUserRating() - 1);
 		
-		// update the message in the database
-		MessageOutputMapper.update(message);
+		// decrement the message user rating
+		MessageOutputMapper.decrementRating(message);
 		
 		// TODO possibly return success message
 		response.setStatus(HttpServletResponse.SC_OK);
