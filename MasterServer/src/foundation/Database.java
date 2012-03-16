@@ -32,6 +32,8 @@ import com.jolbox.bonecp.BoneCP;
 import com.jolbox.bonecp.BoneCPConfig;
 
 import foundation.tdg.MessageTDG;
+import foundation.tdg.ServerListTDG;
+import foundation.tdg.ServerParameterTDG;
 import foundation.tdg.UserTDG;
 
 
@@ -189,6 +191,10 @@ public class Database {
 			UserTDG.create();
 		if (!hasTable(MessageTDG.TABLE))
 			MessageTDG.create();
+		if (!hasTable(ServerListTDG.TABLE))
+			ServerListTDG.create();
+		if (!hasTable(ServerParameterTDG.TABLE))
+			ServerParameterTDG.create();
 	}
 	
 	public static void dropDatabase() throws SQLException
@@ -197,12 +203,17 @@ public class Database {
 			UserTDG.drop();
 		if (hasTable(MessageTDG.TABLE))
 			MessageTDG.drop();
+		if (hasTable(ServerListTDG.TABLE))
+			ServerListTDG.drop();
+		if (hasTable(ServerParameterTDG.TABLE))
+			ServerParameterTDG.drop();
 	}
 	
 	// Refactor the hasTable method to be parameterized
 	// Note this method is called from the frontController
 	public static boolean isDatabaseCreated() throws SQLException
 	{
-		return hasTable(UserTDG.TABLE) && hasTable(MessageTDG.TABLE); 
+		return hasTable(UserTDG.TABLE) && hasTable(MessageTDG.TABLE) && hasTable(ServerListTDG.TABLE) && hasTable(ServerParameterTDG.TABLE); 
 	}
+	
 }

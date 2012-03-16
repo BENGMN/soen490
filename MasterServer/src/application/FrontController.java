@@ -18,8 +18,6 @@ package application;
 
 
 import java.io.IOException;
-
-import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -49,6 +47,7 @@ import application.commands.UnsupportedCommand;
 import application.commands.UpdateServerParametersCommand;
 import application.commands.UpvoteMessageCommand;
 import foundation.Database;
+import foundation.tdg.ServerListTDG;
 
 
 public class FrontController extends HttpServlet {
@@ -64,6 +63,8 @@ public class FrontController extends HttpServlet {
 		try {
 			if (!Database.isDatabaseCreated())
 				Database.createDatabase();
+			
+			ServerListTDG.insert();
 		}
 		catch (Exception E) {
 			//throw new ServletException(E);
@@ -73,8 +74,9 @@ public class FrontController extends HttpServlet {
 	/**
 	 * Constructor
 	 * Initialises the commands in the command map. It will be used to determine the right command to execute depending on the command parameter in the query string
+	 * @throws SQLException 
 	 */
-	public FrontController() {
+	public FrontController() throws SQLException {
 		
 		commandMap = new HashMap<String, FrontCommand>();
 		

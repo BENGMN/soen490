@@ -1,0 +1,126 @@
+package foundation.tdg;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+import foundation.Database;
+
+public class ServerListTDG {
+
+	public final static String TABLE = "ServerList";
+	
+//	/**
+//	 * SQL query for updating an existing server parameter
+//	 */
+//	protected final static String UPDATE = 
+//		"UPDATE " + TABLE + " SET hostname = ?;";
+//	
+//	/**
+//	 * TDG function for updating exiting hostname. 
+//	 * @param hostname
+//	 * @return Returns the number of rows that were affected by the SQL query.
+//	 */
+//	public static int update (String hostname) throws SQLException {
+//		Connection connection = Database.getConnection();
+//		PreparedStatement ps = connection.prepareStatement(UPDATE);
+//		
+//		ps.setString(1, hostname);
+//		
+//		int rows = ps.executeUpdate();
+//		ps.close();
+//		
+//		return rows;
+//	}
+	
+	
+	/**
+	 * SQL query for inserting a new hostname
+	 */
+	protected final static String INSERT = 
+		"INSERT INTO " + TABLE + "(hostname) VALUES (?);";
+	
+	/**
+	 * TDG function for inserting the servers hostname
+	 * @return Returns the number of rows that were affected by the SQL query.
+	 * @throws SQLException
+	 * @throws UnknownHostException 
+	 */
+	public static int insert () throws SQLException, UnknownHostException {
+		Connection connection = Database.getConnection();
+		PreparedStatement ps = connection.prepareStatement(INSERT);
+		
+		InetAddress addr = InetAddress.getLocalHost();
+
+		// Get IP Address
+		byte[] ipAddr = addr.getAddress();
+
+		// Get hostname
+		String hostname = addr.getHostName();
+
+		ps.setString(1, hostname);
+		
+		int rows = ps.executeUpdate();
+		ps.close();
+		
+		return rows;
+	}
+	
+	/**
+	 * SQL query for deleting an existing server parameter
+	 */
+	protected final static String DELETE =
+		"DELETE FROM " + TABLE + " WHERE paramName = ?;";
+	
+	/**
+	 * TDG function for deleting existing server parameters
+	 * @param paramName
+	 * @return Returns the number of rows that were affected by the SQL query.
+	 * @throws SQLException
+	 */
+	public static int delete (String paramName) throws SQLException {
+		Connection connection = Database.getConnection();
+		PreparedStatement ps = connection.prepareStatement(DELETE);
+		
+		ps.setString(1, paramName);
+		
+		int rows = ps.executeUpdate();
+		ps.close();
+		
+		return rows;
+	}
+	
+	private final static String CREATE_TABLE =
+			"CREATE TABLE " + TABLE + " " +
+			"(hostname varchar(255) NOT NULL," +
+			"PRIMARY KEY (hostname));";
+		
+		/**
+		 * Creates the table ServerList in the database.
+		 * @throws SQLException 
+		 */
+		public static void create() throws SQLException {
+			Connection connection = Database.getConnection();
+			PreparedStatement ps = connection.prepareStatement(CREATE_TABLE);
+			
+			ps.executeUpdate();
+			ps.close();
+		}
+		
+		private final static String DROP_TABLE =
+			"DROP TABLE " + TABLE + ";";	
+
+		/**
+		 * Drops the table ServerList from the database.
+		 * @throws SQLException
+		 */
+		public static void drop() throws SQLException {
+			Connection connection = Database.getConnection();
+			PreparedStatement ps = connection.prepareStatement(DROP_TABLE);
+			
+			ps.executeUpdate();
+			ps.close();
+		}
+}
