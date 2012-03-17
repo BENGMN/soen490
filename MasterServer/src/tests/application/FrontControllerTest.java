@@ -16,14 +16,35 @@
 
 package tests.application;
 
+import static org.junit.Assert.*;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import javax.servlet.ServletException;
+
 import org.junit.Test;
+
+import foundation.finder.ServerListFinder;
+
+import application.FrontController;
 
 
 public class FrontControllerTest {
 	
 	@Test
-	public void testFrontController()
+	public void testFrontController() throws SQLException, ServletException, UnknownHostException
 	{
-		
+		FrontController frontController = new FrontController();
+		frontController.init();
+		InetAddress addr = InetAddress.getLocalHost();
+		String hostname = addr.getHostName();
+		int port = 8080;
+		ResultSet rs = ServerListFinder.find(hostname);
+		assertTrue(rs.next());
+		assertEquals(hostname, rs.getString("hostname"));
+		assertEquals(port, rs.getInt("port"));
 	}
 }

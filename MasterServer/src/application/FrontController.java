@@ -18,6 +18,7 @@ package application;
 
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -63,8 +64,10 @@ public class FrontController extends HttpServlet {
 		try {
 			if (!Database.isDatabaseCreated())
 				Database.createDatabase();
-			
-			ServerListTDG.insert();
+			InetAddress addr = InetAddress.getLocalHost();
+			String hostname = addr.getHostName();
+			int port = 8080;
+			ServerListTDG.insert(hostname, port);
 		}
 		catch (Exception E) {
 			//throw new ServletException(E);

@@ -6,6 +6,7 @@ use Net::Ping;
 use POSIX qw(strftime);
 use File::stat;
 use Digest::MD5 'md5';
+use Mysql;
 
 my $ApachePath = "/etc/apache2";
 my $ConfigPath = "$ApachePath/mods-available/proxy.conf";
@@ -13,6 +14,11 @@ my $ServerPath = "servers.txt";
 my $LogPath = "updater.log";
 my $ApacheHardRestartCmd = '/etc/init.d/apache2 graceful';
 my $ApacheGracefulRestartCmd = '/etc/init.d/apache2 restart';
+
+my $DatabaserHostname = '192.168.1.150';
+my $DatabaseUsername = 'soen490';
+my $DatabaseName = 'soen490';
+my $DatabasePassword = 'capstone';
 
 my $Log;
 open($Log, ">>", $LogPath) or die "Unable to open logfile.\n";
@@ -33,17 +39,17 @@ sub logdie($)
 
 logwrite("Script not running as root, may fail.") unless $> == 0;
 logwrite("Updating server list...");
-# Read in list of servers.
-open(my $Input, $ServerPath) or logdie("Unable to open servers.txt.\n");
-while (my $Line = <$Input>) {
-	next if $Line =~ m/^\s*$/;
-	next if $Line =~ m/^\s*#/;
-	die unless $Line =~ m/^\s*(.*?)\:?(\d+)?\s*$/;
-	my $Host = $1;
-	my $Port = $2;
-	$Servers{$Host} = defined $Port ? $Port : 80;
+
+# Get server list from the DB.
+my $DB = Mysql->connect($DatabaseHostname, $DatabaseName, $DatabaseUsername, $DatabasePassword);
+logdie("Unable to connect to mysql database with $DatabasesHostname, $DatabaseName, $DatabaseUsername, $DatabasePassword.") unless defined $DB;
+$DB->selectdb($DatabaseName);
+my $Result = $DB->query("SELECT * FROM ServerList");
+logdie("Malformed Database Table.") unless $Result->numfields() == 2;
+while (my @Results = $Result->fetchrow()) {
+	$Servers{$Results[0]} = $Results[1];
 }
-close($Input);
+
 # Make sure that they're all online.
 my $Ping = Net::Ping->new();
 foreach my $Server (keys(%Servers)) {
