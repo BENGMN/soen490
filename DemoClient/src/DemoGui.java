@@ -14,6 +14,8 @@
  */
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -24,6 +26,7 @@ import java.util.Vector;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -38,7 +41,7 @@ import org.apache.http.client.ClientProtocolException;
 public class DemoGui extends JFrame {
 	
 	private static final int WIDTH = 300;
-	private static final int HEIGHT = 440;
+	private static final int HEIGHT = 550;
 	private static final String PLAYER_PATH = "C:\\Program Files (x86)\\QuickTime\\QuickTimePlayer.exe"; //change this depending on your computer
 	private JButton uploadFileButton;
 	private JFileChooser fileChooser;
@@ -50,6 +53,7 @@ public class DemoGui extends JFrame {
 	private Process process;
 	private FileTransfer fileTransfer;
 	private JTextField statusField;
+	private JTextField[] inputFields; // latitude, longitude, speed, email
 	private JTextArea fileInfo;
 	private JScrollPane fileInfoScrollPane;
 	
@@ -70,7 +74,7 @@ public class DemoGui extends JFrame {
 		fileInfo = new JTextArea(10, 23);
 		fileInfo.setEditable(false);
 		fileInfoScrollPane = new JScrollPane(fileInfo);
-		
+
 		uploadFileButton = new JButton("Upload File");
 		uploadFileButton.addActionListener(new ActionListener() {
 			@Override
@@ -80,7 +84,7 @@ public class DemoGui extends JFrame {
 				 if (fileChooserValue == JFileChooser.APPROVE_OPTION) {
 					 try {
 						 //send file
-						int response = fileTransfer.uploadFile(fileChooser.getSelectedFile());
+						int response = fileTransfer.uploadFile(fileChooser.getSelectedFile(), inputFields[0].getText(), inputFields[1].getText(), inputFields[2].getText(), inputFields[3].getText());
 						statusField.setText("Status Code: " + response);
 					} catch (ClientProtocolException e1) {
 						e1.printStackTrace();
@@ -97,7 +101,7 @@ public class DemoGui extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				//Retrieve audio files	
 				try {
-					messages = fileTransfer.downloadFiles();
+					messages = fileTransfer.downloadFiles(inputFields[0].getText(), inputFields[1].getText(), inputFields[2].getText());
 				} catch (ClientProtocolException e1) {
 					e1.printStackTrace();
 				} catch (IOException e1) {
@@ -111,7 +115,7 @@ public class DemoGui extends JFrame {
 				listOfFiles.setListData(audioFileNames);
 				listScrollPane.validate();
 				listOfFiles.setSelectedIndex(0); // ensures that a file is selected
-				fileInfo.setText(messages.get((String)listOfFiles.getSelectedValue()).toString());
+				fileInfo.setText(messages.get((String)listOfFiles.getSelectedValue()).toString()); // show information about the audio file in the text area
 			}
 		});
 		
@@ -141,11 +145,11 @@ public class DemoGui extends JFrame {
 				ProcessBuilder processBuilder = new ProcessBuilder(PLAYER_PATH, filePath);			 
 				try {
 					
-					//If a file is currently playing, close the application playing it. 
+					
 					if(process != null) {
-						process.destroy();
-					}		
-					process = processBuilder.start();
+						process.destroy(); //If a file is currently playing, close the application playing it. 
+						process = processBuilder.start();
+					}
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}		
@@ -156,16 +160,43 @@ public class DemoGui extends JFrame {
 		stopButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				process.destroy(); // closes the external application
+				if(process != null) {
+					process.destroy(); // closes the external application
+				}
 			}		
 		});
-				
-		JPanel fileButtonPanel = new JPanel();
-		fileButtonPanel.add(uploadFileButton);
-		fileButtonPanel.add(retrieveFileButton);
 		
+		String[] labels = {"Latitude", "Longitude", "Speed", "Email"};
+		
+		JPanel labelPanel = new JPanel(new GridLayout(labels.length / 2, 2));
+		JPanel fieldPanel = new JPanel(new GridLayout(labels.length / 2, 2));
+		
+		JPanel inputPanel = new JPanel(new BorderLayout());
+		inputPanel.add(labelPanel);
+		inputPanel.add(fieldPanel);
+		inputFields = new JTextField[labels.length];
+		
+		for(int i = 0; i < labels.length; i++) {
+			inputFields[i] = new JTextField();
+			inputFields[i].setToolTipText(labels[i]);
+			inputFields[i].setColumns(10);
+			JLabel label = new JLabel(labels[i], JLabel.RIGHT);
+			label.setLabelFor(inputFields[i]);
+			labelPanel.add(label);
+			JPanel panel = new JPanel(new FlowLayout());
+			panel.add(inputFields[i]);
+			fieldPanel.add(panel);
+		}
+		
+		//default values
+		inputFields[0].setText("-73.679810");
+		inputFields[1].setText("45.546050");
+		inputFields[2].setText("10000000000");
+		inputFields[3].setText("test@test.com");
 		
 		JPanel fileChooserPanel = new JPanel();
+		fileChooserPanel.add(uploadFileButton);
+		fileChooserPanel.add(retrieveFileButton);
 		fileChooserPanel.add(statusField);
 		fileChooserPanel.add(listScrollPane);
 		fileChooserPanel.add(fileInfoScrollPane);
@@ -174,10 +205,10 @@ public class DemoGui extends JFrame {
 		mediaButtonPanel.add(playButton);
 		mediaButtonPanel.add(stopButton);
 		
-		add(fileButtonPanel, BorderLayout.NORTH);
+		add(fieldPanel, BorderLayout.NORTH);
 		add(fileChooserPanel, BorderLayout.CENTER);
 		add(mediaButtonPanel, BorderLayout.SOUTH);
-        
+
 		setSize(WIDTH, HEIGHT);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setVisible(true);

@@ -37,20 +37,14 @@ import org.msgpack.MessagePack;
 import org.msgpack.packer.Packer;
 import org.msgpack.unpacker.Unpacker;
 
-
 public class FileTransfer {	
-	//Values are for testing purposes
-	private static final String LONGITUDE = "45.546050";
-	private static final String LATITUDE = "-73.679810";
-	private static final String SPEED = "10000000000";
-	private static final String EMAIL = "test@test.com";
 	private static final String HOST_NAME = "localhost";
 	private static final String HOST_PORT = "8080";
 
-	public int uploadFile(File file) throws IOException {
+	public int uploadFile(File file, String latitude, String longitude, String speed, String email) throws IOException {
 		HttpClient httpClient = new DefaultHttpClient();	
 		HttpPost httpPost = new HttpPost("http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=createmessage&latitude="
-	                                  + LATITUDE + "&longitude=" + LONGITUDE + "&speed=" + SPEED + "&email=" + EMAIL);
+	                                  + latitude + "&longitude=" + longitude + "&speed=" + speed + "&email=" + email);
 		
 		MultipartEntity entity = new MultipartEntity();
 		entity.addPart("bin", new FileBody(file, "audio/amr"));	
@@ -59,11 +53,11 @@ public class FileTransfer {
 		return response.getStatusLine().getStatusCode();
 	}
 	
-	public Map<String, Message> downloadFiles() throws ClientProtocolException, IOException {
+	public Map<String, Message> downloadFiles(String latitude, String longitude, String speed) throws ClientProtocolException, IOException {
 		HttpClient httpgetIdClient = new DefaultHttpClient();
 		//first we must get the message Ids
 		HttpGet getIds = new HttpGet("http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=getmessageids&latitude="
-                                     + LATITUDE + "&longitude=" + LONGITUDE + "&speed=" + SPEED);
+                                     + latitude + "&longitude=" + longitude + "&speed=" + speed);
 
 		HttpResponse getMessageIdResponse = httpgetIdClient.execute(getIds);
 
