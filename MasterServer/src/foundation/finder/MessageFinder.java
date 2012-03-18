@@ -26,6 +26,12 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 
+import javax.print.attribute.standard.Severity;
+
+import application.ServerParameters;
+
+import domain.serverparameter.ServerParameter;
+
 import foundation.Database;
 import foundation.tdg.MessageTDG;
 
@@ -128,6 +134,7 @@ public class MessageFinder {
 	}
 
 	private static final String SELECT_ID_BY_RADIUS =
+			"SET ROW COUNT ?" +
 			"SELECT m.mid " +
 			"FROM " + MessageTDG.TABLE + " AS m " + "WHERE m.longitude BETWEEN ? AND ? AND m.latitude BETWEEN ? AND ?;";
 	
@@ -147,12 +154,10 @@ public class MessageFinder {
 	public static ResultSet findIdsInProximity(double longitude, double latitude, double speed) throws SQLException, IOException {
 		
 		Connection connection = Database.getConnection();
-		
-		//To be remove when we have a config system///////////////////////////
-	//	String PATH  = "tempConfigFile.properties";
-	//	Properties prop = new Properties();
-	//	prop.load(new FileInputStream(PATH));
-		int minMessages  = 10;//Integer.parseInt(prop.getProperty("minMessages"));
+		ServerParameters params = ServerParameters.getUniqueInstance();
+		int minMessages  = Integer.getInteger(params.get("minMessages").getValue());
+		int maxMessages  = Integer.getInteger(params.get("maxMessages").getValue());
+
 		//////////////////////////////////////////////////////////////////////
 		
 		double radius = 0;
@@ -195,16 +200,17 @@ public class MessageFinder {
 		ResultSet rsSize;
 		//flag for not incrementing the radius on the first run
 		boolean flag = false;
-		int count = 0;
-		do {
-			
+		int count = 0; // Used to stop the loop if the algorithm can't find 10 messages after a certain amount of iterations. 
+		int size = 0;
+		do {		
 			PreparedStatement psSize = connection.prepareStatement(GET_SIZE);
 			
 			List<Coordinate> rectangle = GeoSpatialSearch.convertPointToRectangle(new Coordinate(longitude, latitude), radius);
-			psSize.setDouble(1, rectangle.get(0).getLongitude());
-			psSize.setDouble(2, rectangle.get(1).getLongitude());
-			psSize.setDouble(3, rectangle.get(0).getLatitude());
-			psSize.setDouble(4, rectangle.get(1).getLatitude());
+			psSize.setInt(1, size);
+			psSize.setDouble(2, rectangle.get(0).getLongitude());
+			psSize.setDouble(3, rectangle.get(1).getLongitude());
+			psSize.setDouble(4, rectangle.get(0).getLatitude());
+			psSize.setDouble(5, rectangle.get(1).getLatitude());
 			rsSize = psSize.executeQuery();
 			rsSize.next();
 		
@@ -214,8 +220,14 @@ public class MessageFinder {
 				flag = true;
 			
 			count++;		
+			
+			size = rsSize.getInt("size");
+			
+			if(size > maxMessages) {
+				size = maxMessages;  
+			}
 		}
-		while(rsSize.getInt("size") <= minMessages && radius <= maxRadius && count <= 2);
+		while(size <= minMessages && radius <= maxRadius && count <= 2);
 		
 		//Getting the actual ids at this point
 		ResultSet finaleRs;

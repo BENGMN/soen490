@@ -17,7 +17,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import domain.message.Message;
+import domain.message.MessageFactory;
+import domain.user.User;
+import domain.user.UserFactory;
 import domain.user.UserProxy;
+import domain.user.UserType;
+import exceptions.CorruptStreamException;
 import exceptions.MapperException;
 
 public class IOUtils {
@@ -28,7 +33,7 @@ public class IOUtils {
 	 * @param out A DataOutputStream to write to
 	 * @throws IOException
 	 */
-	public static void writeMessageID(BigInteger mid, DataOutputStream out) throws IOException {
+	public static void writeMessageIDtoStream(BigInteger mid, DataOutputStream out) throws IOException {
 		MessagePack messagePack = new MessagePack();
 		Packer packer = messagePack.createPacker(out);
 		packer.write(mid.toString());	
@@ -40,8 +45,9 @@ public class IOUtils {
 	 * @param in A DataInputStream to read from
 	 * @return Returns a BigInteger, the Message id, read from the DataInputStream 
 	 * @throws IOException
+	 * @throws CorruptStreamException 
 	 */
-	public static BigInteger readMessageID(DataInputStream in) throws IOException {
+	public static BigInteger readMessageIDfromStream(DataInputStream in) throws IOException, CorruptStreamException {
 		BigInteger mid = null;
 		
 		MessagePack messagePack = new MessagePack();
@@ -53,6 +59,7 @@ public class IOUtils {
 		catch (NumberFormatException e) {
 			Logger logger = (Logger)LoggerFactory.getLogger("application");
 			logger.error("NumberFormatException occurred when trying to read a Message id from the inputstream: {}", e);
+			throw new CorruptStreamException("A NumberFormatException occurred when trying to read a message id from the input stream.");
 		}
 		return mid;
 	}
@@ -63,7 +70,7 @@ public class IOUtils {
 	 * @param out A DataOutputStream to write to
 	 * @throws IOException
 	 */
-	public static void writeListMessageIDs(List<BigInteger> ids, DataOutputStream out) throws IOException {
+	public static void writeListMessageIDsToStream(List<BigInteger> ids, DataOutputStream out) throws IOException {
 		MessagePack messagePack = new MessagePack();
 		Packer packer = messagePack.createPacker(out);
 		// write the size
@@ -78,8 +85,9 @@ public class IOUtils {
 	 * @param in A DataInputStream to read from
 	 * @return Returns a List of BigInteger read from the DataInputStream
 	 * @throws IOException
+	 * @throws CorruptStreamException 
 	 */
-	public static List<BigInteger> readListMessageIDs(DataInputStream in) throws IOException {
+	public static List<BigInteger> readListMessageIDsFromStream(DataInputStream in) throws IOException, CorruptStreamException {
 		BigInteger mid = null;
 		List<BigInteger> ids = null;
 		
@@ -97,12 +105,67 @@ public class IOUtils {
 		} catch (NumberFormatException e) {
 			Logger logger = (Logger)LoggerFactory.getLogger("application");
 			logger.error("NumberFormatException occurred when trying to read a Message id from the inputstream: {}", e);
+			throw new CorruptStreamException("A NumberFormatException occurred when trying to read a message id from the input stream.");
 		}
 		
 		return ids;
 	}
 
-	public static List<Message> readMessageList(DataInputStream in) throws IOException {
+	/**
+	 * Takes the given DataOutputStream and writes the given Message to it.
+	 * @param msg A Message to write
+	 * @param out A DataOutputStream to write to
+	 * @throws IOException
+	 */
+	public static void writeMessageToStream(Message msg, DataOutputStream out) throws IOException {
+		MessagePack pack = new MessagePack();
+		Packer packer = pack.createPacker(out);
+		
+		packer.write(msg.getMid().toString()); // write mid
+		packer.write(msg.getOwner().getUid().toString()); // write uid of owner
+		packer.write(msg.getMessage()); // write message contents (audio file)
+		packer.write(msg.getSpeed()); // write speed
+		packer.write(msg.getCreatedAt().getTime()); // write time created
+		packer.write(msg.getLongitude()); // write longitude
+		packer.write(msg.getLatitude()); // write latitude
+		packer.write(msg.getUserRating()); // write user rating
+	}
+	
+	/**
+	 * Takes the give DataInputStream and reads a Message from it.
+	 * @param in A DataInputStream to read from
+	 * @return Returns a Message read from the DataInputStream
+	 * @throws IOException
+	 * @throws CorruptStreamException
+	 */
+	public static Message readMessageFromStream(DataInputStream in) throws IOException, CorruptStreamException {
+		Message message = null;
+		
+		MessagePack messagePack = new MessagePack();
+		Unpacker unpacker = messagePack .createUnpacker(in);
+		
+		BigInteger mid = new BigInteger(unpacker.readString()); // read mid
+		BigInteger uid = new BigInteger(unpacker.readString()); // read uid
+		byte[] audio = unpacker.readByteArray(); // read audio contents
+		float speed = unpacker.readFloat(); // read speed
+		Timestamp createAt = new Timestamp(unpacker.readLong()); // read time created
+		double longitude = unpacker.readDouble(); // read longitude
+		double latitude = unpacker.readDouble(); // read latitud
+		int userRating = unpacker.readInt(); // read user rating
+		
+		message = MessageFactory.createClean(mid, uid, audio, speed, latitude, longitude, createAt, userRating);
+		
+		return message;
+	}
+	
+	/**
+	 * Takes the given DataInputStream and reads a List of Message from it
+	 * @param in A DataInputStream to read from
+	 * @return Returns a List of Message
+	 * @throws IOException
+	 * @throws CorruptStreamException
+	 */
+	public static List<Message> readMessageListFromStream(DataInputStream in) throws IOException, CorruptStreamException {
 		List<Message> messages = null;
 		
 		MessagePack messagePack = new MessagePack();
@@ -110,6 +173,28 @@ public class IOUtils {
 		
 		int numberOfMessages = unpacker.readInt();
 		messages = new ArrayList<Message>(numberOfMessages);
+		
+		try {
+			for (int i = 0; i < numberOfMessages; i++) {
+				BigInteger mid = new BigInteger(unpacker.readString()); // read mid
+				BigInteger uid = new BigInteger(unpacker.readString()); // read uid
+				byte[] audio = unpacker.readByteArray(); // read audio contents
+				float speed = unpacker.readFloat(); // read speed
+				Timestamp createAt = new Timestamp(unpacker.readLong()); // read time created
+				double longitude = unpacker.readDouble(); // read longitude
+				double latitude = unpacker.readDouble(); // read latitude
+				int userRating = unpacker.readInt(); // read user rating
+				
+				Message message = MessageFactory.createClean(mid, uid, audio, speed, latitude, longitude, createAt, userRating);
+				
+				messages.add(message);
+			}
+		} catch (NumberFormatException e) {
+			Logger logger = (Logger)LoggerFactory.getLogger("application");
+			logger.error("NumberFormatException occurred when trying to read a Message from the inputstream: {}", e);
+			
+			throw new CorruptStreamException("A NumberFormatException occurred when trying to read a message from the input stream.");
+		}
 		
 		return messages;
 	}
@@ -120,36 +205,61 @@ public class IOUtils {
 	 * @param out A DataOutputStream to write to
 	 * @throws IOException
 	 */
-	public static void writeMessageList(List<Message> messages, DataOutputStream out) throws IOException {
-		Packer packer = (new MessagePack()).createPacker(out);
+	public static void writeMessageListToStream(List<Message> messages, DataOutputStream out) throws IOException {
+		MessagePack messagePack = new MessagePack();
+		Packer packer = messagePack.createPacker(out);
 		// Write the size
 		packer.write(messages.size());
 		for (Message message : messages)
-			IOUtils.writeMessage(message,out);
+			IOUtils.writeMessageToStream(message,out);
 	}
 
 	/**
-	 * Takes the given DataOutputStream and writes the given Message to it.
-	 * @param msg A Message to write
+	 * Takes the given DataOutputStream and writes the given User to it.
+	 * @param user A User to write
 	 * @param out A DataOutputStream to write to
 	 * @throws IOException
 	 */
-	public static void writeMessage(Message msg, DataOutputStream out) throws IOException {
-		MessagePack pack = new MessagePack();
-		Packer packer = pack.createPacker(out);
-		packer.write(msg.getMid().toString());
+	public static void writeUserToStream(User user, DataOutputStream out) throws IOException {
+		MessagePack messagePack = new MessagePack();
+		Packer packer = messagePack.createPacker(out);
+		
+		packer.write(user.getUid().toString()); // write user id
+		packer.write(user.getPassword()); // write password
+		packer.write(user.getEmail()); // write email
+		packer.write(user.getType().toString()); // write user type
+	}
+	
+	/**
+	 * Takes the given DataInputStream and reads a User from it
+	 * @param in DataInputStream to read from
+	 * @return Returns a User read from the given DataInputStream
+	 * @throws IOException
+	 * @throws CorruptStreamException
+	 */
+	public static User readUserFromStream(DataInputStream in) throws IOException, CorruptStreamException {
+		User user;
+		
+		MessagePack messagePack = new MessagePack();
+		Unpacker unpacker = messagePack.createUnpacker(in);
+		BigInteger uid = null;
+		
 		try {
-			packer.write(msg.getOwner().getEmail());
-		} catch (MapperException e) {
+			uid = new BigInteger(unpacker.readString()); // read user id
+		} catch (NumberFormatException e) {
 			Logger logger = (Logger)LoggerFactory.getLogger("application");
-			logger.error("MapperException occurred when writing to client: {}", e);
+			logger.error("NumberFormatException occurred when trying to read a user from the inputstream: {}", e);
+			
+			throw new CorruptStreamException("A NumberFormatException occurred when trying to read a user from the input stream.");
 		}
-		packer.write(msg.getMessage());
-		packer.write(msg.getSpeed());
-		packer.write(msg.getCreatedAt().getTime());
-		packer.write(msg.getLongitude());
-		packer.write(msg.getLatitude());
-		packer.write(msg.getUserRating());
+		String password = unpacker.readString(); // read password
+		String email = unpacker.readString(); // read email
+		String userType = unpacker.readString(); // read user type
+		UserType type = UserType.valueOf(userType);
+		
+		// TODO get rid of version
+		user = UserFactory.createClean(uid, email, password, type, 0);
+		return user;
 	}
 	
 	/**
