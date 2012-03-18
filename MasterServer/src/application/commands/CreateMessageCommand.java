@@ -60,7 +60,7 @@ public class CreateMessageCommand extends FrontCommand {
 		
 		// Check if file is too small
 		if (multipartFile.getSize() < Long.parseLong(params.get("minMessageSizeBytes").getValue())) {
-			throw new ParameterException("Uploaded file's size is too large.");
+			throw new ParameterException("Uploaded file's size is too small.");
 		}
 				
 		byte[] messageBytes = null;
