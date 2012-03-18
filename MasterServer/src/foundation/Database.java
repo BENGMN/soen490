@@ -45,7 +45,7 @@ public class Database {
 	public static final ThreadLocal<Connection> threadConnection = new ThreadLocal<Connection>();
 	private static BoneCP connectionPool = null;
 	
-	protected static String TABLE_PREFIX;
+	protected static boolean TESTING;
 	
 	// File path to properties file
 	private static final String FILENAME = "Database.properties";
@@ -58,13 +58,17 @@ public class Database {
 			// Loads properties file
 			prop.load(Database.class.getClassLoader().getResourceAsStream(FILENAME));
 			
+			TESTING = Boolean.getBoolean(prop.getProperty("testing"));
+					
 			String host = prop.getProperty("hostname");
-			String db = prop.getProperty("database");
+			String db;
+			if(TESTING)
+				db = prop.getProperty("testdatabase");
+			else
+				db = prop.getProperty("database");
+			
 			String username = prop.getProperty("username");
 			String password = prop.getProperty("password");
-			
-			//TEST_TABLE_PREFIX = prop.getProperty("test_table_prefix");
-			TABLE_PREFIX = prop.getProperty("table_prefix");
 			
 			// Setup the connection with the DB
 			BoneCPConfig config = new BoneCPConfig();

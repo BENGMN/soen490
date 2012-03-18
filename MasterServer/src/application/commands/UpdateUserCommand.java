@@ -17,7 +17,8 @@ public class UpdateUserCommand extends FrontCommand {
 	public void execute(HttpServletRequest request, HttpServletResponse response)
 			throws MapperException, ParameterException, IOException,
 			UnrecognizedUserException, SQLException, ServletException {
-		// TODO Auto-generated method stub
+		
+		response.setStatus(HttpServletResponse.SC_OK);
 		
 	}
 
