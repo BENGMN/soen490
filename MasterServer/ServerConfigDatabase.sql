@@ -8,10 +8,10 @@ PRIMARY KEY (paramName)
 
 
 INSERT INTO ServerParameters 
-VALUES ('minMessageSizeBytes', 'The minimum size of uploaded audio files that should be accepted, in bytes.', 10000.0);
+VALUES ('minMessageSizeBytes', 'The minimum size of uploaded audio files that should be accepted, in bytes.', 4000);
 
 INSERT INTO ServerParameters 
-VALUES ('maxMessageSizeBytes', 'The maximum size of uploaded audio files that should be accepted, in bytes.', 50000.0);
+VALUES ('maxMessageSizeBytes', 'The maximum size of uploaded audio files that should be accepted, in bytes.', 50000);
 
 INSERT INTO ServerParameters 
 VALUES ('messageLifeDays', 'The time to live of regular messages. If a message is older than this amount, in days, it should be deleted.', 7);
