@@ -55,8 +55,8 @@ public class DownvoteMessageCommand extends FrontCommand {
 		// get the requested message
 		Message message = MessageInputMapper.find(mid);
 		
-		// TODO remove this line, serves no purpose
-		message.setUserRating(message.getUserRating() - 1);
+		// we do not need to decrement the rating of the Message instance itself
+		// the mapper funcion decrementRating() decrements the value directly in the database
 		
 		// decrement the message user rating
 		MessageOutputMapper.decrementRating(message);

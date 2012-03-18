@@ -69,9 +69,17 @@ public class FrontController extends HttpServlet {
 			String hostname = addr.getHostName();
 			int port = 8080;
 			ServerListTDG.insert(hostname, port);
-		}
-		catch (Exception E) {
-			//throw new ServletException(E);
+			
+		} catch (Exception E) {
+			// TODO why was this commented out?
+			throw new ServletException(E);
+		} finally {
+			try {
+				Database.freeConnection();
+			} catch (SQLException e) {
+				logger = (Logger)LoggerFactory.getLogger("application");
+				logger.error("SQLException occurred when trying to free a database connection. {}", e);
+			}
 		}
 	}
 
@@ -110,11 +118,10 @@ public class FrontController extends HttpServlet {
 		commandMap.put("POST.updateserverparameters", new UpdateServerParametersCommand());
 		
 		// Command for creating a new user
-		commandMap.put("POST.createUser", new CreateUserCommand());
+		commandMap.put("POST.createuser", new CreateUserCommand());
 		
 		ServerParameters params = ServerParameters.getUniqueInstance();
 	
-		// TODO ADD the params object to the application context
 		// Frees the connection from the connection pool
 		Database.freeConnection();
 		
@@ -134,8 +141,7 @@ public class FrontController extends HttpServlet {
 			command = new UnsupportedCommand(httpMethod, commandString);
 		return command;
 	}
-	
-	// TODO log some errors
+
 	
 	/**
 	 * This method handles all requests
@@ -145,7 +151,6 @@ public class FrontController extends HttpServlet {
 		
 		logger.trace("handleRequest() starting.");
 		
-		// TODO might not need transaction
 		try {
 			conn = Database.getConnection();
 			conn.setAutoCommit(false);

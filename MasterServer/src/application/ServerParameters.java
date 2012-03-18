@@ -5,8 +5,13 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Logger;
+
 import domain.serverparameter.ServerParameter;
 import domain.serverparameter.mappers.ServerParameterInputMapper;
+import exceptions.MapperException;
 
 
 /**
@@ -37,6 +42,23 @@ public class ServerParameters extends HashMap<String, ServerParameter> {
 		updateParameters();
 	}
 
+	@Override
+	public ServerParameter get(Object key) {
+		ServerParameter param = null;
+		Logger logger = (Logger) LoggerFactory.getLogger("application");
+	
+		try {
+			param = ServerParameterInputMapper.find((String)key);
+		} catch (SQLException e) {
+			
+			logger.error("SQLExcepion occurred when trying the retrieve a parameter from the database: {}", e);
+		} catch (MapperException e) {
+			// This error should not occur, since we alreayd pulled from the database once
+			logger.error("ServerParameter with name '{}' does not exist.", (String)key);
+		}
+		return param;
+	}
+	
 	/**
 	 * Grabs all the parameters from the database and stores them in the HashMap.
 	 * @throws SQLException

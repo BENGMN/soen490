@@ -1,12 +1,10 @@
 package application.commands;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.SQLException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 
 import exceptions.MapperException;
 import exceptions.ParameterException;
@@ -18,7 +16,7 @@ import domain.message.mappers.MessageOutputMapper;
 public class DeleteMessageCommand extends FrontCommand {
 
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, IOException, UnrecognizedUserException, SQLException {
+	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, UnrecognizedUserException, SQLException {
 		String strId = request.getParameter("messageid");
 		
 		if ("".equals(strId))
@@ -29,7 +27,7 @@ public class DeleteMessageCommand extends FrontCommand {
 		try {
 			mid = new BigInteger(strId);
 		} catch (NumberFormatException e) {
-			throw new ParameterException("Parameter 'messageid' is badly formatted.");
+			throw new ParameterException("Parameter 'messageid' is badly formatted, not a valid integer.");
 		}
 		
 		// Throws MapperException if mid doesn't exist

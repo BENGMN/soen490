@@ -89,30 +89,32 @@ public class CreateMessageCommand extends FrontCommand {
 		String email = multipartRequest.getParameter("email");
 		
 		if (email == null)
-			throw new ParameterException("Must pass in the email to validate user.");
+			throw new ParameterException("Missing 'email' parameter.");
 		
 		User user = UserInputMapper.findByEmail(email);
 		
 		if (user == null)
-			throw new UnrecognizedUserException("Unable to find user.");
+			throw new UnrecognizedUserException("Unable to find user for given email.");
 		
 		Message msg = null;
 		
 		try {
 			msg = MessageFactory.createNew(user.getUid(), messageBytes, speed, latitude, longitude, new Timestamp(GregorianCalendar.getInstance().getTimeInMillis()), 0);
+		
+			MessageOutputMapper.insert(msg);
+			
+			//TODO change this shit
+			// Write the id of the newly created message to the http response
+			MessageHelper.setMessageIDToResponse(msg,new DataOutputStream(response.getOutputStream()));
+			response.setStatus(HttpServletResponse.SC_OK);
+			
 		} catch (NoSuchAlgorithmException e) {
 			Logger logger = (Logger)LoggerFactory.getLogger("application");
 			logger.error("No such algorithm exception thrown when trying to create message: {}", e);
+			
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
-		
-		// Put the new message in the identity map and insert into database
-		MessageIdentityMap.put(msg.getMid(), msg);		 
-		MessageOutputMapper.insert(msg);
-		
-		//TODO change this shit
-		// Write the id of the newly created message to the http response
-		MessageHelper.setMessageIDToResponse(msg,new DataOutputStream(response.getOutputStream()));
-		response.setStatus(HttpServletResponse.SC_OK);
+			 
 	}
 	
 }
