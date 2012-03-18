@@ -42,13 +42,23 @@ public class ServerParameters extends HashMap<String, ServerParameter> {
 		updateParameters();
 	}
 
+	/**
+	 * Overriden get(key) method. It will first check if the underlying Map has a value for the given key. If it doesn't, returns false. 
+	 * If it does, it will check the database for an always up-to-date value and return that.
+	 */
 	@Override
 	public ServerParameter get(Object key) {
 		ServerParameter param = null;
+		
+		// If the underlying map doesn't have it, then return null
+		if (super.get(key) == null)
+			return null;
+		
 		Logger logger = (Logger) LoggerFactory.getLogger("application");
 	
 		try {
 			param = ServerParameterInputMapper.find((String)key);
+			this.put((String)key, param);
 		} catch (SQLException e) {
 			
 			logger.error("SQLExcepion occurred when trying the retrieve a parameter from the database: {}", e);

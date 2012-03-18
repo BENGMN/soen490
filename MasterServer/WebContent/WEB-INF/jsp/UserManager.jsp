@@ -9,7 +9,7 @@
 
 <body>
 <form method="POST"
-		action="${pageContext.request.contextPath}/controller?command=createUser"
+		action="${pageContext.request.contextPath}/controller?command=createuser&client=jsp"
 		name="POST.createUser">
 <table>
 <tr><th colspan="2">Create a new user</th></tr>

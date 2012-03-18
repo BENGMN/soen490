@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.LoggerFactory;
 
-import application.MessageHelper;
+import application.IOUtils;
 
 import ch.qos.logback.classic.Logger;
 
@@ -61,7 +61,7 @@ public class ReadMessageCommand extends FrontCommand {
 		}
 		
 		// TODO write message list to response but not the way we are doing it below
-		MessageHelper.writeListClient(messages, new DataOutputStream(response.getOutputStream()));
+		IOUtils.writeMessageList(messages, new DataOutputStream(response.getOutputStream()));
 		response.setStatus(HttpServletResponse.SC_OK);
 	}
 
