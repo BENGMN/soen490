@@ -1,3 +1,19 @@
+/**
+ * SOEN 490
+ * Capstone 2011
+ * Delete message command; allows a user to delete a message.
+ * Team members: 	
+ * 			Sotirios Delimanolis
+ * 			Filipe Martinho
+ * 			Adam Harrison
+ * 			Vahe Chahinian
+ * 			Ben Crudo
+ * 			Anthony Boyer
+ * 
+ * @author Capstone 490 Team Moving Target
+ *
+ */
+
 package application.commands;
 
 import java.math.BigInteger;
