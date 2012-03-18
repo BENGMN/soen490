@@ -7,6 +7,8 @@ import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.msgpack.MessagePack;
 import org.msgpack.packer.Packer;
@@ -148,6 +150,18 @@ public class IOUtils {
 		packer.write(msg.getLongitude());
 		packer.write(msg.getLatitude());
 		packer.write(msg.getUserRating());
+	}
+	
+	/**
+	 * Function used to ensure that a string conforms to the email address syntax.
+	 * @param emailAddress String parameter containing the email address to be tested
+	 * @return Returns true if the email address has valid syntax, false otherwise.
+	 */
+	public static boolean validateEmail(String emailAddress) {  
+		String email_regex ="^[\\w\\-]([\\.\\w])+[\\w]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";  
+		Pattern pattern = Pattern.compile(email_regex, Pattern.CASE_INSENSITIVE);  
+		Matcher matcher = pattern.matcher(emailAddress);
+		return matcher.matches();
 	}
 
 }

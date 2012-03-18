@@ -18,14 +18,13 @@ package application.commands;
 
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.LoggerFactory;
 
+import application.IOUtils;
 import application.ServerParameters;
 
 import ch.qos.logback.classic.Logger;
@@ -53,7 +52,7 @@ public class CreateUserCommand extends FrontCommand {
 		// Perform some validation on the request parameters
 		if (email == null) {
 			throw new ParameterException("Missing 'email' parameter.");
-		} else if (!validateEmail(email)) {
+		} else if (!IOUtils.validateEmail(email)) {
 			throw new ParameterException("Invalid 'email' parameter provided");
 		} // These could totally be removed
 		else if (email.length() < Integer.getInteger(params.get("minEmailLength").getValue())) {
@@ -114,18 +113,6 @@ public class CreateUserCommand extends FrontCommand {
 		
 		logger.info("New User with ID {} was created.", newUser.getUid().toString());
 		response.setStatus(HttpServletResponse.SC_OK);
-	}
-	
-	/**
-	 * Function used to ensure that a string conforms to the email address syntax.
-	 * @param emailAddress String parameter containing the email address to be tested
-	 * @return Returns true if the email address has valid syntax, false otherwise.
-	 */
-	private boolean validateEmail(String emailAddress) {  
-		String email_regex ="^[\\w\\-]([\\.\\w])+[\\w]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";  
-		Pattern pattern = Pattern.compile(email_regex, Pattern.CASE_INSENSITIVE);  
-		Matcher matcher = pattern.matcher(emailAddress);
-		return matcher.matches();
 	}
 	
 }
