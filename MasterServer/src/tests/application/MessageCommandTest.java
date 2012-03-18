@@ -215,7 +215,7 @@ public class MessageCommandTest {
 		//request.setParameter("longitude", Double.toString(longitude));
 		//request.setParameter("latitude", Double.toString(latitude));
 		upvoteMessageCommand.execute(request, response);
-		assertEquals(HttpServletResponse.SC_ACCEPTED, response.getStatus());
+		assertEquals(HttpServletResponse.SC_OK, response.getStatus());
 		assertEquals(userRating + 1, message.getUserRating());
 		assertEquals(1, MessageOutputMapper.delete(message));
 	}
@@ -233,11 +233,11 @@ public class MessageCommandTest {
 		DownvoteMessageCommand rateMessageCommand = new DownvoteMessageCommand();
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		MockHttpServletResponse response = new MockHttpServletResponse();
-		request.setParameter("mid", message.getMid().toString());
+		request.setParameter("messageid", message.getMid().toString());
 		request.setParameter("longitude", Double.toString(longitude));
 		request.setParameter("latitude", Double.toString(latitude));
 		rateMessageCommand.execute(request, response);
-		assertEquals(HttpServletResponse.SC_ACCEPTED, response.getStatus());
+		assertEquals(HttpServletResponse.SC_OK, response.getStatus());
 		assertEquals(userRating - 1, message.getUserRating());
 		assertEquals(1, MessageOutputMapper.delete(message));
 	}
