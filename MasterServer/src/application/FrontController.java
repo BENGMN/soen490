@@ -38,6 +38,7 @@ import exceptions.MapperException;
 import exceptions.ParameterException;
 import exceptions.UnrecognizedUserException;
 import application.commands.CreateMessageCommand;
+import application.commands.CreateUserCommand;
 import application.commands.DeleteMessageCommand;
 import application.commands.DownvoteMessageCommand;
 import application.commands.FrontCommand;
@@ -108,13 +109,16 @@ public class FrontController extends HttpServlet {
 		// Command for updating server parameters
 		commandMap.put("POST.updateserverparameters", new UpdateServerParametersCommand());
 		
+		// Command for creating a new user
+		commandMap.put("POST.createUser", new CreateUserCommand());
+		
 		ServerParameters params = ServerParameters.getUniqueInstance();
 	
 		// TODO ADD the params object to the application context
 		// Frees the connection from the connection pool
 		Database.freeConnection();
 		
-		// Initialise the logger
+		// Initialize the logger
 		logger = (Logger)LoggerFactory.getLogger("application");
 		logger.trace("Starting Application Server. FrontController started.");
 	}
@@ -134,7 +138,7 @@ public class FrontController extends HttpServlet {
 	// TODO log some errors
 	
 	/**
-	 * This method handles all request s
+	 * This method handles all requests
 	 */
 	private void handleRequest(HttpServletRequest request, HttpServletResponse response, String httpMethod) throws ServletException {
 		Connection conn = null;
