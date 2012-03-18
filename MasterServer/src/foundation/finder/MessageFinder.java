@@ -134,9 +134,8 @@ public class MessageFinder {
 	}
 
 	private static final String SELECT_ID_BY_RADIUS =
-			"SET ROW COUNT ?" +
 			"SELECT m.mid " +
-			"FROM " + MessageTDG.TABLE + " AS m " + "WHERE m.longitude BETWEEN ? AND ? AND m.latitude BETWEEN ? AND ?;";
+			"FROM " + MessageTDG.TABLE + " AS m " + "WHERE m.longitude BETWEEN ? AND ? AND m.latitude BETWEEN ? AND ? LIMIT ?;";
 	
 	private static String GET_SIZE = 
 			"SELECT COUNT(m.mid) AS size " +
@@ -155,8 +154,8 @@ public class MessageFinder {
 		
 		Connection connection = Database.getConnection();
 		ServerParameters params = ServerParameters.getUniqueInstance();
-		int minMessages  = Integer.getInteger(params.get("minMessages").getValue());
-		int maxMessages  = Integer.getInteger(params.get("maxMessages").getValue());
+		int minMessages = Integer.parseInt(params.get("minMessages").getValue());
+		int maxMessages = Integer.parseInt(params.get("maxMessages").getValue());
 
 		//////////////////////////////////////////////////////////////////////
 		
@@ -206,11 +205,10 @@ public class MessageFinder {
 			PreparedStatement psSize = connection.prepareStatement(GET_SIZE);
 			
 			List<Coordinate> rectangle = GeoSpatialSearch.convertPointToRectangle(new Coordinate(longitude, latitude), radius);
-			psSize.setInt(1, size);
-			psSize.setDouble(2, rectangle.get(0).getLongitude());
-			psSize.setDouble(3, rectangle.get(1).getLongitude());
-			psSize.setDouble(4, rectangle.get(0).getLatitude());
-			psSize.setDouble(5, rectangle.get(1).getLatitude());
+			psSize.setDouble(1, rectangle.get(0).getLongitude());
+			psSize.setDouble(2, rectangle.get(1).getLongitude());
+			psSize.setDouble(3, rectangle.get(0).getLatitude());
+			psSize.setDouble(4, rectangle.get(1).getLatitude());
 			rsSize = psSize.executeQuery();
 			rsSize.next();
 		
@@ -222,7 +220,6 @@ public class MessageFinder {
 			count++;		
 			
 			size = rsSize.getInt("size");
-			
 			if(size > maxMessages) {
 				size = maxMessages;  
 			}
@@ -234,11 +231,11 @@ public class MessageFinder {
 		
 		PreparedStatement finalPs = connection.prepareStatement(SELECT_ID_BY_RADIUS);
 		List<Coordinate> rectangle = GeoSpatialSearch.convertPointToRectangle(new Coordinate(longitude, latitude), radius);
-		
 		finalPs.setDouble(1, rectangle.get(0).getLongitude());
 		finalPs.setDouble(2, rectangle.get(1).getLongitude());
 		finalPs.setDouble(3, rectangle.get(0).getLatitude());
 		finalPs.setDouble(4, rectangle.get(1).getLatitude());
+		finalPs.setInt(5, size);
 		finaleRs = finalPs.executeQuery();
 
 		return finaleRs;
