@@ -20,6 +20,9 @@ public class MessageFactory {
 		
 		// Create a message object, passing the proxy as the owner
 		Message msg = null;
+
+		// Correct problems arising from rounding
+		createdDate.setNanos(0);
 		
 		msg = new Message(createMessageUniqueID(uid, createdDate), user, message, speed, latitude, longitude, createdDate, userRating);
 		
@@ -30,6 +33,9 @@ public class MessageFactory {
 		
 		// Create a user proxy
 		IUser user = new UserProxy(uid);
+		
+		// Correct problems arising from rounding
+		createdDate.setNanos(0);
 		
 		// Create a message object, passing the proxy as the owner
 		Message msg = new Message(mid, user, message, speed, latitude, longitude, createdDate, userRating);
