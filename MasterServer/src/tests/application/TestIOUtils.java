@@ -24,7 +24,11 @@ import application.IOUtils;
 import domain.message.Message;
 import domain.message.MessageFactory;
 import domain.user.IUser;
+import domain.user.User;
+import domain.user.UserFactory;
 import domain.user.UserProxy;
+import domain.user.UserType;
+import exceptions.CorruptStreamException;
 import junit.framework.TestCase;
 
 public class TestIOUtils extends TestCase {
@@ -52,13 +56,13 @@ public class TestIOUtils extends TestCase {
 			
 			DataOutputStream out = new DataOutputStream(new FileOutputStream(file));
 			
-			IOUtils.writeMessageID(msg.getMid(), out);
+			IOUtils.writeMessageIDtoStream(msg.getMid(), out);
 			
 			out.close();
 
 			DataInputStream in = new DataInputStream(new FileInputStream(file));
 			
-			BigInteger sameMid = IOUtils.readMessageID(in);
+			BigInteger sameMid = IOUtils.readMessageIDfromStream(in);
 			
 			assertTrue(mid.equals(sameMid));
 			
@@ -70,6 +74,9 @@ public class TestIOUtils extends TestCase {
 			fail();
 			e.printStackTrace();
 		} catch (IOException e) {
+			fail();
+			e.printStackTrace();
+		} catch (CorruptStreamException e) {
 			fail();
 			e.printStackTrace();
 		} finally {
@@ -95,7 +102,7 @@ public class TestIOUtils extends TestCase {
 			
 			DataOutputStream out = new DataOutputStream(new FileOutputStream(file));
 			
-			IOUtils.writeListMessageIDs(ids, out);
+			IOUtils.writeListMessageIDsToStream(ids, out);
 			
 			out.close();
 
@@ -104,7 +111,7 @@ public class TestIOUtils extends TestCase {
 			List<BigInteger> sameIDs = null;
 			
 			// read the message ids from in stream
-			sameIDs = IOUtils.readListMessageIDs(in);
+			sameIDs = IOUtils.readListMessageIDsFromStream(in);
 			
 			assertEquals(ids.size(), sameIDs.size());
 			assertTrue(ids.get(0).equals(sameIDs.get(0)));
@@ -118,31 +125,33 @@ public class TestIOUtils extends TestCase {
 		} catch (IOException e) {
 			fail();
 			e.printStackTrace();
+		} catch (CorruptStreamException e) {
+			fail();
+			e.printStackTrace();
 		} finally {
 			if (file.exists())
 				file.delete();
 		}
 	}
 
+	// Testing a single Message
 	public void testWriteAndReadMessage() {
 		File file = new File("TestMessageUtils");
 		
 		try {
 			Message msg = MessageFactory.createNew(uid, message, speed, latitude, longitude, createdAt, userRating);
 
-			BigInteger mid = msg.getMid();
-			
 			DataOutputStream out = new DataOutputStream(new FileOutputStream(file));
 			
-			IOUtils.writeMessageID(msg.getMid(), out);
+			IOUtils.writeMessageToStream(msg, out);
 			
 			out.close();
 
 			DataInputStream in = new DataInputStream(new FileInputStream(file));
 			
-			BigInteger sameMid = IOUtils.readMessageID(in);
+			Message sameMsg = IOUtils.readMessageFromStream(in);
 			
-			assertTrue(mid.equals(sameMid));
+			assertTrue(msg.equals(sameMsg));
 			
 			in.close();
 		} catch (NoSuchAlgorithmException e) {
@@ -154,10 +163,109 @@ public class TestIOUtils extends TestCase {
 		} catch (IOException e) {
 			fail();
 			e.printStackTrace();
+		} catch (CorruptStreamException e) {
+			fail();
+			e.printStackTrace();
 		} finally {
 			if (file.exists())
 				file.delete();
 		}
 				
+	}
+
+	// Testing a list of Message
+	public void testWriteAndReadMessageList() {
+		File file = new File("TestMessageUtils");
+		
+		try {
+			// create 3 messages
+			BigInteger mid1 = new BigInteger("1231241251342312");
+			Message msg1 = MessageFactory.createClean(mid1, uid, message, speed, latitude, longitude, createdAt, userRating);
+			BigInteger mid2 = new BigInteger("1325435123124312451235134");
+			Message msg2 = MessageFactory.createClean(mid2, uid, message, speed, latitude, longitude, createdAt, userRating);
+			BigInteger mid3 = new BigInteger("123124231253414321231231232131");
+			Message msg3 = MessageFactory.createClean(mid3, uid, message, speed, latitude, longitude, createdAt, userRating);
+
+			
+			List<Message> list = new ArrayList<Message>(3);
+			
+			list.add(msg1);
+			list.add(msg2);
+			list.add(msg3);
+			
+			DataOutputStream out = new DataOutputStream(new FileOutputStream(file));
+			
+			IOUtils.writeMessageListToStream(list, out);
+			
+			out.close();
+
+			DataInputStream in = new DataInputStream(new FileInputStream(file));
+			
+			List<Message> sameList = null;
+			
+			// read the message ids from in stream
+			sameList = IOUtils.readMessageListFromStream(in);
+			
+			assertEquals(list.size(), sameList.size());
+			assertEquals(list.size(), 3);
+			assertTrue(list.get(0).equals(sameList.get(0)));
+			assertTrue(list.get(1).equals(sameList.get(1)));
+			assertTrue(list.get(2).equals(sameList.get(2)));
+
+			assertFalse(list.get(1).equals(sameList.get(2)));
+			in.close();
+		} catch (FileNotFoundException e) {
+			fail();
+			e.printStackTrace();
+		} catch (IOException e) {
+			fail();
+			e.printStackTrace();
+		} catch (CorruptStreamException e) {
+			fail();
+			e.printStackTrace();
+		} finally {
+			if (file.exists())
+				file.delete();
+		}
+	}
+	
+	public void testReadAndWriteMessage() {
+		File file = new File("TestMessageUtils");
+		
+		try {
+			User user = UserFactory.createNew("email@email.com", "this is a password", UserType.USER_ADVERTISER);
+			
+			DataOutputStream out = new DataOutputStream(new FileOutputStream(file));
+			
+			IOUtils.writeUserToStream(user, out);
+			
+			out.close();
+
+			DataInputStream in = new DataInputStream(new FileInputStream(file));
+			
+			User sameUser = null;
+			
+			// read the user from in stream
+			sameUser = IOUtils.readUserFromStream(in);
+			
+			assertTrue(sameUser.equals(user));
+			
+			in.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			fail();
+		} catch (IOException e) {			
+			e.printStackTrace();
+			fail();
+		} catch (CorruptStreamException e) {			
+			e.printStackTrace();
+			fail();
+		} catch (NoSuchAlgorithmException e) {			
+			e.printStackTrace();
+			fail();
+		} finally {
+			if (file.exists())
+				file.delete();
+		}
 	}
 }

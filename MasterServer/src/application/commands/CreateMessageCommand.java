@@ -108,7 +108,7 @@ public class CreateMessageCommand extends FrontCommand {
 			
 			//TODO change this shit
 			// Write the id of the newly created message to the http response
-			IOUtils.writeMessageID(msg.getMid(), new DataOutputStream(response.getOutputStream()));
+			IOUtils.writeMessageIDtoStream(msg.getMid(), new DataOutputStream(response.getOutputStream()));
 			response.setStatus(HttpServletResponse.SC_OK);
 			
 		} catch (NoSuchAlgorithmException e) {

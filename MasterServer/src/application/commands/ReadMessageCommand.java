@@ -61,7 +61,7 @@ public class ReadMessageCommand extends FrontCommand {
 		}
 		
 		// TODO write message list to response but not the way we are doing it below
-		IOUtils.writeMessageList(messages, new DataOutputStream(response.getOutputStream()));
+		IOUtils.writeMessageListToStream(messages, new DataOutputStream(response.getOutputStream()));
 		response.setStatus(HttpServletResponse.SC_OK);
 	}
 

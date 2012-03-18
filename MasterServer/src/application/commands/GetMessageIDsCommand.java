@@ -55,7 +55,7 @@ public class GetMessageIDsCommand extends FrontCommand{
 		response.setContentType("text/plain");
 		response.setStatus(HttpServletResponse.SC_OK);
 		
-		IOUtils.writeListMessageIDs(ids, new DataOutputStream(response.getOutputStream()));
+		IOUtils.writeListMessageIDsToStream(ids, new DataOutputStream(response.getOutputStream()));
 	}
 
 	
