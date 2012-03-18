@@ -19,7 +19,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -64,7 +66,7 @@ public class FileTransfer {
 		InputStream getMessageIdInputStream = getMessageIdResponse.getEntity().getContent();
 		Unpacker unpacker = (new MessagePack()).createUnpacker(getMessageIdInputStream);
 		int size = unpacker.readInt();
-	 
+		
 		// now that we have the message Ids we can retrieve the messages	
 		Map<String, Message> messages = new HashMap<String, Message>();
 		HttpGet readMessage;

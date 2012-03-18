@@ -35,9 +35,9 @@ public class Message {
 	private Timestamp createdAt;
 	private int userRating;
 	private File message;
-	private String ownerEmail;
+	private String userId;
 	
-	public Message(BigInteger mid, File message, float speed, double latitude, double longitude, Timestamp createdAt, int userRating, String ownerEmail)
+	public Message(BigInteger mid, File message, float speed, double latitude, double longitude, Timestamp createdAt, int userRating, String userId)
 	{
 		this.mid = mid;
 		this.message = message;
@@ -46,7 +46,7 @@ public class Message {
 		this.longitude = longitude;
 		this.createdAt = createdAt;
 		this.userRating = userRating;
-		this.ownerEmail = ownerEmail;
+		this.userId = userId;
 	}
 		
 	// Getters and Setters
@@ -78,8 +78,8 @@ public class Message {
 		return userRating;
 	}
 
-	public String getOwnerEmail() {
-		return ownerEmail;
+	public String getUserId() {
+		return userId;
 	}
 	
 	public void setUserRating(int userRating) {
@@ -94,14 +94,14 @@ public class Message {
 				"\nLongitude: "+getLongitude()+
 				"\nUserRating: "+getUserRating()+
 				"\nCreatedAt: "+getCreatedAt() +
-				"\nOwner: "+ getOwnerEmail();
+				"\nUserId: "+ getUserId();
 	}
 	
 	public static Message createMessage(InputStream in, String fileType, String folder) throws IOException {
 		Unpacker unpacker = (new MessagePack()).createUnpacker(in);
 		int size = unpacker.readInt();
 		BigInteger mid = new BigInteger(unpacker.readString());	
-		String email = unpacker.readString();
+		String userId = unpacker.readString();
 		byte[] byteMessage = unpacker.readByteArray();		
 		Float speed = unpacker.readFloat();
 		Timestamp createdAt = new Timestamp(unpacker.readLong());//unpacker.read(Timestamp.class);
@@ -113,7 +113,6 @@ public class Message {
 		output.write(byteMessage);
 		output.close();
 		
-		return new Message(mid, message, speed, latitude, longitude, createdAt, userRating, email);
-
+		return new Message(mid, message, speed, latitude, longitude, createdAt, userRating, userId);
 	}
 }
