@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 
@@ -52,6 +53,7 @@ import application.commands.UpdateServerParametersCommand;
 import application.commands.UpdateUserCommand;
 import application.commands.UpvoteMessageCommand;
 import foundation.Database;
+import foundation.finder.ServerListFinder;
 import foundation.tdg.ServerListTDG;
 
 
@@ -69,10 +71,12 @@ public class FrontController extends HttpServlet {
 			if (!Database.isDatabaseCreated())
 				Database.createDatabase();
 			InetAddress addr = InetAddress.getLocalHost();
-			String hostname = addr.getHostName();
-			int port = 8080;
-			ServerListTDG.insert(hostname, port);
-			
+			String hostname = addr.getHostName();		
+			ResultSet rs = ServerListFinder.find(hostname);		
+			if(!rs.next()) {
+				int port = 8080;
+				ServerListTDG.insert(hostname, port);
+			}						
 		} catch (Exception E) {
 			// TODO why was this commented out?
 			throw new ServletException(E);
