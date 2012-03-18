@@ -94,12 +94,10 @@ public class Message {
 				"\nLongitude: "+getLongitude()+
 				"\nUserRating: "+getUserRating()+
 				"\nCreatedAt: "+getCreatedAt() +
-				"\nOwner: "+ getOwnerEmail()
-				;
+				"\nOwner: "+ getOwnerEmail();
 	}
 	
-	public static Message createMessage(InputStream in, String fileName, String fileType) throws IOException
-	{
+	public static Message createMessage(InputStream in, String fileName, String fileType) throws IOException {
 		Unpacker unpacker = (new MessagePack()).createUnpacker(in);
 		int size = unpacker.readInt();
 		BigInteger mid = new BigInteger(unpacker.readString());	

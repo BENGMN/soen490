@@ -1,5 +1,6 @@
 package application.commands;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -12,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.msgpack.MessagePack;
 import org.msgpack.packer.Packer;
+
+import application.MessageHelper;
 
 import domain.message.mappers.MessageInputMapper;
 
@@ -54,32 +57,10 @@ public class GetMessageIDsCommand extends FrontCommand{
 		
 		List<BigInteger> ids = MessageInputMapper.findIdsInProximity(longitude, latitude, speed);	
 		
-		// TODO probably remove
-		// Imploding the BigInteger IDs with a "|" delimiter
-		String implodedId ="";
-		
 		response.setContentType("text/plain");
 		response.setStatus(HttpServletResponse.SC_OK);
 		
-		int size = 0;
-		   
-		/*
-		OutputStreamWriter out = new OutputStreamWriter(response.getOutputStream());
-		for (BigInteger id:ids) {
-			out.write(id.toString());
-			size += id.toString().length();
-		}
-		
-		response.setContentLength(size);
-		out.flush();
-		out.close();
-		
-		*/
-		Packer packer = (new MessagePack()).createPacker(response.getOutputStream());
-		packer.write(ids.size());
-		for(BigInteger id: ids) {
-		packer.write(id.toString());
-		}		
+		MessageHelper.setMessageIDs(ids, new DataOutputStream(response.getOutputStream()));
 	}
 
 	

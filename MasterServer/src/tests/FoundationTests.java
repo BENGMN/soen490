@@ -11,7 +11,8 @@ import tests.foundation.*;
 @SuiteClasses({ 
 		 DatabaseTest.class,
 		 MessageTDGTest.class,
-		 UserTDGTest.class
+		 UserTDGTest.class,
+		 ServerListTDGTest.class
 })
 
 public class FoundationTests {

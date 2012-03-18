@@ -1,6 +1,5 @@
 package foundation.tdg;
 
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -40,7 +39,7 @@ public class ServerListTDG {
 	 * SQL query for inserting a new hostname
 	 */
 	protected final static String INSERT = 
-		"INSERT INTO " + TABLE + "(hostname) VALUES (?);";
+		"INSERT INTO " + TABLE + "(hostname, port) VALUES (?, ?);";
 	
 	/**
 	 * TDG function for inserting the servers hostname
@@ -48,19 +47,12 @@ public class ServerListTDG {
 	 * @throws SQLException
 	 * @throws UnknownHostException 
 	 */
-	public static int insert () throws SQLException, UnknownHostException {
+	public static int insert (String hostname, int port) throws SQLException, UnknownHostException {
 		Connection connection = Database.getConnection();
 		PreparedStatement ps = connection.prepareStatement(INSERT);
-		
-		InetAddress addr = InetAddress.getLocalHost();
-
-		// Get IP Address
-		byte[] ipAddr = addr.getAddress();
-
-		// Get hostname
-		String hostname = addr.getHostName();
 
 		ps.setString(1, hostname);
+		ps.setInt(2, port);
 		
 		int rows = ps.executeUpdate();
 		ps.close();
@@ -72,7 +64,7 @@ public class ServerListTDG {
 	 * SQL query for deleting an existing server parameter
 	 */
 	protected final static String DELETE =
-		"DELETE FROM " + TABLE + " WHERE paramName = ?;";
+		"DELETE FROM " + TABLE + " WHERE hostname = ?;";
 	
 	/**
 	 * TDG function for deleting existing server parameters
@@ -80,11 +72,11 @@ public class ServerListTDG {
 	 * @return Returns the number of rows that were affected by the SQL query.
 	 * @throws SQLException
 	 */
-	public static int delete (String paramName) throws SQLException {
+	public static int delete (String hostname) throws SQLException {
 		Connection connection = Database.getConnection();
 		PreparedStatement ps = connection.prepareStatement(DELETE);
 		
-		ps.setString(1, paramName);
+		ps.setString(1, hostname);
 		
 		int rows = ps.executeUpdate();
 		ps.close();
@@ -95,6 +87,7 @@ public class ServerListTDG {
 	private final static String CREATE_TABLE =
 			"CREATE TABLE " + TABLE + " " +
 			"(hostname varchar(255) NOT NULL," +
+			"port integer NOT NULL," +
 			"PRIMARY KEY (hostname));";
 		
 		/**
