@@ -195,6 +195,7 @@ public class MessageFinder {
 		ResultSet rsSize;
 		//flag for not incrementing the radius on the first run
 		boolean flag = false;
+		int count = 0;
 		do {
 			
 			PreparedStatement psSize = connection.prepareStatement(GET_SIZE);
@@ -211,9 +212,10 @@ public class MessageFinder {
 				radius += radiusAdder;
 			else
 				flag = true;
-		
+			
+			count++;		
 		}
-		while(rsSize.getInt("size") <= minMessages && radius <= maxRadius);
+		while(rsSize.getInt("size") <= minMessages && radius <= maxRadius && count <= 2);
 		
 		//Getting the actual ids at this point
 		ResultSet finaleRs;

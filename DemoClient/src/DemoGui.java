@@ -18,6 +18,7 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,8 +42,9 @@ import org.apache.http.client.ClientProtocolException;
 public class DemoGui extends JFrame {
 	
 	private static final int WIDTH = 300;
-	private static final int HEIGHT = 550;
+	private static final int HEIGHT = 465;
 	private static final String PLAYER_PATH = "C:\\Program Files (x86)\\QuickTime\\QuickTimePlayer.exe"; //change this depending on your computer
+	private static final String DIRECTORY_PATH = ".\\src\\Retrieved Files\\";
 	private JButton uploadFileButton;
 	private JFileChooser fileChooser;
 	private JScrollPane listScrollPane;
@@ -71,7 +73,7 @@ public class DemoGui extends JFrame {
 		audioFileNames = new Vector<String>();
 		statusField = new JTextField(23);
 		statusField.setEditable(false);
-		fileInfo = new JTextArea(10, 23);
+		fileInfo = new JTextArea(8, 23);
 		fileInfo.setEditable(false);
 		fileInfoScrollPane = new JScrollPane(fileInfo);
 
@@ -99,9 +101,16 @@ public class DemoGui extends JFrame {
 		retrieveFileButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				File directory = new File(DIRECTORY_PATH);		
+				if(!directory.exists()) {
+					directory.mkdir(); // create folder to place the files if it doesn't exist already
+				}				
+				
+				//detele previous audio files in the folder				
+				deleteFiles(directory);			
 				//Retrieve audio files	
 				try {
-					messages = fileTransfer.downloadFiles(inputFields[0].getText(), inputFields[1].getText(), inputFields[2].getText());
+					messages = fileTransfer.downloadFiles(inputFields[0].getText(), inputFields[1].getText(), inputFields[2].getText(), DIRECTORY_PATH);
 				} catch (ClientProtocolException e1) {
 					e1.printStackTrace();
 				} catch (IOException e1) {
@@ -116,6 +125,7 @@ public class DemoGui extends JFrame {
 				listScrollPane.validate();
 				listOfFiles.setSelectedIndex(0); // ensures that a file is selected
 				fileInfo.setText(messages.get((String)listOfFiles.getSelectedValue()).toString()); // show information about the audio file in the text area
+				findFilePath();
 			}
 		});
 		
@@ -124,16 +134,7 @@ public class DemoGui extends JFrame {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				if(e.getValueIsAdjusting()) {
-					String selectedFile = "";				
-					selectedFile = (String)listOfFiles.getSelectedValue();				
-					Message message = messages.get(selectedFile);
-					fileInfo.setText(message.toString());
-
-					try {
-						filePath = message.getMessage().getCanonicalPath();
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
+					findFilePath();
 				}				
 			}
 		});
@@ -143,13 +144,13 @@ public class DemoGui extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				ProcessBuilder processBuilder = new ProcessBuilder(PLAYER_PATH, filePath);			 
-				try {
-					
-					
+				try {			
 					if(process != null) {
 						process.destroy(); //If a file is currently playing, close the application playing it. 
-						process = processBuilder.start();
 					}
+		
+					process = processBuilder.start();
+					
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}		
@@ -212,6 +213,28 @@ public class DemoGui extends JFrame {
 		setSize(WIDTH, HEIGHT);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setVisible(true);
+	}
+	
+	private void findFilePath() {
+		String selectedFile = "";				
+		selectedFile = (String)listOfFiles.getSelectedValue();				
+		Message message = messages.get(selectedFile);
+		fileInfo.setText(message.toString());
+
+		try {
+			filePath = message.getMessage().getCanonicalPath();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}	
+	}
+	
+	private void deleteFiles(File directory) {	
+		String[] fileNames = directory.list();		
+		for(int i = 0; i < fileNames.length; i++) {
+			File file = new File(directory, fileNames[i]);
+			file.delete();
+		}
+		
 	}
 }
 

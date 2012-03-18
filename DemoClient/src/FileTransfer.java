@@ -40,6 +40,7 @@ import org.msgpack.unpacker.Unpacker;
 public class FileTransfer {	
 	private static final String HOST_NAME = "localhost";
 	private static final String HOST_PORT = "8080";
+	private static final String TYPE = ".amr";
 
 	public int uploadFile(File file, String latitude, String longitude, String speed, String email) throws IOException {
 		HttpClient httpClient = new DefaultHttpClient();	
@@ -53,18 +54,15 @@ public class FileTransfer {
 		return response.getStatusLine().getStatusCode();
 	}
 	
-	public Map<String, Message> downloadFiles(String latitude, String longitude, String speed) throws ClientProtocolException, IOException {
+	public Map<String, Message> downloadFiles(String latitude, String longitude, String speed, String folder) throws ClientProtocolException, IOException {
 		HttpClient httpgetIdClient = new DefaultHttpClient();
 		//first we must get the message Ids
 		HttpGet getIds = new HttpGet("http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=getmessageids&latitude="
                                      + latitude + "&longitude=" + longitude + "&speed=" + speed);
 
 		HttpResponse getMessageIdResponse = httpgetIdClient.execute(getIds);
-
 		InputStream getMessageIdInputStream = getMessageIdResponse.getEntity().getContent();
-		DataInputStream stream = new DataInputStream(getMessageIdInputStream);
-
-		Unpacker unpacker = (new MessagePack()).createUnpacker(stream);
+		Unpacker unpacker = (new MessagePack()).createUnpacker(getMessageIdInputStream);
 		int size = unpacker.readInt();
 	 
 		// now that we have the message Ids we can retrieve the messages	
@@ -78,7 +76,7 @@ public class FileTransfer {
 			readMessage = new HttpGet("http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=readmessage&messageid="+ id);		
 			readMessageResponse = httpgetMessageClient.execute(readMessage);
 			inputStream = readMessageResponse.getEntity().getContent();
-			Message message = Message.createMessage(inputStream, "audio" + (i + 1), ".amr");
+			Message message = Message.createMessage(inputStream, TYPE, folder);
 			messages.put(message.getMessage().getName(), message);
 		}
 		

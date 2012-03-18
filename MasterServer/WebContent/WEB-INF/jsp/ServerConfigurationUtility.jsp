@@ -6,8 +6,7 @@
 <html>
 <script type="text/javascript">
 	function onKeyInvalid(obj) {
-		if (!/^\d+\.?\d*$/.test(obj.value))
-			obj.value = "";
+		obj.value = obj.value.replace(/[^0-9]/gi,"");
 	}
 </script>
 <style type="text/css">
