@@ -20,6 +20,10 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Logger;
+
 import exceptions.ParameterException;
 
 
@@ -30,7 +34,7 @@ public class UnsupportedCommand extends FrontCommand {
 	
 	public UnsupportedCommand(String httpMethod, String commandString) {
 		this.httpMethod = httpMethod;
-		if (commandString == null)
+		if (commandString == null || "".equals(commandString))
 			this.commandString = "Missing 'command' parameter.";
 		else
 			this.commandString = commandString;
@@ -38,6 +42,10 @@ public class UnsupportedCommand extends FrontCommand {
 
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ParameterException, IOException {
 		String text = "HTTP " + httpMethod + " method for '" + commandString + "' command is not supported.";
+		// log
+		Logger logger = (Logger)LoggerFactory.getLogger("application");
+		logger.debug(text);
+		
 		response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED, text);
 	}
 

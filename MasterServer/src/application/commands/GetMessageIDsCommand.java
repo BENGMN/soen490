@@ -9,7 +9,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import application.MessageHelper;
+import application.IOUtils;
 
 import domain.message.mappers.MessageInputMapper;
 
@@ -55,7 +55,7 @@ public class GetMessageIDsCommand extends FrontCommand{
 		response.setContentType("text/plain");
 		response.setStatus(HttpServletResponse.SC_OK);
 		
-		MessageHelper.setMessageIDs(ids, new DataOutputStream(response.getOutputStream()));
+		IOUtils.writeListMessageIDs(ids, new DataOutputStream(response.getOutputStream()));
 	}
 
 	

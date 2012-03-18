@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
-import application.MessageHelper;
+import application.IOUtils;
 import application.ServerParameters;
 
 import ch.qos.logback.classic.Logger;
@@ -103,9 +103,12 @@ public class CreateMessageCommand extends FrontCommand {
 		
 			MessageOutputMapper.insert(msg);
 			
+			Logger logger = (Logger)LoggerFactory.getLogger("application");
+			logger.info("New Message with ID {} was created.", msg.getMid().toString());
+			
 			//TODO change this shit
 			// Write the id of the newly created message to the http response
-			MessageHelper.setMessageIDToResponse(msg,new DataOutputStream(response.getOutputStream()));
+			IOUtils.writeMessageID(msg.getMid(), new DataOutputStream(response.getOutputStream()));
 			response.setStatus(HttpServletResponse.SC_OK);
 			
 		} catch (NoSuchAlgorithmException e) {

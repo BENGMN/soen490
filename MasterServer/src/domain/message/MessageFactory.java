@@ -13,7 +13,7 @@ import domain.user.UserProxy;
 
 public class MessageFactory {
 
-	public static Message createNew(BigInteger uid, byte[] message, float speed, double latitude, double longitude, Timestamp createdDate, int userRating) throws SQLException, NoSuchAlgorithmException {
+	public static Message createNew(BigInteger uid, byte[] message, float speed, double latitude, double longitude, Timestamp createdDate, int userRating) throws NoSuchAlgorithmException {
 		
 		// Create a user proxy
 		IUser user = new UserProxy(uid);
