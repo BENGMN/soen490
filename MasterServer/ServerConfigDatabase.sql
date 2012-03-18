@@ -37,3 +37,10 @@ VALUES ('speedThreshold', 'The speed threshold to compare against a user request
 INSERT INTO ServerParameters 
 VALUES ('defaultMessageRadiusMeters', 'The default radius, in meters, in which to check if there are any messages.', 100);
 
+INSERT INTO ServerParameters 
+VALUES ('minMessages', 'The minimum amount of messages fetched to the user.', 10);
+
+INSERT INTO ServerParameters 
+VALUES ('maxMessages', 'The maximum amount of messages fetched to the user.', 50);
+
+
