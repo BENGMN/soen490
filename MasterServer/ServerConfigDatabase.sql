@@ -8,7 +8,7 @@ PRIMARY KEY (paramName)
 
 
 INSERT INTO ServerParameters 
-VALUES ('minMessageSizeBytes', 'The minimum size of uploaded audio files that should be accepted, in bytes.', 4000);
+VALUES ('minMessageSizeBytes', 'The minimum size of uploaded audio files that should be accepted, in bytes.', 2000);
 
 INSERT INTO ServerParameters 
 VALUES ('maxMessageSizeBytes', 'The maximum size of uploaded audio files that should be accepted, in bytes.', 50000);

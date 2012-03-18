@@ -31,10 +31,9 @@ public class ServerParameterInputMapper {
 		if (!rs.next()) 
 			throw new MapperException("Server parameter with name: " + paramName + " does not exist.");
 		
-		String description = rs.getString("description");
-		String value = rs.getString("value");
+		param = getServerParameter(rs);
 		
-		param = new ServerParameter(paramName, description, value);
+		rs.close();
 		
 		return param;
 	}

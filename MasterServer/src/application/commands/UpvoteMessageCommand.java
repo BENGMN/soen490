@@ -55,8 +55,8 @@ public class UpvoteMessageCommand extends FrontCommand {
 		// get the requested message
 		Message message = MessageInputMapper.find(mid);
 		
-		// TODO remove this line, serves no purpose
-		message.setUserRating(message.getUserRating() + 1);
+		// we do not need to increment the rating of the Message instance itself
+		// the mapper funcion incrementRating() increments the value directly in the database
 		
 		// increment the message user rating
 		MessageOutputMapper.incrementRating(message);

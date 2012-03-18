@@ -33,6 +33,9 @@ public class ReadMessageCommand extends FrontCommand {
 		if ((separatedIDs = request.getParameter("messageid")) == null)
 			throw new ParameterException("Missing 'messageid' parameter.");
 		
+		//TODO ids to ignore
+		//String ignore = request.getParameter("ignoreid");
+		
 		// Split the ids, split takes a regex, so we need to escape the pipe character
 		String[] individualIDs = separatedIDs.split("\\|");
 		

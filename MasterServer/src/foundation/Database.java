@@ -170,23 +170,18 @@ public class Database {
 		return true;
 	}
 	
-	public static boolean hasTable(String tableName) throws SQLException
-	{
+	public static boolean hasTable(String tableName) throws SQLException {
 		Connection connection = getConnection();
 		DatabaseMetaData metaData = connection.getMetaData();
 		ResultSet tables = metaData.getTables(null, null, tableName, null);
-		return tables.next();
-	}
-	
-	public PreparedStatement getStatement(String query) throws SQLException
-	{
-		Connection connection = getConnection();
-		return connection.prepareStatement(query);
+		boolean hasTable = tables.next();
+		
+		tables.close();
+		
+		return hasTable;
 	}
 
-
-	public static void createDatabase() throws SQLException
-	{
+	public static void createDatabase() throws SQLException {
 		if (!hasTable(UserTDG.TABLE))
 			UserTDG.create();
 		if (!hasTable(MessageTDG.TABLE))
@@ -197,8 +192,7 @@ public class Database {
 			ServerParameterTDG.create();
 	}
 	
-	public static void dropDatabase() throws SQLException
-	{
+	public static void dropDatabase() throws SQLException {
 		if (hasTable(UserTDG.TABLE))
 			UserTDG.drop();
 		if (hasTable(MessageTDG.TABLE))
@@ -211,8 +205,7 @@ public class Database {
 	
 	// Refactor the hasTable method to be parameterized
 	// Note this method is called from the frontController
-	public static boolean isDatabaseCreated() throws SQLException
-	{
+	public static boolean isDatabaseCreated() throws SQLException {
 		return hasTable(UserTDG.TABLE) && hasTable(MessageTDG.TABLE) && hasTable(ServerListTDG.TABLE) && hasTable(ServerParameterTDG.TABLE); 
 	}
 	

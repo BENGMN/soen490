@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.LoggerFactory;
 
+import application.ServerParameters;
+
 import ch.qos.logback.classic.Logger;
 
 import domain.user.User;
@@ -21,41 +23,47 @@ import exceptions.ParameterException;
 public class CreateUserCommand extends FrontCommand {
 
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws ParameterException {
-		
+	public void execute(HttpServletRequest request, HttpServletResponse response) throws ParameterException, SQLException {
+		ServerParameters params = ServerParameters.getUniqueInstance();
 		// Create some local variables to store the request parameters
-		String email, password, user_type;
+		String email, password, usertype;
 		
 		// Capture the request parameters
 		email = (String) request.getParameter("email");
 		password = request.getParameter("password");
-		user_type = request.getParameter("user_type");
+		usertype = request.getParameter("usertype");
 		
 		// Perform some validation on the request parameters
 		if (email == null) {
-			throw new ParameterException("Missing 'email address' parameter");
+			throw new ParameterException("Missing 'email' parameter.");
+		} else if (!validateEmail(email)) {
+			throw new ParameterException("Invalid 'email' parameter provided");
+		} // These could totally be removed
+		else if (email.length() < Integer.getInteger(params.get("minEmailLength").getValue())) {
+			throw new ParameterException("Invalid 'email' parameter, too short.");
+		} else if (email.length() > Integer.getInteger(params.get("maxEmailLength").getValue())) {
+			throw new ParameterException("Invalid 'email' parameter, too long.");
 		}
-		else if (!validateEmail(email)) {
-			throw new ParameterException("Invalid 'email address' parameter provided");
-		}
-			
+	
+		// Check the password length, should be validated in jsp as well	
 		if (password == null) {
-			throw new ParameterException("Missing 'password' parameter");
-		}
-		else if (password.length() > 0) {
+			throw new ParameterException("Missing 'password' parameter.");
+		} else if (password.length() < Integer.getInteger(params.get("minPasswordLength").getValue())) {
 			throw new ParameterException("Invalid 'password' parameter, too short.");
 		}
 
-		if (user_type == null) {
-			throw new ParameterException("Missing 'user type' parameter");
-		}
-		else if (!(user_type.equalsIgnoreCase("USER_NORMAL") || user_type.equalsIgnoreCase("USER_ADVERTISER"))) {
-			throw new ParameterException("Invalid 'user type' parameter provided");
+		// Check the type of user account
+		if (usertype == null) {
+			throw new ParameterException("Missing 'usertype' parameter.");
+		} else if (!(usertype.equalsIgnoreCase("USER_NORMAL") || usertype.equalsIgnoreCase("USER_ADVERTISER"))) {
+			throw new ParameterException("Invalid 'usertype' parameter provided");
 		}
 		
 		// Since all of the validations succeeded let's make a new user
-		UserType type = UserType.valueOf(user_type);
+		UserType type = UserType.valueOf(usertype);
 		User newUser = null;
+		
+		Logger logger = (Logger)LoggerFactory.getLogger("application");
 		
 		try {
 			// Create the new User
@@ -64,27 +72,21 @@ public class CreateUserCommand extends FrontCommand {
 			// Add the new user to the database
 			UserOutputMapper.insert(newUser);
 		} catch (NoSuchAlgorithmException e) {
-			// TODO
-			// NOTE This error will be thrown by the uniqueIDGenerator in the UserFactory
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-		} catch (SQLException e) {
-			// TODO
-			// NOTE This error will be thrown if the user cannot be inserted into the database
-			// normally this is because of a duplicate primary key
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-		}
+			
+			logger.error("No such algorithm exception thrown when trying to create user: {}", e);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		} 
 		
-		Logger logger = (Logger)LoggerFactory.getLogger("application");
-		logger.debug("New User with ID {} was created.", newUser.getUid().toString());
+		logger.info("New User with ID {} was created.", newUser.getUid().toString());
 		response.setStatus(HttpServletResponse.SC_OK);
 	}
 	
 	/**
 	 * Function used to ensure that a string conforms to the email address syntax.
 	 * @param emailAddress String parameter containing the email address to be tested
-	 * @return True is returned if the email address has valid syntax, false otherwise.
+	 * @return Returns true if the email address has valid syntax, false otherwise.
 	 */
-	public boolean validateEmail(String emailAddress) {  
+	private boolean validateEmail(String emailAddress) {  
 		String email_regex ="^[\\w\\-]([\\.\\w])+[\\w]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";  
 		Pattern pattern = Pattern.compile(email_regex, Pattern.CASE_INSENSITIVE);  
 		Matcher matcher = pattern.matcher(emailAddress);
