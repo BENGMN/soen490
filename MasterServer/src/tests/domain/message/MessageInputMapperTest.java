@@ -138,7 +138,7 @@ public class MessageInputMapperTest extends TestCase {
 		List<Message> messages = MessageInputMapper.findAll();
 		
 		// Two message should be returned
-		assertEquals(messages.size() == 2, true);
+		assertEquals(messages.size(), 2);
 		
 		// Make sure that the message were persisted by deleting them
 		assertEquals(MessageOutputMapper.delete(m1), 1);
