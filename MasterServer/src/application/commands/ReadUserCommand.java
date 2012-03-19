@@ -1,9 +1,11 @@
 package application.commands;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.SQLException;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,55 +14,60 @@ import domain.user.User;
 import domain.user.mappers.UserInputMapper;
 
 import application.IOUtils;
-import application.ServerParameters;
 
 import exceptions.MapperException;
 import exceptions.ParameterException;
 import exceptions.UnrecognizedUserException;
 
 public class ReadUserCommand extends FrontCommand {
+	private static String USER_JSP = "/WEB-INF/jsp/UserManager.jsp";
 
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response)
-			throws MapperException, ParameterException, IOException,
-			UnrecognizedUserException, SQLException, ServletException {
-		
-		// Get the server parameters
-		ServerParameters params = ServerParameters.getUniqueInstance();
+	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, UnrecognizedUserException, SQLException, ServletException, IOException {
 		
 		// Create some local variables to store the request/response parameters
 		BigInteger userID = null;
-		String email, responseType;
-		
+		String userid, responseType;
+
 		// Get the parameters from the request
-		email = request.getParameter("email");
+		userid = request.getParameter("userid");
+
 		responseType = request.getParameter("responsetype");
 		
-		if (request.getParameter("userid") != null)
-			userID = new BigInteger(request.getParameter("userid"));
+		// Validation
+		if (userid == null) 
+			throw new ParameterException("Missing 'userid' parameter.");
 		
-		// Make sure that an email or userid parameter was supplied
-		if (!(email != null || userID != null))
-			throw new ParameterException("Missing parameters 'email' and 'userid' in request");
-		
-		// Check the response type
-		if (responseType == null) {
+		if (responseType == null) 
 			throw new ParameterException("Missing 'responsetype' parameter.");
-		} else if (!(responseType.equals("JSP") || responseType.equals("XML") || responseType.equals("BIN"))) {
-			throw new ParameterException("Invalid 'responseType' parameter provided");
-		}
-				
-		// Create a variable to store the user to be retrieved
-		User user = null;
-		// If the email parameter is supplied use that to search on
-		if (email != null) {
-			user = UserInputMapper.findByEmail(email);
-		} else if (userID != null) {
-			user = UserInputMapper.find(userID);
-		}
 		
-		// WRITE A RESPONSE BASED ON THE RESPONSE TYPE
-
+		if (!(responseType.equals("jsp") || responseType.equals("xml") || responseType.equals("bin"))) 
+			throw new ParameterException("Invalid 'responseType' parameter provided, should be 'jsp', 'xml', or 'bin'.");
+		// End of Val
+		
+		userID = new BigInteger(request.getParameter("userid"));
+		
+		// Create a variable to store the user to be retrieved
+		User user = UserInputMapper.find(userID);
+		
+		// Format response based on request response type
+		if (responseType.equals("jsp")) {
+			
+			request.setAttribute("user", user);
+			RequestDispatcher view = request.getRequestDispatcher(USER_JSP);
+			view.forward(request, response);
+			
+		} else if (responseType.equals("xml")) {
+			
+			response.setContentType("application/xml");
+			IOUtils.writeUserToXML(user, new DataOutputStream(response.getOutputStream()));
+			response.setStatus(HttpServletResponse.SC_OK);
+			
+		} else if (responseType.equals("bin")) {
+			
+			response.setContentType("application/octet-stream");
+			IOUtils.writeUserToStream(user, new DataOutputStream(response.getOutputStream()));
+			response.setStatus(HttpServletResponse.SC_OK);
+		}
 	}
-
 }

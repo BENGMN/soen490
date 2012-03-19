@@ -16,6 +16,8 @@
 
 package application.commands;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
@@ -40,6 +42,7 @@ public class CreateUserCommand extends FrontCommand {
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ParameterException, SQLException {
 		ServerParameters params = ServerParameters.getUniqueInstance();
+		
 		// Create some local variables to store the request parameters
 		String email, password, userType, responseType;
 		
@@ -48,6 +51,8 @@ public class CreateUserCommand extends FrontCommand {
 		password = request.getParameter("password");
 		userType = request.getParameter("usertype").toUpperCase();
 		responseType = request.getParameter("responsetype").toUpperCase();
+		
+		// Validation
 		
 		// Perform some validation on the request parameters
 		if (email == null) {
@@ -73,46 +78,64 @@ public class CreateUserCommand extends FrontCommand {
 			throw new ParameterException("Missing 'usertype' parameter.");
 		} else if (!(userType.equals("USER_NORMAL") || userType.equals("USER_ADVERTISER"))) {
 			throw new ParameterException("Invalid 'usertype' parameter provided");
-		}
+		} // TODO change to check usertype.valueof and catch exception
 		
 		// Check the response type
 		if (responseType == null) {
 			throw new ParameterException("Missing 'responsetype' parameter.");
 		} else if (!(responseType.equals("JSP") || responseType.equals("XML") || responseType.equals("BIN"))) {
-			throw new ParameterException("Invalid 'responseType' parameter provided");
+			throw new ParameterException("Invalid 'responsetype' parameter provided");
 		}
 		
-		// Since all of the validations succeeded let's make a new user
+		// End of Validation
+		
 		UserType type = UserType.valueOf(userType);
 		User newUser = null;
 		
 		Logger logger = (Logger)LoggerFactory.getLogger("application");
 		
 		try {
+			
+			String hashedPass = hashPassword(password);
 			// Create the new User
-			newUser = UserFactory.createNew(email, password, type);
+			newUser = UserFactory.createNew(email, hashedPass, type);
 			
 			// Add the new user to the database
 			UserOutputMapper.insert(newUser);
-		} catch (NoSuchAlgorithmException e) {
-			if (responseType.equals("JSP"))
-				request.setAttribute("error", "User could not be created to due to NoAlgorithmException being thrown buy the ID generator");
-			
+		} catch (NoSuchAlgorithmException e) {			
 			logger.error("No such algorithm exception thrown when trying to create user: {}", e);
 			
 			if (responseType.equals("JSP")) {
+				request.setAttribute("error", "User could not be created to due to NoAlgorithmException being thrown buy the ID generator");
 				request.setAttribute("user", newUser);
+				// TODO forward to jsp
 			} else if (responseType.equals("XML")) {
-
+				
 			} else if (responseType.equals("BIN")) {
 				
 			}
 			
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		} catch (UnsupportedEncodingException e) {
+			// TODO do similar as above
+			e.printStackTrace();
 		}
+		
+		// TODO success message
 		
 		logger.info("New User with ID {} was created.", newUser.getUid().toString());
 		response.setStatus(HttpServletResponse.SC_OK);
+	}
+	
+	private String hashPassword(String password) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+		 
+		String charSet = "Latin1";
+		byte[] passwordBytes = password.getBytes(charSet);
+		MessageDigest md = MessageDigest.getInstance("SHA");
+		byte[] encryptedPass = md.digest(passwordBytes);
+		
+		return new String(encryptedPass);
+		 
 	}
 	
 }

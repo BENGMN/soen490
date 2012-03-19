@@ -21,6 +21,7 @@ import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
+
 import domain.user.User;
 
 import domain.user.UserFactory;
@@ -28,6 +29,7 @@ import domain.user.UserIdentityMap;
 import domain.user.mappers.UserInputMapper;
 import domain.user.mappers.UserOutputMapper;
 import domain.user.UserType;
+import exceptions.LostUpdateException;
 import exceptions.MapperException;
 import junit.framework.TestCase;
 
@@ -47,7 +49,7 @@ public class UserInputMapperTest extends TestCase {
 		User user = UserFactory.createNew(email, password, userType);
 		
 		// Place the user into the identity map
-		UserIdentityMap.getUniqueInstance().put(user.getUid(), user);
+		UserIdentityMap.put(user.getUid(), user);
 		
 		// Get a copy of the newly created object from the datastore
 		User userCopy = UserInputMapper.find(user.getUid());
@@ -56,7 +58,7 @@ public class UserInputMapperTest extends TestCase {
 		assertEquals(user.equals(userCopy), true);
 	}
 	
-	public void testFindUserCacheMiss() throws IOException, SQLException, MapperException {
+	public void testFindUserCacheMiss() throws IOException, SQLException, MapperException, LostUpdateException {
 		// Create a new user without the factory to make sure
 		// a) it is NOT placed in the UserIdentityMap and
 		// b) Manually persist the User to the database using the UserOutputMapper
@@ -67,7 +69,7 @@ public class UserInputMapperTest extends TestCase {
 		UserOutputMapper.insert(user);
 		
 		// Make sure a cache miss occurs
-		assertEquals(UserIdentityMap.getUniqueInstance().get(uid), null);
+		assertEquals(UserIdentityMap.get(uid), null);
 		
 		// Retrieve the user object from the database
 		User userCopy = UserInputMapper.find(uid);
@@ -79,7 +81,7 @@ public class UserInputMapperTest extends TestCase {
 		assertEquals(UserOutputMapper.delete(user), 1);
 	}
 	
-	public void testFindByEmail() throws IOException, SQLException, NoSuchAlgorithmException, MapperException {
+	public void testFindByEmail() throws IOException, SQLException, NoSuchAlgorithmException, MapperException, LostUpdateException {
 		// Create a new user with the factory to make sure
 		// a) it is placed in the UserIdentityMap and
 		// b) persisted to the database

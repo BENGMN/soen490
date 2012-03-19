@@ -60,6 +60,7 @@ import domain.user.User;
 import domain.user.UserFactory;
 import domain.user.mappers.UserOutputMapper;
 import domain.user.UserType;
+import exceptions.LostUpdateException;
 import exceptions.MapperException;
 import exceptions.ParameterException;
 import foundation.Database;
@@ -84,7 +85,7 @@ public class MessageCommandTest {
 	}
 	
 	@Test
-	public void getCommand() throws SQLException, IOException, NoSuchAlgorithmException, MapperException, ParameterException, exceptions.UnrecognizedUserException
+	public void getCommand() throws SQLException, IOException, NoSuchAlgorithmException, MapperException, ParameterException, exceptions.UnrecognizedUserException, LostUpdateException
 	{
 		final double longitude = 10.0;
 		final double latitude = 30.0;
@@ -134,7 +135,7 @@ public class MessageCommandTest {
 	}
 	
 	@Test
-	public void putCommand() throws SQLException, IOException, UnrecognizedUserException, ParameterException, NoSuchAlgorithmException, MapperException, exceptions.UnrecognizedUserException
+	public void putCommand() throws SQLException, IOException, UnrecognizedUserException, ParameterException, NoSuchAlgorithmException, MapperException, exceptions.UnrecognizedUserException, LostUpdateException
 	{		
 		String fileName = "test.amr";
 		File file = new File(fileName);

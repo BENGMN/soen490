@@ -1,10 +1,8 @@
 package application;
 
-import java.beans.XMLEncoder;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -14,10 +12,8 @@ import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -31,7 +27,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import com.sun.org.apache.xml.internal.security.utils.Base64;
 
@@ -39,10 +34,9 @@ import domain.message.Message;
 import domain.message.MessageFactory;
 import domain.user.User;
 import domain.user.UserFactory;
-import domain.user.UserProxy;
 import domain.user.UserType;
 import exceptions.CorruptStreamException;
-import exceptions.MapperException;
+
 
 public class IOUtils {
 
@@ -64,22 +58,15 @@ public class IOUtils {
 	 * @param in A DataInputStream to read from
 	 * @return Returns a BigInteger, the Message id, read from the DataInputStream 
 	 * @throws IOException
-	 * @throws CorruptStreamException 
 	 */
-	public static BigInteger readMessageIDfromStream(DataInputStream in) throws IOException, CorruptStreamException {
+	public static BigInteger readMessageIDfromStream(DataInputStream in) throws IOException, NumberFormatException {
 		BigInteger mid = null;
 		
 		MessagePack messagePack = new MessagePack();
 		Unpacker unpacker = messagePack.createUnpacker(in);
+
+		mid = new BigInteger(unpacker.readString());
 		
-		try {
-			mid = new BigInteger(unpacker.readString());
-		} // TODO may want to have this catch outside 
-		catch (NumberFormatException e) {
-			Logger logger = (Logger)LoggerFactory.getLogger("application");
-			logger.error("NumberFormatException occurred when trying to read a Message id from the inputstream: {}", e);
-			throw new CorruptStreamException("A NumberFormatException occurred when trying to read a message id from the input stream.");
-		}
 		return mid;
 	}
 	
@@ -278,9 +265,56 @@ public class IOUtils {
 		UserType type = UserType.valueOf(userType);
 		int version = unpacker.readInt();
 		
-		// TODO get rid of version
 		user = UserFactory.createClean(uid, email, password, type, version);
 		return user;
+	}
+	
+	/**
+	 * Takes the given DataOutputStream and writes the List of Message as XML to it
+	 * @param messages A List of Message to write as XML
+	 * @param out A DataOutputStream to write to
+	 * @throws IOException
+	 */
+	public static void writeMessageListToXML(List<Message> messages, DataOutputStream out) throws IOException {
+		try {
+			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			Document doc = builder.newDocument();
+			// create the root element
+			Element root = doc.createElement("Messages");
+			
+			// for each Message add a node to the XML
+			for (Message message : messages) {
+				Element messageRoot = doc.createElement("Message");
+			
+				// create and append all the children
+				XMLCreateAndAppend(doc, "mid", message.getMid().toString(), messageRoot);
+				XMLCreateAndAppend(doc, "owner", message.getOwner().getUid().toString(), messageRoot);
+				XMLCreateAndAppend(doc, "message", Base64.encode(message.getMessage()), messageRoot);
+				XMLCreateAndAppend(doc, "speed", "" + message.getSpeed(), messageRoot);
+				XMLCreateAndAppend(doc, "longitude", message.getLongitude() + "", messageRoot);
+				XMLCreateAndAppend(doc, "latitude", "" + message.getLatitude(), messageRoot);
+				XMLCreateAndAppend(doc, "createdAt", message.getCreatedAt().getTime() + "", messageRoot);
+				XMLCreateAndAppend(doc, "userRating", message.getUserRating() + "" , messageRoot);
+				
+				root.appendChild(messageRoot);
+			}
+			
+			doc.appendChild(root);
+			
+			// write to the outputstream
+			DOMSource domSource = new DOMSource(doc);
+			TransformerFactory factory = TransformerFactory.newInstance();
+			
+			Transformer transformer = factory.newTransformer();
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+			
+			transformer.transform(domSource, new StreamResult(out));
+		} catch (Exception e) {
+			Logger logger = (Logger) LoggerFactory.getLogger("application");
+			logger.error("Could not properly serialize Message to XML. The following exception occurred: {}", e);
+			throw new IOException("Could not write a Message to XML.");
+		}
 	}
 	
 	/**
@@ -288,9 +322,8 @@ public class IOUtils {
 	 * @param message A Message to write as XML
 	 * @param out A DataOutputStream to write to
 	 * @throws IOException
-	 * @throws CorruptStreamException
 	 */
-	public static void writeMessageToXML(Message message, DataOutputStream out) throws IOException, CorruptStreamException {
+	public static void writeMessageToXML(Message message, DataOutputStream out) throws IOException {
 		try {
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document doc = builder.newDocument();
@@ -321,7 +354,7 @@ public class IOUtils {
 		} catch (Exception e) {
 			Logger logger = (Logger) LoggerFactory.getLogger("application");
 			logger.error("Could not properly serialize Message to XML. The following exception occurred: {}", e);
-			throw new CorruptStreamException("Could not write a Message to XML.");
+			throw new IOException("Could not write a Message to XML.");
 		}
 	}
 	
@@ -330,15 +363,16 @@ public class IOUtils {
 	 * @param in A DataInputStream to read from
 	 * @return Returns a List of Message
 	 * @throws IOException
-	 * @throws CorruptStreamException
 	 */
-	public static List<Message> readMessageFromXML(DataInputStream in) throws IOException, CorruptStreamException {
+	public static List<Message> readMessageListFromXML(DataInputStream in) throws IOException {
 		List<Message> messages = null;
 
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			Document doc = builder.parse(in);
+			
+			// Gets all the message nodes
 			NodeList n = doc.getElementsByTagName("Message");
 			
 			Message msg = null;
@@ -347,6 +381,7 @@ public class IOUtils {
 			
 			messages = new ArrayList<Message>(size);
 			
+			// for each Message node, create and add a Message to the list
 			for (int i = 0; i < size; i++) {
 				Node node = n.item(i);
 				
@@ -364,11 +399,95 @@ public class IOUtils {
 			}
 		} catch (Exception e) {
 			Logger logger = (Logger) LoggerFactory.getLogger("application");
-			logger.error("Could not properly serialize Message to XML. The following exception occurred: {}", e);
-			throw new CorruptStreamException("Could not read a Message from XML.");
+			logger.error("Could not properly deserialize Message to XML. The following exception occurred: {}", e);
+			throw new IOException("Could not read a Message from XML.");
 		} 
 		
 		return messages;
+	}
+	
+	/**
+	 * Takes the given DataOutputStream writes a User as XML to it.
+	 * @param user A User to write as XML
+	 * @param out A DataOutputStream to write to
+	 * @throws IOException
+	 */
+	public static void writeUserToXML(User user, DataOutputStream out) throws IOException {
+		try {
+			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			Document doc = builder.newDocument();
+			// create the root element
+			Element root = doc.createElement("User");
+			
+			// create and append all the children
+			XMLCreateAndAppend(doc, "uid", user.getUid().toString(), root);
+			XMLCreateAndAppend(doc, "password", user.getPassword(), root);
+			XMLCreateAndAppend(doc, "email", user.getEmail(), root);
+			XMLCreateAndAppend(doc, "usertype", "" + user.getType(), root);
+			XMLCreateAndAppend(doc, "version", user.getVersion() + "", root);
+			
+			doc.appendChild(root);
+			
+			// write to the outputstream
+			DOMSource domSource = new DOMSource(doc);
+			TransformerFactory factory = TransformerFactory.newInstance();
+			
+			Transformer transformer = factory.newTransformer();
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+			
+			transformer.transform(domSource, new StreamResult(out));
+		} catch (Exception e) {
+			Logger logger = (Logger) LoggerFactory.getLogger("application");
+			logger.error("Could not properly serialize User to XML. The following exception occurred: {}", e);
+			throw new IOException("Could not write a User to XML.");
+		}
+	}
+	
+	/**
+	 * Takes the given DataOutputStream and reads a List of User as XML from it
+	 * @param user A User to read as XML
+	 * @param out A DataOutputStream to read from
+	 * @throws IOException
+	 */
+	public static List<User> readUserFromXML(DataInputStream in) throws IOException {
+		List<User> users = null;
+
+		try {
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document doc = builder.parse(in);
+			
+			// Gets all the message nodes
+			NodeList n = doc.getElementsByTagName("User");
+			
+			User user = null;
+			
+			int size = n.getLength();
+			
+			users = new ArrayList<User>(size);
+			
+			// for each Message node, create and add a Message to the list
+			for (int i = 0; i < size; i++) {
+				Node node = n.item(i);
+				
+				BigInteger uid = new BigInteger(getElementValue(node, "uid"));
+				String password = getElementValue(node, "password");
+				String email = getElementValue(node, "email");
+				UserType usertype = UserType.valueOf(getElementValue(node, "usertype"));
+				int version = Integer.parseInt(getElementValue(node, "version"));
+				
+			
+				user = UserFactory.createClean(uid, email, password, usertype, version);
+				users.add(user);
+			}
+		} catch (Exception e) {
+			Logger logger = (Logger) LoggerFactory.getLogger("application");
+			logger.error("Could not properly deserialize User from XML. The following exception occurred: {}", e);
+			throw new IOException("Could not read a User from XML.");
+		} 
+		
+		return users;
 	}
 	
 	/**
@@ -407,4 +526,29 @@ public class IOUtils {
 		return matcher.matches();
 	}
 
+	/*
+	 * XML schema for Message
+	 * 	<Messages>
+	 *		<Message>
+	 *			<mid></mid>
+	 *			<owner></owner>
+	 *			<message></message>
+	 *			<speed></speed>
+	 *			<longitude></longitude>
+	 *			<latitude></latitude>
+	 *			<createdAt></createdAt>
+	 *			<userRating></userRating>
+	 *		</Message>
+	 *	</Messages>	
+	 *
+	 *	XML schema for User
+	 *	<User>
+	 *		<uid></uid>
+	 *		<password></password
+	 *		<email></email>
+	 *		<usertype></usertype>
+	 *		<version></version>
+	 *	</User>
+	 *		
+	 */
 }
