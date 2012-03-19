@@ -27,17 +27,9 @@ public class ReadMessageCommand extends FrontCommand {
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, IOException, UnrecognizedUserException, SQLException {
 
-		String separatedIDs;
-		
-		// Get parameter of pipe ('|') separated message id values
-		if ((separatedIDs = request.getParameter("messageid")) == null)
+		String[] individualIDs;
+		if ((individualIDs = request.getParameterValues("messageid")) == null)
 			throw new ParameterException("Missing 'messageid' parameter.");
-		
-		//TODO ids to ignore
-		//String ignore = request.getParameter("ignoreid");
-		
-		// Split the ids, split takes a regex, so we need to escape the pipe character
-		String[] individualIDs = separatedIDs.split("\\|");
 		
 		BigInteger mid = null;
 		
