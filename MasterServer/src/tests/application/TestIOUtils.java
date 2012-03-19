@@ -6,21 +6,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Scanner;
-
-import org.msgpack.MessagePack;
-import org.msgpack.packer.Packer;
-
 import application.IOUtils;
 
 import domain.message.Message;
@@ -80,9 +71,6 @@ public class TestIOUtils extends TestCase {
 			fail();
 			e.printStackTrace();
 		} catch (IOException e) {
-			fail();
-			e.printStackTrace();
-		} catch (CorruptStreamException e) {
 			fail();
 			e.printStackTrace();
 		} finally {
@@ -303,9 +291,6 @@ public class TestIOUtils extends TestCase {
 		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
-		} catch (CorruptStreamException e) {
-			e.printStackTrace();
-			fail();
 		} finally {
 			if (file.exists())
 				file.delete();
@@ -354,10 +339,7 @@ public class TestIOUtils extends TestCase {
 		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
-		} catch (CorruptStreamException e) {
-			e.printStackTrace();
-			fail();
-		} finally {
+		}  finally {
 			if (file.exists())
 				file.delete();
 		}
@@ -388,9 +370,6 @@ public class TestIOUtils extends TestCase {
 			e.printStackTrace();
 			fail();
 		} catch (IOException e) {
-			e.printStackTrace();
-			fail();
-		} catch (CorruptStreamException e) {
 			e.printStackTrace();
 			fail();
 		} finally {

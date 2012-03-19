@@ -21,7 +21,6 @@ import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
-import application.commands.LostUpdateException;
 
 import domain.user.User;
 
@@ -30,6 +29,7 @@ import domain.user.UserIdentityMap;
 import domain.user.mappers.UserInputMapper;
 import domain.user.mappers.UserOutputMapper;
 import domain.user.UserType;
+import exceptions.LostUpdateException;
 import exceptions.MapperException;
 import junit.framework.TestCase;
 

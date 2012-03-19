@@ -48,7 +48,6 @@ import technical.UnrecognizedUserException;
 
 
 import application.commands.DownvoteMessageCommand;
-import application.commands.LostUpdateException;
 import application.commands.ReadMessageCommand;
 import application.commands.CreateMessageCommand;
 import application.commands.UpvoteMessageCommand;
@@ -61,6 +60,7 @@ import domain.user.User;
 import domain.user.UserFactory;
 import domain.user.mappers.UserOutputMapper;
 import domain.user.UserType;
+import exceptions.LostUpdateException;
 import exceptions.MapperException;
 import exceptions.ParameterException;
 import foundation.Database;

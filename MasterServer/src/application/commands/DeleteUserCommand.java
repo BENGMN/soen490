@@ -8,11 +8,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import application.ServerParameters;
 import domain.user.User;
 import domain.user.mappers.UserInputMapper;
 import domain.user.mappers.UserOutputMapper;
 
+import exceptions.LostUpdateException;
 import exceptions.MapperException;
 import exceptions.ParameterException;
 import exceptions.UnrecognizedUserException;
@@ -20,9 +20,7 @@ import exceptions.UnrecognizedUserException;
 public class DeleteUserCommand extends FrontCommand {	
 	
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response)
-			throws MapperException, ParameterException, IOException,
-			UnrecognizedUserException, SQLException, ServletException {
+	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, IOException, UnrecognizedUserException, SQLException, ServletException {
 		
 		// Create some local variables to store the request/response parameters
 		BigInteger userID = null;
@@ -53,7 +51,6 @@ public class DeleteUserCommand extends FrontCommand {
 		} catch (NumberFormatException e) {
 			throw new ParameterException("Parameter 'version' is badly formatted, not a valid integer.");
 		}
-		// End Validation
 		
 		// Check the response type
 		if (responseType == null) {
@@ -62,7 +59,8 @@ public class DeleteUserCommand extends FrontCommand {
 		else if (!(responseType.equals("jsp") || responseType.equals("xml") || responseType.equals("bin"))){
 			throw new ParameterException("Invalid 'responseType' parameter provided. Choose from 'jsp', 'xml', 'bin'.");
 		}
-				
+		// End Validation
+		
 		User user = UserInputMapper.find(userID);
 		
 		// Set the version of the object to that which the client provided
@@ -78,6 +76,7 @@ public class DeleteUserCommand extends FrontCommand {
 			}
 		}
 
+		// TODO Writing depending on response type
 		if (responseType.equals("jsp")) {
 			response.setStatus(HttpServletResponse.SC_OK);
 		}

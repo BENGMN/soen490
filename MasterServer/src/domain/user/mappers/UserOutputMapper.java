@@ -17,10 +17,10 @@ package domain.user.mappers;
 
 import java.sql.SQLException;
 
-import application.commands.LostUpdateException;
 
 import domain.user.User;
 import domain.user.UserType;
+import exceptions.LostUpdateException;
 import foundation.tdg.UserTDG;
 
 
