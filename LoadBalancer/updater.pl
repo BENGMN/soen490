@@ -5,8 +5,10 @@ use warnings;
 use Net::Ping;
 use POSIX qw(strftime);
 use File::stat;
-use Digest::MD5 'md5';
-use Mysql;
+use Digest::MD5 'md5_hex';
+use Net::MySQL;
+use Net::SSH::Perl;
+use File::Temp;
 
 my $ApachePath = "/etc/apache2";
 my $ConfigPath = "$ApachePath/mods-available/proxy.conf";
@@ -15,10 +17,16 @@ my $LogPath = "updater.log";
 my $ApacheHardRestartCmd = '/etc/init.d/apache2 graceful';
 my $ApacheGracefulRestartCmd = '/etc/init.d/apache2 restart';
 
-my $DatabaserHostname = '192.168.1.150';
+my $DatabaseHostname = '192.168.1.150';
 my $DatabaseUsername = 'soen490';
 my $DatabaseName = 'soen490';
 my $DatabasePassword = 'capstone';
+my $SSHUsername = 'root';
+my $SSHPassword = 'ah4819237';
+my $LoadBalancerHostname = 'localhost';
+
+our $SSH = Net::SSH::Perl->new($LoadBalancerHostname);
+$SSH->login($SSHUsername, $SSHPassword);
 
 my $Log;
 open($Log, ">>", $LogPath) or die "Unable to open logfile.\n";
@@ -37,17 +45,56 @@ sub logdie($)
 	exit(-1);
 }
 
-logwrite("Script not running as root, may fail.") unless $> == 0;
-logwrite("Updating server list...");
+sub runRemoteCmd($)
+{
+	my $CMD = shift;
+	my ($stdout, $stderr, $exit) = $SSH->cmd($CMD);
+	return undef if $exit != 0;
+	return $stdout;
+}
 
+sub getRemoteSize($)
+{
+	my $Result = runRemoteCmd("du -b $ConfigPath");
+	logdie("Unable to retrieve size.") unless defined $Result && $Result =~ m/^(\d+)/;
+	return $1;
+}
+
+sub getRemoteMD5($)
+{
+	my $Result = runRemoteCmd("md5sum $ConfigPath");
+	logdie("Unable to retrieve md5sum.") unless defined $Result && $Result =~ m/^(\w+)/;
+	return $1;	
+}
+
+sub putRemoteFile($$)
+{
+	my $Contents = shift;
+	my $Destination = shift;
+	my $TMP = tmpnam();
+	open(my $OUTPUT, ">$TMP") or logdie("Unable to open tempporary file for remote file transfer.");
+	print $OUTPUT $Contents;
+	close($OUTPUT);
+	my $CMD = "scp $TMP $SSHUsername@" . "$LoadBalancerHostname:$Destination";
+	`$CMD`;
+	return $? == 0;
+}
+
+sub getRemoteFile($)
+{
+	my $Origin = shift;
+	return runRemoteCmd("cat $Origin");
+}
+
+logwrite("Updating server list...");
 # Get server list from the DB.
-my $DB = Mysql->connect($DatabaseHostname, $DatabaseName, $DatabaseUsername, $DatabasePassword);
-logdie("Unable to connect to mysql database with $DatabasesHostname, $DatabaseName, $DatabaseUsername, $DatabasePassword.") unless defined $DB;
-$DB->selectdb($DatabaseName);
+my $DB = Net::MySQL->new("hostname" => $DatabaseHostname, "database" => $DatabaseName, "user" => $DatabaseUsername, "password" => $DatabasePassword);
+logdie("Unable to connect to mysql database with $DatabaseHostname, $DatabaseName, $DatabaseUsername, $DatabasePassword.") unless defined $DB;
 my $Result = $DB->query("SELECT * FROM ServerList");
-logdie("Malformed Database Table.") unless $Result->numfields() == 2;
-while (my @Results = $Result->fetchrow()) {
-	$Servers{$Results[0]} = $Results[1];
+logdie("Malformed Database Table.") if $DB->is_error();
+my $Record = $DB->create_record_iterator();
+while (my $Row = $Record->each) {
+	$Servers{$$Row{'hostname'}} = $$Row{'port'};
 }
 
 # Make sure that they're all online.
@@ -93,36 +140,31 @@ foreach my $Server (keys(%Servers)) {
 $ConfigContents .= "</Proxy>
 
 </IfModule>";
+
 # Check if we differ from config file.
-my $Differ = 0;
-if (stat($ConfigPath)->size == length($ConfigContents) ) {
+my $Differ = 1;
+my $LocalSize = length($ConfigContents);
+my $RemoteSize = getRemoteSize($ConfigPath);
+logwrite("Local/Remote Szies: $LocalSize/$RemoteSize.");
+if ($LocalSize ==  $RemoteSize) {
 	# Size is the same, let's do an md5 digest of our config, and the new one.
-	my $ConfigCurrent = undef;
-	{
-		local $/;
-		open($Input, $ConfigPath) or logdie("Unable to open configuration file for reading.");
-		$ConfigCurrent = <$Input>;
-		close($Input);
-	}
-	$Differ = 1 if (md5($ConfigContents) ne md5($ConfigCurrent));
-}
-else {
-	$Differ = 1;
-}
+	my $MD5Local = md5_hex($ConfigContents);
+	my $MD5Remote = getRemoteMD5($ConfigPath);
+	logwrite("Local/Remote Hash: $MD5Local/$MD5Remote.");
+	$Differ = 0 if ($MD5Local eq $MD5Remote);
+#}
 
 if ($Differ == 1) {	
 	logwrite("Generated and current files differ. Replacing.");
-	open(my $Output, ">", $ConfigPath) or logdie("Unable to open configuration file for writing.");
-	print $Output $ConfigContents;
-	close($Output);
+	logdie("Unable to transfer configuration file for writing.") unless putRemoteFile($ConfigContents, $ConfigPath);
 	logwrite("Configuration updated sucessfully.");
 	logwrite("Gracefully restarting apache.");
 	# Perform a graceful restart.
-	my $ApacheLog = `$ApacheGracefulRestartCmd`;
+	my $ApacheLog = runRemoteCmd($ApacheGracefulRestartCmd);
 	if ($? != 0) {
 		logwrite("Unable to gracefully restart apache: " . $ApacheLog);
 		logwrite("Attempting full restart.");
-		$ApacheLog = `$ApacheHardRestartCmd`;
+		$ApacheLog = runRemoteCmd($ApacheHardRestartCmd);
 		logdie("Unable to hard restart apache!") if $? != 0; 
 	}
 	logwrite("Succesfully restarted apache.");

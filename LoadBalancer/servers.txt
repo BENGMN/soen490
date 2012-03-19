@@ -1,6 +1,0 @@
-# This file is a bunch of servers. The updater.pl read this file when it's run, 
-# and then try and ping all of the servers. It will then swap out the existing
-# apache proxy.conf file.
-# Structure like: hostname:port
-
-192.168.1.150:8000
