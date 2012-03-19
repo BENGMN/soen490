@@ -16,6 +16,8 @@
 
 package application.commands;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
@@ -89,8 +91,10 @@ public class CreateUserCommand extends FrontCommand {
 		Logger logger = (Logger)LoggerFactory.getLogger("application");
 		
 		try {
+			
+			String hashedPass = hashPassword(password);
 			// Create the new User
-			newUser = UserFactory.createNew(email, password, type);
+			newUser = UserFactory.createNew(email, hashedPass, type);
 			
 			// Add the new user to the database
 			UserOutputMapper.insert(newUser);
@@ -109,10 +113,24 @@ public class CreateUserCommand extends FrontCommand {
 			}
 			
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		logger.info("New User with ID {} was created.", newUser.getUid().toString());
 		response.setStatus(HttpServletResponse.SC_OK);
+	}
+	
+	private String hashPassword(String password) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+		 
+		String charSet = "Latin1";
+		byte[] passwordBytes = password.getBytes(charSet);
+		MessageDigest md = MessageDigest.getInstance("SHA");
+		byte[] encryptedPass = md.digest(passwordBytes);
+		
+		return new String(encryptedPass);
+		 
 	}
 	
 }
