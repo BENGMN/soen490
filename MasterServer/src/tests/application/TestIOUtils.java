@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
@@ -15,6 +16,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Scanner;
 
 import org.msgpack.MessagePack;
 import org.msgpack.packer.Packer;
@@ -229,6 +231,7 @@ public class TestIOUtils extends TestCase {
 		}
 	}
 	
+	// Testing a single user
 	public void testReadAndWriteMessage() {
 		File file = new File("TestMessageUtils");
 		
@@ -237,6 +240,7 @@ public class TestIOUtils extends TestCase {
 			
 			DataOutputStream out = new DataOutputStream(new FileOutputStream(file));
 			
+			// write user to out stream
 			IOUtils.writeUserToStream(user, out);
 			
 			out.close();
@@ -266,6 +270,42 @@ public class TestIOUtils extends TestCase {
 		} finally {
 			if (file.exists())
 				file.delete();
+		} 
+	}
+	
+	public void testWriteAndReadMessageToXML() {
+		File file = new File("TestMessageUtils");
+		
+		try {
+			Message msg = MessageFactory.createClean(mid, uid, message, speed, latitude, longitude, createdAt, userRating);
+			
+			
+			DataOutputStream out = new DataOutputStream(new FileOutputStream(file));
+			
+			IOUtils.writeMessageToXML(msg, out);
+			
+			out.close();
+
+			DataInputStream in = new DataInputStream(new FileInputStream(file));
+			
+			List<Message> messages = IOUtils.readMessageFromXML(in);
+			
+			// only one message
+			assertTrue(msg.equals(messages.get(0)));
+			
+			in.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			fail();
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail();
+		} catch (CorruptStreamException e) {
+			e.printStackTrace();
+			fail();
+		} finally {
+			if (file.exists());
+				//file.delete();
 		}
 	}
 }
