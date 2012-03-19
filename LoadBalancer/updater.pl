@@ -12,7 +12,6 @@ use File::Temp;
 
 my $ApachePath = "/etc/apache2";
 my $ConfigPath = "$ApachePath/mods-available/proxy.conf";
-my $ServerPath = "servers.txt";
 my $LogPath = "updater.log";
 my $ApacheHardRestartCmd = '/etc/init.d/apache2 graceful';
 my $ApacheGracefulRestartCmd = '/etc/init.d/apache2 restart';
@@ -152,7 +151,7 @@ if ($LocalSize ==  $RemoteSize) {
 	my $MD5Remote = getRemoteMD5($ConfigPath);
 	logwrite("Local/Remote Hash: $MD5Local/$MD5Remote.");
 	$Differ = 0 if ($MD5Local eq $MD5Remote);
-#}
+}
 
 if ($Differ == 1) {	
 	logwrite("Generated and current files differ. Replacing.");

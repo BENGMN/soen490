@@ -12,7 +12,12 @@ UPDATE_SCRIPT=$MAIN_DIR/updater.pl
 # Base update.
 sudo apt-get update
 # Install apache and necessary modules.
-sudo apt-get install apache2
+sudo apt-get install apache2 perl
+sudo perl -MCPAN -e 'install Math::Pari'
+sudo perl -MCPAN -e 'install Net::SSH::Perl'
+sudo perl -MCPAN -e 'install Digest::MD5';
+sudo perl -MCPAN -e 'install Net::MySQL';
+sudo perl -MCPAN -e 'install Net::Ping';
 # Create symlinsk to load proper modules.
 sudo ln -s $MOD_AVA/proxy.conf $MOD_ENA/proxy.conf
 sudo ln -s $MOD_AVA/proxy.load $MOD_ENA/proxy.load
