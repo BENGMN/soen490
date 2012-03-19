@@ -24,53 +24,63 @@ public class DeleteUserCommand extends FrontCommand {
 			throws MapperException, ParameterException, IOException,
 			UnrecognizedUserException, SQLException, ServletException {
 		
-		// Get the server parameters
-		ServerParameters params = ServerParameters.getUniqueInstance();
-		
 		// Create some local variables to store the request/response parameters
 		BigInteger userID = null;
-		String email, version, responseType;
+		String userid, version, responseType;
+		int intVersion;
+		
 		
 		// Get the parameters from the request
-		email = request.getParameter("email");
+		userid = request.getParameter("userid");
 		version = request.getParameter("version");
 		responseType = request.getParameter("responsetype");
 		
-		if (request.getParameter("userid") != null)
-			userID = new BigInteger(request.getParameter("userid"));
+		// Validation
+		if (userid == null)
+			throw new ParameterException("Missing 'userid' parameter.");
+			
+		if (version == null)
+			throw new ParameterException("Missing 'version' parameter.");
 		
-		if (request.getParameter("version") != null)
-			version = request.getParameter("version");
+		try {
+			userID = new BigInteger(userid);
+		} catch (NumberFormatException e) {
+			throw new ParameterException("Parameter 'userid' is badly formatted, not a valid integer.");
+		}
 		
-		// Make sure that an email or userid parameter was supplied
-		if (!(email != null || userID != null))
-			throw new ParameterException("Missing parameters 'email' and 'userid' in request");
+		try {
+			intVersion = Integer.parseInt(version);
+		} catch (NumberFormatException e) {
+			throw new ParameterException("Parameter 'version' is badly formatted, not a valid integer.");
+		}
+		// End Validation
 		
 		// Check the response type
 		if (responseType == null) {
 			throw new ParameterException("Missing 'responsetype' parameter.");
 		} 
-		else if (!(responseType.equals("JSP") || responseType.equals("XML") || responseType.equals("BIN"))){
-			throw new ParameterException("Invalid 'responseType' parameter provided");
+		else if (!(responseType.equals("jsp") || responseType.equals("xml") || responseType.equals("bin"))){
+			throw new ParameterException("Invalid 'responseType' parameter provided. Choose from 'jsp', 'xml', 'bin'.");
 		}
-		
-		User user = null;
-		
-		if (email != null) {
-			// If the email parameter is supplied use that to locate the object with
-			user = UserInputMapper.findByEmail(email);
-			
-		} else if (userID != null) {
-			// If the userID parameter is supplied use that to locate the object with
-			user = UserInputMapper.find(userID);
-		}
+				
+		User user = UserInputMapper.find(userID);
 		
 		// Set the version of the object to that which the client provided
-		user.setVersion(Integer.parseInt(version));
+		user.setVersion(intVersion);
 					
 		// Delete the user from the database
-		int rows_affected = UserOutputMapper.delete(user);
-		
+		try {
+			UserOutputMapper.delete(user);
+		} catch (LostUpdateException e) {
+			if (responseType.equals("jsp")) {
+				request.setAttribute("error", e.getMessage());
+				request.setAttribute("user", user);
+			}
+		}
+
+		if (responseType.equals("jsp")) {
+			response.setStatus(HttpServletResponse.SC_OK);
+		}
 		// WRITE A RESPONSE BASED ON THE RESPONSE TYPE
 
 	}

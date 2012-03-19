@@ -28,7 +28,7 @@ import foundation.tdg.MessageTDG;
  */
 public class MessageOutputMapper {
 	/**
-	 * Calls the foundation method for updating a message.
+	 * Calls the persistence method for updating a message.
 	 * @param message Message
 	 * @return the number of rows updated (1 for success, 0 for failure)
 	 * @throws SQLException
@@ -39,7 +39,7 @@ public class MessageOutputMapper {
 	}
 	
 	/**
-	 * Calls the foundation method for deleting a message
+	 * Calls the persistence method for deleting a message
 	 * @param message Message
 	 * @return the number of rows updated (1 for success, 0 for failure) 
 	 * @throws SQLException
@@ -49,7 +49,7 @@ public class MessageOutputMapper {
 	}
 	
 	/**
-	 * Calls the foundation method for deleting a message from a BigInteger
+	 * Calls the persistence method for deleting a message from a BigInteger
 	 * @param messageID
 	 * @return
 	 * @throws SQLException

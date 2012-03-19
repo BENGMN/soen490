@@ -46,7 +46,11 @@ public class TestIOUtils extends TestCase {
 	final double longitude = 35.134;
 	private Timestamp createdAt = new Timestamp(System.currentTimeMillis());
 	private int userRating = 7;
-
+	private String email = "test@test.com";
+	private UserType usertype = UserType.USER_ADVERTISER;
+	private int version = 0;
+	private String password = "password";
+	
 	// Testing for a single BigInteger
 	public void testWriteAndReadMessageID() {
 		File file = new File("TestMessageUtils");
@@ -232,7 +236,7 @@ public class TestIOUtils extends TestCase {
 	}
 	
 	// Testing a single user
-	public void testReadAndWriteMessage() {
+	public void testWriteAndReadUser() {
 		File file = new File("TestMessageUtils");
 		
 		try {
@@ -279,7 +283,6 @@ public class TestIOUtils extends TestCase {
 		try {
 			Message msg = MessageFactory.createClean(mid, uid, message, speed, latitude, longitude, createdAt, userRating);
 			
-			
 			DataOutputStream out = new DataOutputStream(new FileOutputStream(file));
 			
 			IOUtils.writeMessageToXML(msg, out);
@@ -288,7 +291,7 @@ public class TestIOUtils extends TestCase {
 
 			DataInputStream in = new DataInputStream(new FileInputStream(file));
 			
-			List<Message> messages = IOUtils.readMessageFromXML(in);
+			List<Message> messages = IOUtils.readMessageListFromXML(in);
 			
 			// only one message
 			assertTrue(msg.equals(messages.get(0)));
@@ -304,8 +307,95 @@ public class TestIOUtils extends TestCase {
 			e.printStackTrace();
 			fail();
 		} finally {
-			if (file.exists());
-				//file.delete();
+			if (file.exists())
+				file.delete();
 		}
+	}
+	
+	public void testWriteAndReadMessageListXML() {
+		File file = new File("TestMessageUtils");
+		
+		try {
+			// create 3 messages
+			BigInteger mid1 = new BigInteger("1231241251342312");
+			Message msg1 = MessageFactory.createClean(mid1, uid, message, speed, latitude, longitude, createdAt, userRating);
+			BigInteger mid2 = new BigInteger("1325435123124312451235134");
+			Message msg2 = MessageFactory.createClean(mid2, uid, message, speed, latitude, longitude, createdAt, userRating);
+			BigInteger mid3 = new BigInteger("123124231253414321231231232131");
+			Message msg3 = MessageFactory.createClean(mid3, uid, message, speed, latitude, longitude, createdAt, userRating);
+
+			List<Message> list = new ArrayList<Message>(3);
+			
+			list.add(msg1);
+			list.add(msg2);
+			list.add(msg3);
+					
+			DataOutputStream out = new DataOutputStream(new FileOutputStream(file));
+			
+			IOUtils.writeMessageListToXML(list, out);
+			
+			out.close();
+
+			DataInputStream in = new DataInputStream(new FileInputStream(file));
+			
+			List<Message> messages = IOUtils.readMessageListFromXML(in);
+			
+			// only one message
+			assertEquals(list.size(), messages.size());
+			assertTrue(msg1.equals(messages.get(0)));
+			assertTrue(msg2.equals(messages.get(1)));
+			assertTrue(msg3.equals(messages.get(2)));
+			
+			
+			in.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			fail();
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail();
+		} catch (CorruptStreamException e) {
+			e.printStackTrace();
+			fail();
+		} finally {
+			if (file.exists())
+				file.delete();
+		}
+	}
+	
+	// Testing a single user
+	public void testWriteAndReadUserXML() {
+		File file = new File("TestMessageUtils");
+		
+		try {
+			User user = UserFactory.createClean(uid, email, password, usertype, version);
+					
+			DataOutputStream out = new DataOutputStream(new FileOutputStream(file));
+			
+			IOUtils.writeUserToXML(user, out);
+			
+			out.close();
+
+			DataInputStream in = new DataInputStream(new FileInputStream(file));
+		
+			List<User> users = IOUtils.readUserFromXML(in);
+			
+			assertEquals(users.size(), 1);
+			assertTrue(user.equals(users.get(0)));
+			
+			in.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			fail();
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail();
+		} catch (CorruptStreamException e) {
+			e.printStackTrace();
+			fail();
+		} finally {
+			if (file.exists())
+				file.delete();
+		}		
 	}
 }

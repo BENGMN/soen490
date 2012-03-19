@@ -128,15 +128,13 @@ public class FrontController extends HttpServlet {
 		commandMap.put("POST.createuser", new CreateUserCommand());
 		
 		// Command for getting a user
-		commandMap.put("GET.getuser", new ReadUserCommand());
-		
-		// Command for updating a user
-		commandMap.put("POST.updateuser", new UpdateUserCommand());
+		commandMap.put("GET.readuser", new ReadUserCommand());
 		
 		// Command for deleting a user
 		commandMap.put("DELETE.deleteuser", new DeleteUserCommand());
 		
-		ServerParameters params = ServerParameters.getUniqueInstance();
+		// Simply to initialise
+		ServerParameters.getUniqueInstance();
 	
 		// Frees the connection from the connection pool
 		Database.freeConnection();

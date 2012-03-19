@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.SQLException;
 
+import application.commands.LostUpdateException;
+
 import domain.user.User;
 import domain.user.UserIdentityMap;
 import domain.user.mappers.UserInputMapper;
@@ -40,7 +42,7 @@ public class UserOutputMapperTest extends TestCase {
 		UserIdentityMap.remove(uid);
 	}
 	
-	public void testUpdate() throws IOException, SQLException, MapperException {
+	public void testUpdate() throws IOException, SQLException, MapperException, LostUpdateException {
 		// Use the UserOutputMapper to deconstruct the object and place it into the database
 		UserOutputMapper.insert(user);
 		
@@ -65,7 +67,7 @@ public class UserOutputMapperTest extends TestCase {
 		assertEquals(UserTDG.delete(uid, 2),1);	
 	}
 
-	public void testDelete() throws IOException, SQLException {
+	public void testDelete() throws IOException, SQLException, LostUpdateException {
 		// Use the UserOutputMapper to deconstruct the object and place it into the database
 		UserOutputMapper.insert(user);
 		
