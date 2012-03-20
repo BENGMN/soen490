@@ -1,0 +1,27 @@
+title Load Balancer
+
+Client->LoadBalancer: Incoming HTTP Request
+LoadBalancer->LoadBalancer: Determine Recipient
+LoadBalancer->Server X: Forward Request
+Server X->Database: Retrieve Data
+Server X->Server X: Fufill Request
+Server X->LoadBalancer: Return HTTP Response
+LoadBalancer->Client: Return HTTP Response
+
+
+title Load Balancer Updater
+
+Server X->Server X: init
+Server X->Database: Register Server
+loop every 10 minutes
+Management->Database: Get Server List
+loop for each Server X
+    Management->Server X: PingCommandRequest
+end
+
+opt if configuration changed
+    Management->LoadBalancer: Update Proxy Configuration
+    Management->LoadBalancer: Apache Graceful Restart
+end
+Management->Management: Write Results to Logfile
+end

@@ -2,13 +2,13 @@
 
 use strict;
 use warnings;
-use Net::Ping;
 use POSIX qw(strftime);
 use File::stat;
 use Digest::MD5 'md5_hex';
 use Net::MySQL;
 use Net::SSH::Perl;
 use File::Temp;
+use LWP::UserAgent;
 
 my $ApachePath = "/etc/apache2";
 my $ConfigPath = "$ApachePath/mods-available/proxy.conf";
@@ -23,6 +23,8 @@ my $DatabasePassword = 'capstone';
 my $SSHUsername = 'root';
 my $SSHPassword = 'ah4819237';
 my $LoadBalancerHostname = 'localhost';
+my $UA = LWP::UserAgent->new;
+$UA->timeout(2);
 
 our $SSH = Net::SSH::Perl->new($LoadBalancerHostname);
 $SSH->login($SSHUsername, $SSHPassword);
@@ -96,14 +98,13 @@ while (my $Row = $Record->each) {
 	$Servers{$$Row{'hostname'}} = $$Row{'port'};
 }
 
-# Make sure that they're all online.
-my $Ping = Net::Ping->new();
+# Make sure that they're all online, and that tomcat is running.
 foreach my $Server (keys(%Servers)) {
-	next if $Ping->ping($Server);
+	my $Response = $UA->get("$Server/frontController?command=PingCommand");
+	next unless $Response->code == 303;
 	delete $Servers{$Server};
 	logwrite("Server $Server is not responding to ping, not adding to list.");
 }
-$Ping->close();
 # Generate configuration file.
 my $ConfigContents = "<IfModule mod_proxy.c>
 # 'ProxyRequests On' line and the <Proxy *> block below.
