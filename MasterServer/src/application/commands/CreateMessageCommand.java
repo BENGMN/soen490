@@ -60,13 +60,18 @@ public class CreateMessageCommand extends FrontCommand {
 			throw new ParameterException("Uploaded file's size is too small.");
 		}
 				
-		byte[] messageBytes = null;
-		messageBytes = multipartFile.getBytes();
+		byte[] messageBytes = multipartFile.getBytes();
 		
 		// Get location information
 		String strLongitude = multipartRequest.getParameter("longitude");
 		String strLatitude = multipartRequest.getParameter("latitude");
 		String strSpeed = multipartRequest.getParameter("speed");
+		
+		if (strLongitude == null) 
+			throw new ParameterException("Missing 'longitude' parameter.");
+		
+		if (strLatitude == null) 
+			throw new ParameterException("Missing 'latitude' parameter.");
 		
 		double longitude;
 		double latitude;
