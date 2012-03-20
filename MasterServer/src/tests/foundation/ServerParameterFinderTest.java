@@ -33,6 +33,7 @@ public class ServerParameterFinderTest extends TestCase {
 			assertEquals("A description", rs.getString("description"));
 			assertEquals("A value", rs.getString("value"));
 			
+			rs.close();
 			ServerParameterTDG.drop();
 			
 		} catch (SQLException e) {
@@ -56,27 +57,16 @@ public class ServerParameterFinderTest extends TestCase {
 			
 			ResultSet rs = ServerParameterFinder.findAll();
 			
-			assertFalse(rs.next());
-			
-			// Insert
-			ServerParameterTDG.insert("paramName1", "A 1st description", "A 1st value");
-			// Insert
-			ServerParameterTDG.insert("paramName2", "A 2nd description", "A 2nd value");
-			// Insert
-			ServerParameterTDG.insert("paramName3", "A 3rd description", "A 3rd value");
-			
-			// paramName is primary key 
-			rs = ServerParameterFinder.findAll();
-			
-			/*
-			 * Should have 3 elements 
-			 * So assert true 3 times and false 1
-			 */
-			assertTrue(rs.next());
-			assertTrue(rs.next());
-			assertTrue(rs.next());
-			assertFalse(rs.next());
+			int size = ServerParameterTDG.INSERTIONS.length;
 						
+			for (int i = 0; i < size; i++) {
+				assertTrue(rs.next());
+			}
+			
+			assertFalse(rs.next());
+			
+			rs.close();
+			
 			ServerParameterTDG.drop();
 			
 		} catch (SQLException e) {

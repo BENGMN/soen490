@@ -7,7 +7,9 @@ import java.sql.SQLException;
 import foundation.Database;
 
 
-
+/**
+ * Table data gateway for the ServerParameters table in persistence.
+ */
 public class ServerParameterTDG {
 	/**
 	 * SQL table name of parameters
@@ -108,14 +110,21 @@ public class ServerParameterTDG {
 
 	/**
 	 * SQL function for creating the table. Will throw SQLExceptin if table already exists.
-	 * Public visibility so that the controller can call it.
+	 * Public visibility so that the controller can call it. This function actually adds rows to the table since it is needed configuration information.
 	 * @throws SQLException 
 	 */
 	public static void create() throws SQLException {
 		Connection connection = Database.getConnection();
 		PreparedStatement ps = connection.prepareStatement(CREATE);
-		
 		ps.executeUpdate();
+		ps.close();
+	
+		for (String insertion : INSERTIONS) {
+			ps = connection.prepareStatement(insertion);
+			ps.executeUpdate();
+			ps.close();
+		}
+
 		ps.close();
 	}
 	
@@ -136,4 +145,46 @@ public class ServerParameterTDG {
 		ps.executeUpdate();
 		ps.close();
 	}
+	
+	/**
+	 * SQL queries for inserting the configuration data we need. It is public for testing purposes.
+	 */
+	public static final String INSERTIONS[] = 
+		{
+		"INSERT INTO ServerParameters " +
+		"VALUES ('minMessageSizeBytes', 'The minimum size of uploaded audio files that should be accepted, in bytes.', 2000);",
+
+		"INSERT INTO ServerParameters " + 
+		"VALUES ('maxMessageSizeBytes', 'The maximum size of uploaded audio files that should be accepted, in bytes.', 50000);",
+
+		"INSERT INTO ServerParameters " + 
+		"VALUES ('messageLifeDays', 'The time to live of regular messages. If a message is older than this amount, in days, it should be deleted.', 7);",
+
+		"INSERT INTO ServerParameters " + 
+		"VALUES ('advertiserMessageLifeDays', 'The time to live of advertiser messages.', 30);",
+
+		"INSERT INTO ServerParameters " + 
+		"VALUES ('minEmailLength', 'The minimum character length of email addresses when creating user accounts.', 15);",
+
+		"INSERT INTO ServerParameters " + 
+		"VALUES ('maxEmailLength', 'The maximum character length of email addresses when creating user accounts.', 50);",
+
+		"INSERT INTO ServerParameters " + 
+		"VALUES ('minPasswordLength', 'The minimum character length of password when creating user accounts.', 6);",
+
+		"INSERT INTO ServerParameters " + 
+		"VALUES ('maxPasswordLength', 'The maximum character length of password when creating user accounts.', 20);",
+
+		"INSERT INTO ServerParameters " + 
+		"VALUES ('speedThreshold', 'The speed threshold to compare against a user requesting messages.', 15);",
+
+		"INSERT INTO ServerParameters " + 
+		"VALUES ('defaultMessageRadiusMeters', 'The default radius, in meters, in which to check if there are any messages.', 100);",
+
+		"INSERT INTO ServerParameters " + 
+		"VALUES ('minMessages', 'The minimum amount of messages fetched to the user.', 10);",
+
+		"INSERT INTO ServerParameters " + 
+		"VALUES ('maxMessages', 'The maximum amount of messages fetched to the user.', 50);",
+		};
 }

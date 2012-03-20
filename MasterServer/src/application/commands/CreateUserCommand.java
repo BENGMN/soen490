@@ -16,17 +16,22 @@
 
 package application.commands;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.LoggerFactory;
 
 import application.IOUtils;
+import application.ResponseType;
 import application.ServerParameters;
 
 import ch.qos.logback.classic.Logger;
@@ -38,13 +43,16 @@ import domain.user.mappers.UserOutputMapper;
 import exceptions.ParameterException;
 
 public class CreateUserCommand extends FrontCommand {
-
+	private static String SUCCESS_CREATE_USER = "success.jsp";
+	
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws ParameterException, SQLException {
+	public void execute(HttpServletRequest request, HttpServletResponse response) throws ParameterException, SQLException, ServletException, IOException {
 		ServerParameters params = ServerParameters.getUniqueInstance();
 		
 		// Create some local variables to store the request parameters
 		String email, password, userType, responseType;
+		UserType type;
+		ResponseType resp;
 		
 		// Capture the request parameters
 		email = (String) request.getParameter("email");
@@ -53,8 +61,6 @@ public class CreateUserCommand extends FrontCommand {
 		responseType = request.getParameter("responsetype").toUpperCase();
 		
 		// Validation
-		
-		// Perform some validation on the request parameters
 		if (email == null) {
 			throw new ParameterException("Missing 'email' parameter.");
 		} else if (!IOUtils.validateEmail(email)) {
@@ -76,57 +82,87 @@ public class CreateUserCommand extends FrontCommand {
 		// Check the type of user account
 		if (userType == null) {
 			throw new ParameterException("Missing 'usertype' parameter.");
-		} else if (!(userType.equals("USER_NORMAL") || userType.equals("USER_ADVERTISER"))) {
-			throw new ParameterException("Invalid 'usertype' parameter provided");
-		} // TODO change to check usertype.valueof and catch exception
+		} 
+		
+		try {
+			// Get the type of user while validating
+			type = UserType.valueOf(userType.toUpperCase());
+		} catch (IllegalArgumentException e) {
+			throw new ParameterException("Invalid 'usertype' parameter provided.");
+		}
 		
 		// Check the response type
 		if (responseType == null) {
 			throw new ParameterException("Missing 'responsetype' parameter.");
-		} else if (!(responseType.equals("JSP") || responseType.equals("XML") || responseType.equals("BIN"))) {
-			throw new ParameterException("Invalid 'responsetype' parameter provided");
-		}
+		} 
 		
+		try {
+			resp = ResponseType.valueOf(responseType.toUpperCase());
+		} catch (IllegalArgumentException e) {
+			throw new ParameterException("Invalid 'responsetype' parameter provided.");
+		}		
 		// End of Validation
 		
-		UserType type = UserType.valueOf(userType);
 		User newUser = null;
 		
 		Logger logger = (Logger)LoggerFactory.getLogger("application");
 		
+		DataOutputStream out = new DataOutputStream(response.getOutputStream());
+
 		try {
-			
 			String hashedPass = hashPassword(password);
-			// Create the new User
+			
 			newUser = UserFactory.createNew(email, hashedPass, type);
 			
-			// Add the new user to the database
+			// add the new user to the database
 			UserOutputMapper.insert(newUser);
-		} catch (NoSuchAlgorithmException e) {			
-			logger.error("No such algorithm exception thrown when trying to create user: {}", e);
 			
-			if (responseType.equals("JSP")) {
-				request.setAttribute("error", "User could not be created to due to NoAlgorithmException being thrown buy the ID generator");
+			// write success message to response based on the requested response type
+			response.setStatus(HttpServletResponse.SC_OK);
+			
+			String message = "User with id: " + newUser.getUid().toString() + " was created successfully.";
+
+			// Format the response based on requested response type
+			switch (resp) {
+			case JSP:
+				request.setAttribute("success", message);
 				request.setAttribute("user", newUser);
-				// TODO forward to jsp
-			} else if (responseType.equals("XML")) {
 				
-			} else if (responseType.equals("BIN")) {
-				
+				RequestDispatcher view = request.getRequestDispatcher(SUCCESS_CREATE_USER);
+				view.forward(request, response);
+				break;
+			case XML:
+				response.setContentType("text/xml");
+				IOUtils.writeUserToXML(newUser, out);
+				IOUtils.writeStatusMessageToXML("success", message, out);
+				break;
+			case BIN:
+				response.setContentType("application/octet-stream");
+				IOUtils.writeUserToStream(newUser, out);
+				IOUtils.writeStatusMessageToStream(message, out);
+				break;
 			}
 			
+			logger.info("New User with ID {} was created.", newUser.getUid().toString());
+			
+		} // The unique id generating didn't work 
+		catch (NoSuchAlgorithmException e) {			
+			logger.error("No such algorithm exception thrown when trying to create user: {}", e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-		} catch (UnsupportedEncodingException e) {
-			// TODO do similar as above
-			e.printStackTrace();
+		} // The password hashing didn't work 
+		catch (UnsupportedEncodingException e) {
+			logger.error("Unsupported encoding exception thrown when trying to create user: {}", e);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
-		
-		// TODO success message
-		
-		logger.info("New User with ID {} was created.", newUser.getUid().toString());
-		response.setStatus(HttpServletResponse.SC_OK);
 	}
 	
+	/**
+	 * Hashes the given string
+	 * @param password String to hash
+	 * @return Returns the String value of the hash
+	 * @throws NoSuchAlgorithmException
+	 * @throws UnsupportedEncodingException
+	 */
 	private String hashPassword(String password) throws NoSuchAlgorithmException, UnsupportedEncodingException {
 		 
 		String charSet = "Latin1";

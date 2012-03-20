@@ -10,8 +10,6 @@ import java.util.GregorianCalendar;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.msgpack.MessagePack;
-import org.msgpack.packer.Packer;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -28,7 +26,6 @@ import exceptions.ParameterException;
 import exceptions.UnrecognizedUserException;
 import domain.message.Message;
 import domain.message.MessageFactory;
-import domain.message.MessageIdentityMap;
 import domain.message.mappers.MessageOutputMapper;
 import domain.user.User;
 import domain.user.mappers.UserInputMapper;
@@ -106,12 +103,12 @@ public class CreateMessageCommand extends FrontCommand {
 			Logger logger = (Logger)LoggerFactory.getLogger("application");
 			logger.info("New Message with ID {} was created.", msg.getMid().toString());
 			
-			//TODO change this shit
-			// Write the id of the newly created message to the http response
+			// Write the id to the stream
 			IOUtils.writeMessageIDtoStream(msg.getMid(), new DataOutputStream(response.getOutputStream()));
 			response.setStatus(HttpServletResponse.SC_OK);
 			
-		} catch (NoSuchAlgorithmException e) {
+		} // The unique id generating didn't work
+		catch (NoSuchAlgorithmException e) {
 			Logger logger = (Logger)LoggerFactory.getLogger("application");
 			logger.error("No such algorithm exception thrown when trying to create message: {}", e);
 			

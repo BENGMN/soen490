@@ -9,12 +9,6 @@ public class ServerParameterTest extends TestCase {
 	private static String description = "This is a test description of a server parameter.";
 	private static String value = "0.0";
 	
-	public void testConstructor() {
-		ServerParameter param = new ServerParameter(paramName, description, value);
-		if (param == null)
-			fail();
-	}
-	
 	public void testGetters() {
 		ServerParameter param = new ServerParameter(paramName, description, value);
 		assertTrue(paramName.equals(param.getParamName()));

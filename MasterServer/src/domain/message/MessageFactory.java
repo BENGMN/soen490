@@ -1,10 +1,8 @@
 package domain.message;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import domain.user.IUser;

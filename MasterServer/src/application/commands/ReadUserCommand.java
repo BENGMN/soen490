@@ -14,7 +14,7 @@ import domain.user.User;
 import domain.user.mappers.UserInputMapper;
 
 import application.IOUtils;
-
+import application.ResponseType;
 import exceptions.MapperException;
 import exceptions.ParameterException;
 import exceptions.UnrecognizedUserException;
@@ -28,7 +28,7 @@ public class ReadUserCommand extends FrontCommand {
 		// Create some local variables to store the request/response parameters
 		BigInteger userID = null;
 		String userid, responseType;
-
+		ResponseType type;
 		// Get the parameters from the request
 		userid = request.getParameter("userid");
 
@@ -41,33 +41,37 @@ public class ReadUserCommand extends FrontCommand {
 		if (responseType == null) 
 			throw new ParameterException("Missing 'responsetype' parameter.");
 		
-		if (!(responseType.equals("jsp") || responseType.equals("xml") || responseType.equals("bin"))) 
-			throw new ParameterException("Invalid 'responseType' parameter provided, should be 'jsp', 'xml', or 'bin'.");
-		// End of Val
+		try {
+			type = ResponseType.valueOf(responseType.toUpperCase());
+		} catch (IllegalArgumentException e) {
+			throw new ParameterException("Invalid 'responseType' parameter provided.");
+		}
+		// End of Validation
 		
-		userID = new BigInteger(request.getParameter("userid"));
+		userID = new BigInteger(userid);
 		
 		// Create a variable to store the user to be retrieved
 		User user = UserInputMapper.find(userID);
 		
 		// Format response based on request response type
-		if (responseType.equals("jsp")) {
-			
+		switch (type) {
+		case JSP:
 			request.setAttribute("user", user);
 			RequestDispatcher view = request.getRequestDispatcher(USER_JSP);
 			view.forward(request, response);
+			break;
 			
-		} else if (responseType.equals("xml")) {
-			
+		case XML:
 			response.setContentType("application/xml");
 			IOUtils.writeUserToXML(user, new DataOutputStream(response.getOutputStream()));
-			response.setStatus(HttpServletResponse.SC_OK);
+			break;
 			
-		} else if (responseType.equals("bin")) {
-			
+		case BIN:
 			response.setContentType("application/octet-stream");
 			IOUtils.writeUserToStream(user, new DataOutputStream(response.getOutputStream()));
-			response.setStatus(HttpServletResponse.SC_OK);
+			break;
 		}
+		
+		response.setStatus(HttpServletResponse.SC_OK);
 	}
 }

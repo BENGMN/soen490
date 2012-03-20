@@ -15,44 +15,96 @@
 
 
 package tests.foundation;
-import static org.junit.Assert.*;
-
-import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.junit.Test;
-
-import org.slf4j.LoggerFactory;
-
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
+import junit.framework.TestCase;
 
 import foundation.Database;
 
-public class DatabaseTest {
-
-	@Test
-	public void testTables() throws IOException, SQLException
-	{		
-		partTestCreateTable();
-		partTestDeleteTable();
+public class DatabaseTest extends TestCase {
+	private static final String TABLE = "testtable";
+	private static final String CREATE = "CREATE TABLE " + TABLE + " (value VARCHAR(10), PRIMARY KEY (value));";
+	private static final String DROP = "DROP TABLE " + TABLE;
+	
+	public void testGetConnection() {
+		try {
+			// these two should be the same because of same thread
+			Connection conn1 = Database.getConnection();
+			Connection conn2 = Database.getConnection();
+			
+			assertTrue(conn1 == conn2);
+ 		} catch (SQLException e) {
+			e.printStackTrace();
+			fail();
+		} finally {
+			try {
+				Database.dropDatabaseTables();
+				Database.freeConnection();
+			} catch (SQLException e) {
+			}
+		}
 	}
 	
-	private void partTestCreateTable() throws IOException, SQLException
-	{
-		assertTrue("Test table already exists!", !Database.hasTable("testTable"));
-		Database.update("CREATE TABLE testTable (testColumn1 varchar(40), testColumn2 varchar(50))");
-		assertTrue("Test table not created.", Database.hasTable("testTable"));
+	public void testFreeConnection() {
+		try {
+			// these two should be different since you release it in between
+			Connection conn1 = Database.getConnection();
+			Database.freeConnection();
+			Connection conn2 = Database.getConnection();
+			
+			assertTrue(conn1 != conn2);
+ 		} catch (SQLException e) {
+			e.printStackTrace();
+			fail();
+		} finally {
+			try {
+				Database.dropDatabaseTables();
+				Database.freeConnection();
+			} catch (SQLException e) {
+			}
+		}
 	}
 	
-	private void partTestDeleteTable() throws IOException, SQLException
-	{
-		assertTrue("Test table not created.", Database.hasTable("testTable"));
-		Database.update("DROP TABLE testTable");
-		assertTrue("Test table not deleted.", !Database.hasTable("testTable"));
+	public void testHasTable() {
+		try {
+			Connection connection = Database.getConnection();
+			
+			assertFalse(Database.hasTable(TABLE));
+			
+			connection.prepareStatement(CREATE).executeUpdate();
+			
+			assertTrue(Database.hasTable(TABLE));
+			
+			connection.prepareStatement(DROP).executeUpdate();
+ 		} catch (SQLException e) {
+			e.printStackTrace();
+			fail();
+		} finally {
+			try {
+				Database.getConnection().prepareStatement(DROP).executeUpdate();
+				Database.dropDatabaseTables();
+				Database.freeConnection();
+			} catch (SQLException e) {
+			}
+		}
 	}
 	
-	public void testIsDatabaseCreated() throws SQLException, IOException {
-		assertTrue("Test to ensure that the tables we for the applicaton exist", Database.isDatabaseCreated());
+	public void testIsDatabaseCreated() {
+		try {
+			assertFalse("Test to ensure that the tables we for the applicaton exist", Database.isDatabaseCreated());
+			Database.createDatabaseTables();
+			assertTrue(Database.isDatabaseCreated());
+			Database.dropDatabaseTables();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail();
+		} finally {
+			try {
+				Database.dropDatabaseTables();
+				Database.freeConnection();
+			} catch (SQLException e) {
+			}
+		}
 	}
 }

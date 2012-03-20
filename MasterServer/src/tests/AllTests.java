@@ -17,32 +17,42 @@ import tests.technical.GeoSpatialSearchTest;
 @RunWith(Suite.class)
 
 @SuiteClasses({
-		 FrontControllerTest.class, 
+		 FrontControllerTest.class,
+		 
+		 IOUtilsTest.class,
+		 
 		 HttpMessageTest.class,
+		 
 		 UnsupportedCommandTest.class,
+		 
 		 MessageCommandTest.class,
-		 MessageIdentityMapTest.class,
 		 MessageInputMapperTest.class,
 		 MessageOutputMapperTest.class,
 		 MessageTest.class,
 		 MessageFactoryTest.class,
+		 MessageTDGTest.class,
+		 MessageFinderTest.class,
+		 
 		 UserFactoryTest.class,
-		 UserIdentityMapTest.class,
 		 UserInputMapperTest.class,
 		 UserOutputMapperTest.class,
 		 UserProxyTest.class,
-		 UserTest.class,
-		 DatabaseTest.class,
-		 MessageTDGTest.class,
+		 UserTest.class,		 
 		 UserTDGTest.class,
+		 UserFinderTest.class,
+		 
+		 DatabaseTest.class,
+
 		 GeoSpatialSearchTest.class,
+		 
 		 ServerParameterInputMapperTest.class,
 		 ServerParameterOutputMapperTest.class,
 		 ServerParametersTest.class,
 		 ServerParameterTest.class,
 		 ServerParameterTDGTest.class,
-		 ServerParameterFinderTest.class
+		 ServerParameterFinderTest.class,
 		 
+		 ServerListTDGTest.class,
 		 
 })
 

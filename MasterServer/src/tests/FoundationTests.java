@@ -4,6 +4,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import foundation.finder.GeoSpatialSearch;
+
 import tests.foundation.*;
 
 @RunWith(Suite.class)
@@ -12,7 +14,8 @@ import tests.foundation.*;
 		 DatabaseTest.class,
 		 MessageTDGTest.class,
 		 UserTDGTest.class,
-		 ServerListTDGTest.class
+		 ServerListTDGTest.class,
+		 GeoSpatialSearch.class,
 })
 
 public class FoundationTests {

@@ -5,9 +5,7 @@ import java.sql.SQLException;
 import junit.framework.TestCase;
 
 import domain.serverparameter.ServerParameter;
-import domain.serverparameter.mappers.ServerParameterInputMapper;
 import domain.serverparameter.mappers.ServerParameterOutputMapper;
-import exceptions.MapperException;
 import foundation.tdg.ServerParameterTDG;
 
 public class ServerParameterOutputMapperTest extends TestCase {

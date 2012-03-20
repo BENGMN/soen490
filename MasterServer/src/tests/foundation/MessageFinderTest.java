@@ -16,19 +16,13 @@
 
 package tests.foundation;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.GregorianCalendar;
-import java.util.LinkedList;
-import java.util.List;
-
-import domain.message.Message;
-import domain.message.MessageFactory;
-import domain.message.mappers.MessageOutputMapper;
 import foundation.finder.MessageFinder;
+import foundation.tdg.MessageTDG;
 
 import junit.framework.TestCase;
 
@@ -50,63 +44,71 @@ public class MessageFinderTest extends TestCase {
 	private Timestamp createdDate = new Timestamp(new GregorianCalendar(2011, 9, 10).getTimeInMillis());
 	private int userRating = -1;
 	
-	private Message newMessage1 = MessageFactory.createClean(mid1, uid, array, speed, latitude1, longitude1, createdDate, userRating);
-	private Message newMessage2 = MessageFactory.createClean(mid2, uid, array, speed, latitude2, longitude2, createdDate, userRating);
-	private Message newMessage3 = MessageFactory.createClean(mid3, uid, array, speed, latitude3, longitude3, createdDate, userRating);
-	
-	private void createTestMessages() throws IOException, SQLException {
+	public void testFind() {
+		try {
+			MessageTDG.create();
+			MessageTDG.insert(mid1, uid, array, speed, latitude1, longitude1, createdDate, userRating);
 
-		MessageOutputMapper.insert(newMessage1);
-		MessageOutputMapper.insert(newMessage2);
-		MessageOutputMapper.insert(newMessage3);
-	}
-	
-	public void deleteTestMessages() throws IOException, SQLException {
-		MessageOutputMapper.delete(newMessage1);
-		MessageOutputMapper.delete(newMessage2);
-		MessageOutputMapper.delete(newMessage3);
-	}
-	
-	
-	public void testFindAll() throws SQLException, IOException {
-		createTestMessages();
-		List<Message> messages = new LinkedList<Message>();
-		ResultSet rs = MessageFinder.findAll();
-		while(rs.next()) {
-			Message m = getMessage(rs);
-			messages.add(m);
+			ResultSet rs = MessageFinder.find(mid1);
+			
+			assertTrue(rs.next());
+
+		} catch (SQLException e){
+			e.printStackTrace();
+			fail();
+		} finally {
+			try {
+				MessageTDG.drop();
+			} catch (SQLException e) {				
+			}
 		}
-		
-		assertEquals(messages.size() == 3, true);
-		deleteTestMessages();
 	}
-	
-	public void testFind() throws SQLException, IOException {
-		createTestMessages();
-		ResultSet rs = MessageFinder.find(mid1);
-		List<Message> message = new LinkedList<Message>();
-		while(rs.next()) {
-			message.add(getMessage(rs));
+		
+	public void testFindAll() {
+		try {
+			MessageTDG.create();
+			
+			// add 3 rows
+			MessageTDG.insert(mid1, uid, array, speed, latitude1, longitude1, createdDate, userRating);
+			MessageTDG.insert(mid2, uid, array, speed, latitude2, longitude3, createdDate, userRating);
+			MessageTDG.insert(mid3, uid, array, speed, latitude3, longitude2, createdDate, userRating);
+			
+			ResultSet rs = MessageFinder.findAll();
+			
+			assertTrue(rs.next());
+			assertTrue(rs.next());
+			assertTrue(rs.next());
+			assertFalse(rs.next());
+		} catch (SQLException e){
+			e.printStackTrace();
+			fail();
+		} finally {
+			try {
+				MessageTDG.drop();
+			} catch (SQLException e) {				
+			}
 		}
-		System.out.println("Messages returned = "+message.size());
-		assertEquals(message.size(), 1);
-		deleteTestMessages();
 	}
 	
-	private static Message getMessage(ResultSet rs) throws SQLException {
-		Timestamp date = rs.getTimestamp("m.created_at");
-		
-		BigInteger mid = rs.getBigDecimal("m.mid").toBigInteger();
-		Message message;
-		
-		message = MessageFactory.createClean(mid,
-								 rs.getBigDecimal("m.uid").toBigInteger(),
-								 rs.getBytes("m.message"),
-								 rs.getFloat("m.speed"),
-								 rs.getDouble("m.latitude"),
-								 rs.getDouble("m.longitude"),
-								 date,
-								 rs.getInt("m.user_rating"));
-		return message;
+	public void testFindByUser() {
+		try {
+			MessageTDG.create();
+			MessageTDG.insert(mid1, uid, array, speed, latitude1, longitude1, createdDate, userRating);
+
+			// should find one
+			ResultSet rs = MessageFinder.findByUser(uid);
+			
+			assertTrue(rs.next());
+			assertFalse(rs.next());
+			
+		} catch (SQLException e){
+			e.printStackTrace();
+			fail();
+		} finally {
+			try {
+				MessageTDG.drop();
+			} catch (SQLException e) {				
+			}
+		}
 	}
 }

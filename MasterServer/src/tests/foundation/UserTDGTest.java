@@ -15,75 +15,104 @@
 
 package tests.foundation;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.ResultSet;
-import static org.junit.Assert.*;
 import java.sql.SQLException;
 
-import org.junit.Test;
+import junit.framework.TestCase;
 
-import foundation.Database;
 import foundation.finder.UserFinder;
 import foundation.tdg.UserTDG;
 
-public class UserTDGTest {
+public class UserTDGTest extends TestCase {
 	
-	static BigInteger uid = new BigInteger("158749857934");
+	private BigInteger uid = new BigInteger("158749857934");
+	private final String email = "example@example.com";
+	private final String password = "password";
+	private int version = 0;
+	private int type = 0;
 	
-	@Test
-	public void testFunctionality() throws SQLException, IOException
-	{
-		// We put this in here, so that the tests don't disturb the database if it's already present.
-		boolean previousDatabase = Database.isDatabaseCreated();
-		if (!previousDatabase)
-			Database.createDatabase();
-		insert();
-		update();
-		delete();
-		if (!previousDatabase)
-			Database.dropDatabase();
+	public void testInsert() {
+		try {
+			UserTDG.create();
+			
+			UserTDG.insert(uid, version, email, password, type);
+			
+			// try adding second with same id
+			try {
+				UserTDG.insert(uid, version, email, password, type);
+				fail();
+			} catch (SQLException e) {
+				// should reach here
+			}
+		} catch (SQLException e){
+			e.printStackTrace();
+			fail();
+		} finally {
+			try {
+				UserTDG.drop();
+			} catch (SQLException e) {				
+			}
+		}
 	}
 	
-	private void insert() throws SQLException, IOException
-	{
-		final String email = "example@example.com";
-		final String password = "password";
-		final int type = 1;
-		final int version = 1;
-		assertFalse(UserFinder.find(uid).next());
-		assertEquals(UserTDG.insert(uid, version, email, password, type), 1);
-		ResultSet rs = UserFinder.find(uid);
-		assertTrue(rs.next());
-		assertEquals(rs.getBigDecimal("u.uid").toBigInteger(), uid);
-		assertEquals(rs.getString("u.email"), email);
-		assertEquals(rs.getString("u.password"), password);
-		assertEquals(rs.getInt("u.version"), version);
-		assertEquals(rs.getInt("u.type"), type);
+	public void testUpdate() {
+		try {
+			UserTDG.create();
+			String newEmail = email + "some other value";
+			UserTDG.insert(uid, version, email, password, type);
+			
+			assertEquals(1, UserTDG.update(uid, version, newEmail, password, type));
+			
+			ResultSet rs = UserFinder.find(uid);
+			rs.next();
+			
+			String foundEmail = rs.getString("u.email");
+			//version will have changed
+			
+			int newVersion = rs.getInt("u.version");
+			
+			assertTrue(foundEmail.equals(newEmail));
+			assertFalse(newVersion == version);
+			
+			rs.close();
+		} catch (SQLException e){
+			e.printStackTrace();
+			fail();
+		} finally {
+			try {
+				UserTDG.drop();
+			} catch (SQLException e) {				
+			}
+		}
 	}
 	
-	private void update() throws SQLException, IOException
-	{
-		final String email = "example2@example.com";
-		final String password = "password2";
-		final int type = 0;
-		final int version = 1;
-		assertTrue(UserFinder.find(uid).next());
-		assertEquals(1, UserTDG.update(uid, version, email, password, type));
-		ResultSet rs = UserFinder.find(uid);
-		assertTrue(rs.next());
-		assertEquals(rs.getBigDecimal("u.uid").toBigInteger(), uid);
-		assertEquals(rs.getString("u.email"), email);
-		assertEquals(rs.getString("u.password"), password);
-		assertEquals(rs.getInt("u.version"), version+1);
-		assertEquals(rs.getInt("u.type"), type);
-	}
-	
-	private void delete() throws SQLException, IOException
-	{
-		final int version = 2;
-		assertTrue(UserFinder.find(uid).next());
-		assertEquals(UserTDG.delete(uid, version), 1);
-		assertFalse(UserFinder.find(uid).next());
+	public void testDelete() {
+		try {
+			UserTDG.create();
+			UserTDG.insert(uid, version, email, password, type);
+			ResultSet rs = UserFinder.find(uid);
+			
+			assertTrue(rs.next());
+			
+			// update will increment version by 1
+			UserTDG.update(uid, version, email, password + "eqweqweas", type);
+			
+			// will not delete anything, as version differes from row version
+			assertEquals(0, UserTDG.delete(uid, version));
+			
+			// will delete the row
+			assertEquals(1, UserTDG.delete(uid, version + 1));
+			
+			rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail();
+		} finally {
+			try {
+				UserTDG.drop();
+			} catch (SQLException e) {				
+			}
+		}
 	}
 }

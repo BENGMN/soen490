@@ -50,7 +50,6 @@ import application.commands.ReadMessageCommand;
 import application.commands.ReadUserCommand;
 import application.commands.UnsupportedCommand;
 import application.commands.UpdateServerParametersCommand;
-import application.commands.UpdateUserCommand;
 import application.commands.UpvoteMessageCommand;
 import foundation.Database;
 import foundation.finder.ServerListFinder;
@@ -69,7 +68,7 @@ public class FrontController extends HttpServlet {
 	public void init() throws ServletException {
 		try {
 			if (!Database.isDatabaseCreated())
-				Database.createDatabase();
+				Database.createDatabaseTables();
 			InetAddress addr = InetAddress.getLocalHost();
 			String hostname = addr.getHostName();		
 			ResultSet rs = ServerListFinder.find(hostname);		
@@ -77,6 +76,9 @@ public class FrontController extends HttpServlet {
 				int port = 8080;
 				ServerListTDG.insert(hostname, port);
 			}						
+			
+			// Simply to initialise
+			ServerParameters.getUniqueInstance();
 		} catch (Exception E) {
 			// TODO why was this commented out?
 			throw new ServletException(E);
@@ -132,12 +134,6 @@ public class FrontController extends HttpServlet {
 		
 		// Command for deleting a user
 		commandMap.put("DELETE.deleteuser", new DeleteUserCommand());
-		
-		// Simply to initialise
-		ServerParameters.getUniqueInstance();
-	
-		// Frees the connection from the connection pool
-		Database.freeConnection();
 		
 		// Initialize the logger
 		logger = (Logger)LoggerFactory.getLogger("application");
@@ -216,13 +212,11 @@ public class FrontController extends HttpServlet {
 			ps.close();
 		} catch (SQLException e) {
 			logger.debug("The following SQLException occured", e);				
-			e.printStackTrace();
 		} finally {
 			try {
 				Database.freeConnection();
 			} catch (SQLException e) {
 				logger.debug("The following SQLException occured", e);				
-				e.printStackTrace();
 			}
 		}
 		

@@ -15,17 +15,17 @@
 
 package tests.domain.user;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
 import domain.user.User;
 import domain.user.UserFactory;
-import domain.user.UserIdentityMap;
 import domain.user.UserProxy;
 import domain.user.UserType;
+import domain.user.mappers.UserOutputMapper;
 import exceptions.MapperException;
+import foundation.tdg.UserTDG;
 import junit.framework.TestCase;
 
 
@@ -40,40 +40,76 @@ public class UserProxyTest extends TestCase {
 	private UserProxy userProxy = null;		// Create a proxy for the real object
 	
 	
-	public void testSetters() throws IOException, SQLException, NoSuchAlgorithmException, MapperException {
-		realUser = UserFactory.createNew(email, password, userType);
-		UserIdentityMap.getUniqueInstance().put(realUser.getUid(), realUser);
+	public void testSetters()  {
+		try {
+			UserTDG.create();
 		
-		// Get the UID from the user object since it's generated in it's constructor
-		BigInteger uid = realUser.getUid();
-		
-		userProxy = new UserProxy(uid);
-		userProxy.setEmail(email);
-		userProxy.setPassword(password);
-		userProxy.setType(userType);
-		userProxy.setVersion(version);
-		
-		assertEquals(userProxy.getEmail(), email);
-		assertEquals(userProxy.getUid(), uid);
-		assertEquals(userProxy.getPassword(), password);
-		assertEquals(userProxy.getVersion(), version);
-		assertEquals(userProxy.getType(), userType);
+			realUser = UserFactory.createNew(email, password, userType);		
+			UserOutputMapper.insert(realUser);
+			
+			// Get the UID from the user object since it's generated in it's constructor
+			BigInteger uid = realUser.getUid();
+			
+			userProxy = new UserProxy(uid);
+			userProxy.setEmail(email);
+			userProxy.setPassword(password);
+			userProxy.setType(userType);
+			userProxy.setVersion(version);
+			
+			assertEquals(userProxy.getEmail(), email);
+			assertEquals(userProxy.getUid(), uid);
+			assertEquals(userProxy.getPassword(), password);
+			assertEquals(userProxy.getVersion(), version);
+			assertEquals(userProxy.getType(), userType);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail();
+		} catch (MapperException e) {
+			e.printStackTrace();
+			fail();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+			fail();
+		} finally {
+			try {
+				UserTDG.drop();
+			} catch (SQLException e) {
+			}
+		}
 	}
 	
-	public void testGetters() throws IOException, SQLException, NoSuchAlgorithmException, MapperException {
-		// First we create an object via the factory so it get's sent to the IdentityMap as well
-		realUser = UserFactory.createNew(email, password, userType);
-		UserIdentityMap.getUniqueInstance().put(realUser.getUid(), realUser);
+	public void testGetters() {
+		try {
+			UserTDG.create();
 		
-		// Create a proxy for the real object
-		userProxy = new UserProxy(realUser.getUid());
-		
-		assertEquals(userProxy.getUid(), realUser.getUid());
-		
-		assertEquals(userProxy.getEmail(), realUser.getEmail());
-		assertEquals(userProxy.getPassword(), realUser.getPassword());
-		assertEquals(userProxy.getVersion(), realUser.getVersion());
-		assertEquals(userProxy.getType(), realUser.getType());
+			// First we create an object via the factory so it get's sent to the IdentityMap as well
+			realUser = UserFactory.createNew(email, password, userType);
+			UserOutputMapper.insert(realUser);
+			// Create a proxy for the real object
+			userProxy = new UserProxy(realUser.getUid());
+			
+			assertEquals(userProxy.getUid(), realUser.getUid());
+			
+			assertEquals(userProxy.getEmail(), realUser.getEmail());
+			// assert equals on password since proxy will never load it
+			assertEquals(userProxy.getVersion(), realUser.getVersion());
+			assertEquals(userProxy.getType(), realUser.getType());
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail();
+		} catch (MapperException e) {
+			e.printStackTrace();
+			fail();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+			fail();
+		} finally {
+			try {
+				UserTDG.drop();
+			} catch (SQLException e) {
+			}
+		}
 	}
 	
 	public void testEquals() {

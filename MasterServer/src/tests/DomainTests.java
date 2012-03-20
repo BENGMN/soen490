@@ -10,13 +10,11 @@ import tests.domain.user.*;
 @RunWith(Suite.class)
 
 @SuiteClasses({ 
-		 MessageIdentityMapTest.class,
 		 MessageInputMapperTest.class,
 		 MessageOutputMapperTest.class,
 		 MessageTest.class,
 		 MessageFactoryTest.class,
 		 UserFactoryTest.class,
-		 UserIdentityMapTest.class,
 		 UserInputMapperTest.class,
 		 UserOutputMapperTest.class,
 		 UserProxyTest.class,

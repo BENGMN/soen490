@@ -16,8 +16,8 @@ public class ServerParameterTDGTest extends TestCase {
 			assertTrue(Database.hasTable(ServerParameterTDG.TABLE));
 			ServerParameterTDG.drop();
 		} catch (SQLException e) {
-			fail();
 			e.printStackTrace();
+			fail();			
 		} finally {
 			try {
 				ServerParameterTDG.drop();
@@ -36,8 +36,8 @@ public class ServerParameterTDGTest extends TestCase {
 			ServerParameterTDG.drop();
 			assertFalse(Database.hasTable(ServerParameterTDG.TABLE));
 		} catch (SQLException e) {
-			fail();
 			e.printStackTrace();
+			fail();
 		} finally {
 			try {
 				ServerParameterTDG.drop();
@@ -63,8 +63,8 @@ public class ServerParameterTDGTest extends TestCase {
 			
 			ServerParameterTDG.drop();
 		} catch (SQLException e) {
-			fail();
 			e.printStackTrace();
+			fail();	
 		} finally {
 			try {
 				ServerParameterTDG.drop();
@@ -87,8 +87,8 @@ public class ServerParameterTDGTest extends TestCase {
 				
 			ServerParameterTDG.drop();
 		} catch (SQLException e) {
-			fail();
 			e.printStackTrace();
+			fail();	
 		} finally {
 			try {
 				ServerParameterTDG.drop();
@@ -117,8 +117,8 @@ public class ServerParameterTDGTest extends TestCase {
 			
 			ServerParameterTDG.drop();
 		} catch (SQLException e) {
-			fail();
 			e.printStackTrace();
+			fail();	
 		} finally {
 			try {
 				ServerParameterTDG.drop();

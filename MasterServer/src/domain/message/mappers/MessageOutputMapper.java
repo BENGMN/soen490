@@ -30,7 +30,7 @@ public class MessageOutputMapper {
 	/**
 	 * Calls the persistence method for updating a message.
 	 * @param message Message
-	 * @return the number of rows updated (1 for success, 0 for failure)
+	 * @return Returns the number of rows updated (1 for success, 0 for failure)
 	 * @throws SQLException
 	 */
 	public static int update(Message message) throws SQLException {
@@ -41,7 +41,7 @@ public class MessageOutputMapper {
 	/**
 	 * Calls the persistence method for deleting a message
 	 * @param message Message
-	 * @return the number of rows updated (1 for success, 0 for failure) 
+	 * @return Returns the number of rows updated (1 for success, 0 for failure) 
 	 * @throws SQLException
 	 */
 	public static int delete(Message message) throws SQLException {
@@ -51,7 +51,7 @@ public class MessageOutputMapper {
 	/**
 	 * Calls the persistence method for deleting a message from a BigInteger
 	 * @param messageID
-	 * @return
+	 * @return Returns the number of rows affected
 	 * @throws SQLException
 	 */
 	public static int delete(BigInteger messageID) throws SQLException {

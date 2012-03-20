@@ -48,7 +48,7 @@ public class ServerParameterInputMapperTest extends TestCase {
 		try {
 			ServerParameterTDG.create();
 			List<ServerParameter> param =	ServerParameterInputMapper.findAll();
-			assertTrue(param.isEmpty());
+			assertFalse(param.isEmpty());
 			ServerParameterOutputMapper.insert(p);
 			ServerParameterOutputMapper.insert(p2);
 			ServerParameterOutputMapper.insert(p3);
@@ -56,7 +56,7 @@ public class ServerParameterInputMapperTest extends TestCase {
 			param =	ServerParameterInputMapper.findAll();
 			assertFalse(param.isEmpty());
 			
-			assertEquals(3, param.size());
+			assertEquals(3 + ServerParameterTDG.INSERTIONS.length, param.size());
 
 			ServerParameterTDG.drop();
 		} catch (SQLException e) {
