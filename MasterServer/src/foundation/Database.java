@@ -44,7 +44,7 @@ public class Database {
 	protected static boolean TESTING;
 	
 	// File path to properties file
-	private static final String FILENAME = "Database.properties";
+	private static final String FILENAME = "MyProperties.properties";
 	
 	static {
 		try {
