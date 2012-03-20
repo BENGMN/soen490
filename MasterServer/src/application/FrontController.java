@@ -56,7 +56,9 @@ import foundation.Database;
 import foundation.finder.ServerListFinder;
 import foundation.tdg.ServerListTDG;
 
-
+/**
+ * Entry point for all HTTP Requests.
+ */
 public class FrontController extends HttpServlet {
 
 	private static final long serialVersionUID = 8691536805973858130L;
@@ -136,6 +138,7 @@ public class FrontController extends HttpServlet {
 		// Command for deleting a user
 		commandMap.put("DELETE.deleteuser", new DeleteUserCommand());
 		
+		// Command for pinging server
 		commandMap.put("GET.ping", new PingCommand());
 		
 		// Initialize the logger

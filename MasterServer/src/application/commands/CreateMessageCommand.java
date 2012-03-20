@@ -65,16 +65,15 @@ public class CreateMessageCommand extends FrontCommand {
 		
 		// Get location information
 		String strLongitude = multipartRequest.getParameter("longitude");
-		String strSpeed = multipartRequest.getParameter("speed");
 		String strLatitude = multipartRequest.getParameter("latitude");
+		String strSpeed = multipartRequest.getParameter("speed");
 		
 		double longitude;
 		double latitude;
 		float speed = 0;
 		
 		try {
-			// Get speed from request object
-			if ((strSpeed = request.getParameter("speed")) != null)
+			if (strSpeed != null)
 				speed = Float.parseFloat(strSpeed);
 			
 			longitude = Double.parseDouble(strLongitude);
