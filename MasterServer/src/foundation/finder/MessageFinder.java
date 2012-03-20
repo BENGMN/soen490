@@ -114,70 +114,62 @@ public class MessageFinder {
 				"(SELECT m.mid, m.uid, m.message, m.speed, m.latitude, m.longitude, m.created_at, m.user_rating " +
 				 "FROM Message AS m " +
 				 "WHERE longitude BETWEEN ? AND ? AND m.latitude BETWEEN ? AND ? LIMIT 40) AS messages " +
-			"WHERE u.uid = messages.uid AND u.type = 0" +
+			"WHERE u.uid = messages.uid AND u.type = 0 " +
 			"ORDER BY messages.user_rating DESC, messages.created_at DESC;";
 
 	
-	/*** Get's a count of all messages in the minimum sized square that are from Regular Users ***/
-	private static final String COUNT_MESSAGES_PER_SQUARE =
-			"SELECT COUNT(m.mid) AS messageCount"+
-			"FROM Message AS m,"+
-			"User AS u"+
-			"WHERE m.longitude BETWEEN ? AND ? AND"+ 
-				  "m.latitude BETWEEN ? AND ? AND"+
-				  "u.uid = m.uid AND"+
-	              "u.type = 0"+
-	        "ORDER BY messages.user_rating DESC,"+ 
-	                 "messages.created_at DESC;";
-
-
+	/*** Get the number of all messages in the minimum sized square that are from Regular Users ***/
+	private static final String COUNT_NORMAL_MESSAGES_PER_SQUARE =
+			"SELECT COUNT(m.mid) AS messageCount " +
+			"FROM Message AS m, User AS u " +
+			"WHERE m.longitude BETWEEN ? AND ? " +
+				"AND m.latitude BETWEEN ? AND ? AND " +
+				"u.uid = m.uid AND u.type = 0 " +
+			"ORDER BY m.user_rating DESC, m.created_at DESC;";	
+						
+	
 	/*** Get a list of all the messages that should be deleted ***/
 	private static final String SELECT_INVALID_MESSAGES = 
-			"SELECT m.mid"+
+			"SELECT m.mid "+
 			"FROM Message as m,"+
-			     "User as u"+
-			"WHERE m.longitude BETWEEN ? AND ? AND"+ 
-				  "m.latitude BETWEEN ? AND ? AND"+
-				  "u.uid = m.uid AND"+
-				  "u.type = 0"+
-			"ORDER BY messages.user_rating DESC,"+ 
-					 "messages.created_at DESC"+
+			     "User as u "+
+			"WHERE m.longitude BETWEEN ? AND ? AND "+ 
+				  "m.latitude BETWEEN ? AND ? AND "+
+				  "u.uid = m.uid AND "+
+				  "u.type = 0 "+
+			"ORDER BY m.user_rating DESC,"+ 
+					 "m.created_at DESC "+
 			"LIMIT 41, ?;";
 	
-	public static void MessageCleanup(double latitude, double longitude, int radius) throws SQLException {
+	public static ResultSet findMessagesToDelete(double latitude, double longitude, double radius) throws SQLException {
 		// Get all the points in the database close to the coordinates supplied
 		Coordinate coordinate = new Coordinate(latitude, longitude);
 		List<Coordinate> rectangle = GeoSpatialSearch.convertPointToRectangle(coordinate, radius);
 		Connection connection = Database.getConnection();
-		PreparedStatement ps = connection.prepareStatement(COUNT_MESSAGES_PER_SQUARE);
+		PreparedStatement ps = connection.prepareStatement(COUNT_NORMAL_MESSAGES_PER_SQUARE);
 		ps.setDouble(1, rectangle.get(0).getLongitude());
 		ps.setDouble(2, rectangle.get(1).getLongitude());
 		ps.setDouble(3, rectangle.get(0).getLatitude());
 		ps.setDouble(4, rectangle.get(1).getLatitude());
 		ResultSet rs = ps.executeQuery();
 		
-		int msg_count = 0;
+		int msgCount = 0;
 		
 		while(rs.next()) {
-			msg_count = rs.getInt("messsageCount");
+			msgCount = rs.getInt("messageCount");
 		}
-		ResultSet invalid_messages = null;
-		if (msg_count > 40) {
+		ResultSet invalidMessages = null;
+		if (msgCount > 40) {
 			ps = connection.prepareStatement(SELECT_INVALID_MESSAGES);
 			ps.setDouble(1, rectangle.get(0).getLongitude());
 			ps.setDouble(2, rectangle.get(1).getLongitude());
 			ps.setDouble(3, rectangle.get(0).getLatitude());
 			ps.setDouble(4, rectangle.get(1).getLatitude());
-			invalid_messages = ps.executeQuery();
+			ps.setInt(5, msgCount);
+			invalidMessages = ps.executeQuery();
 		}
 		
-		while(invalid_messages.next()) {
-			MessageOutputMapper.delete(invalid_messages.getBigDecimal("m.mid").toBigInteger());
-		}
-		
-		
-		
-		
+		return invalidMessages;
 	}
 
 	/**

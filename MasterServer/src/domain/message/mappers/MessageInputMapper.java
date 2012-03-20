@@ -150,6 +150,29 @@ public class MessageInputMapper {
 	}
 	
 	/**
+	 * Finds messages in high density areas needed to be deleted
+	 * @param latitude
+	 * @param longitude
+	 * @param radius
+	 * @return list of message IDs to be deleted
+	 * @throws SQLException
+	 */
+	public static List<BigInteger> findMessagesToDelete(double latitude, double longitude, double radius) throws SQLException {		
+		List<BigInteger> messages = new LinkedList<BigInteger>();
+		ResultSet rs = MessageFinder.findMessagesToDelete(latitude, longitude, radius);
+				
+		// result set is null if the density of message and there are no messages to delete
+		if(rs != null) {
+			while(rs.next()) {
+				messages.add(rs.getBigDecimal("m.mid").toBigInteger());
+			}		
+			rs.close();
+		}
+				
+		return messages;
+	}
+	
+	/**
 	 * Find message ids in proximity
 	 * @param longitude
 	 * @param latitude

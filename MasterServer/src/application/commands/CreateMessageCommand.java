@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import application.IOUtils;
+import application.PurgeNormalMessages;
 import application.ServerParameters;
 
 import ch.qos.logback.classic.Logger;
@@ -118,6 +119,9 @@ public class CreateMessageCommand extends FrontCommand {
 			
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
+		
+		// Check the area around this message, if it's a high density zone, delete some messages
+		PurgeNormalMessages.deleteMessages(latitude, longitude, Double.parseDouble(params.get("defaultMessageRadiusMeters").getValue()));
 			 
 	}
 	
