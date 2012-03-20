@@ -46,6 +46,7 @@ import application.commands.DownvoteMessageCommand;
 import application.commands.FrontCommand;
 import application.commands.GetMessageIDsCommand;
 import application.commands.GetServerParametersCommand;
+import application.commands.PingCommand;
 import application.commands.ReadMessageCommand;
 import application.commands.ReadUserCommand;
 import application.commands.UnsupportedCommand;
@@ -80,7 +81,7 @@ public class FrontController extends HttpServlet {
 			// Simply to initialise
 			ServerParameters.getUniqueInstance();
 		} catch (Exception E) {
-			// TODO why was this commented out?
+			// TODO Log
 			throw new ServletException(E);
 		} finally {
 			try {
@@ -91,7 +92,7 @@ public class FrontController extends HttpServlet {
 			}
 		}
 	}
-
+	
 	/**
 	 * Constructor
 	 * Initialises the commands in the command map. It will be used to determine the right command to execute depending on the command parameter in the query string
@@ -134,6 +135,8 @@ public class FrontController extends HttpServlet {
 		
 		// Command for deleting a user
 		commandMap.put("DELETE.deleteuser", new DeleteUserCommand());
+		
+		commandMap.put("GET.ping", new PingCommand());
 		
 		// Initialize the logger
 		logger = (Logger)LoggerFactory.getLogger("application");
