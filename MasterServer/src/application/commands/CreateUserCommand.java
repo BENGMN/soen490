@@ -59,23 +59,23 @@ public class CreateUserCommand extends FrontCommand {
 		password = request.getParameter("password");
 		userType = request.getParameter("usertype").toUpperCase();
 		responseType = request.getParameter("responsetype").toUpperCase();
-		
+				
 		// Validation
 		if (email == null) {
 			throw new ParameterException("Missing 'email' parameter.");
 		} else if (!IOUtils.validateEmail(email)) {
 			throw new ParameterException("Invalid 'email' parameter provided");
 		} // These could totally be removed
-		else if (email.length() < Integer.getInteger(params.get("minEmailLength").getValue())) {
+		else if (email.length() < Integer.parseInt(params.get("minEmailLength").getValue())) {
 			throw new ParameterException("Invalid 'email' parameter, too short.");
-		} else if (email.length() > Integer.getInteger(params.get("maxEmailLength").getValue())) {
+		} else if (email.length() > Integer.parseInt(params.get("maxEmailLength").getValue())) {
 			throw new ParameterException("Invalid 'email' parameter, too long.");
 		}
 	
 		// Check the password length, should be validated in jsp as well	
 		if (password == null) {
 			throw new ParameterException("Missing 'password' parameter.");
-		} else if (password.length() < Integer.getInteger(params.get("minPasswordLength").getValue())) {
+		} else if (password.length() < Integer.parseInt(params.get("minPasswordLength").getValue())) {
 			throw new ParameterException("Invalid 'password' parameter, too short.");
 		}
 
