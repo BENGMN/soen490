@@ -40,7 +40,7 @@ public class GetMessageIDsCommand extends FrontCommand{
 			throw new ParameterException("Missing 'latitude' parameter.");
 		
 		// Get message latitude from request object
-		if ((sort = request.getParameter("sorttype")).toUpperCase() == null)
+		if ((sort = request.getParameter("sorttype")) == null)
 				throw new ParameterException("Missing 'sorttype' parameter.");
 		try {
 			// Get speed from request object
