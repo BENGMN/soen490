@@ -1,3 +1,4 @@
+package Client;
 /**
  * SOEN 490
  * Capstone 2011

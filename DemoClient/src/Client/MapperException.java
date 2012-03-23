@@ -1,3 +1,4 @@
+package Client;
 
 
 public class MapperException extends Exception {

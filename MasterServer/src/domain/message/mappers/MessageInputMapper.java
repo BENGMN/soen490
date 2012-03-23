@@ -180,9 +180,9 @@ public class MessageInputMapper {
 	 * @return List of message ids
 	 * @throws SQLException
 	 */
-	public static List<BigInteger> findIdsInProximity(double longitude, double latitude, double speed) throws IOException, SQLException {
+	public static List<BigInteger> findIdsInProximity(double longitude, double latitude, double speed, String sort) throws IOException, SQLException {
 		
-		ResultSet rs = MessageFinder.findIdsInProximity(longitude, latitude, speed);	
+		ResultSet rs = MessageFinder.findIdsInProximity(longitude, latitude, speed, sort);	
 		
 		List<BigInteger> messageIds = new LinkedList<BigInteger>();
 
