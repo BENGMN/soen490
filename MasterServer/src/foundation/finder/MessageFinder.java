@@ -207,6 +207,10 @@ public class MessageFinder {
 			"FROM " + MessageTDG.TABLE + " AS m " +
 			"WHERE longitude BETWEEN ? AND ? AND m.latitude BETWEEN ? AND ?) AS messages WHERE u.uid = messages.uid";
 	
+	private static final String ORDER_BY_USER_TYPE = " ORDER BY u.type DESC;";
+	private static final String ORDER_BY_USER_RATING = " ORDER BY messages.user_rating DESC;";
+	private static final String ORDER_BY_CREATED_TYPE = " ORDER BY messages.created_at DESC;";
+	
 	private static String GET_SIZE = 
 			"SELECT COUNT(m.mid) AS size " +
 			"FROM " + MessageTDG.TABLE + " AS m " + "WHERE m.longitude BETWEEN ? AND ? AND m.latitude BETWEEN ? AND ?;";
@@ -227,6 +231,15 @@ public class MessageFinder {
 		int minMessages = Integer.parseInt(params.get("minMessages").getValue());
 		int maxMessages = Integer.parseInt(params.get("maxMessages").getValue());
 
+		String query = "";
+		
+		if(orderBy.equals("user_rating"))
+			query = SELECT_ID_BY_RADIUS+ORDER_BY_USER_RATING;
+		else if(orderBy.equals("type"))
+			query = SELECT_ID_BY_RADIUS+ORDER_BY_USER_TYPE;
+		else if(orderBy.equals("created_type"))
+			query = SELECT_ID_BY_RADIUS+ORDER_BY_CREATED_TYPE;
+			
 		double radius = 0;
 		double multiplier = 0;
 		double radiusAdder = 500;
@@ -292,7 +305,8 @@ public class MessageFinder {
 		//Getting the actual ids at this point
 		ResultSet finaleRs;
 
-		PreparedStatement finalPs = connection.prepareStatement(SELECT_ID_BY_RADIUS+" ORDER BY "+orderBy+" DESC;");
+		//SELECT_ID_BY_RADIUS2 PreparedStatement finalPs = connection.prepareStatement(SELECT_ID_BY_RADIUS+" ORDER BY "+orderBy+" DESC;");
+		PreparedStatement finalPs = connection.prepareStatement(query);
 		List<Coordinate> rectangle = GeoSpatialSearch.convertPointToRectangle(new Coordinate(longitude, latitude), radius);
 		finalPs.setDouble(1, rectangle.get(0).getLongitude());
 		finalPs.setDouble(2, rectangle.get(1).getLongitude());
