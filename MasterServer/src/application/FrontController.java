@@ -51,7 +51,10 @@ import application.commands.ReadMessageCommand;
 import application.commands.ReadUserCommand;
 import application.commands.UnsupportedCommand;
 import application.commands.UpdateServerParametersCommand;
+import application.commands.UpdateUserCommand;
 import application.commands.UpvoteMessageCommand;
+import application.commands.UserCreatorCommand;
+import application.commands.UserLookupCommand;
 import foundation.Database;
 import foundation.finder.ServerListFinder;
 import foundation.tdg.ServerListTDG;
@@ -133,10 +136,19 @@ public class FrontController extends HttpServlet {
 		commandMap.put("POST.createuser", new CreateUserCommand());
 		
 		// Command for getting a user
-		commandMap.put("GET.readuser", new ReadUserCommand());
+		commandMap.put("POST.readuser", new ReadUserCommand());
 		
 		// Command for deleting a user
-		commandMap.put("DELETE.deleteuser", new DeleteUserCommand());
+		commandMap.put("POST.deleteuser", new DeleteUserCommand());
+		
+		// Command for looking up a user
+		commandMap.put("GET.userlookup", new UserLookupCommand());
+
+		// Command for opening the user creation page
+		commandMap.put("GET.usercreator", new UserCreatorCommand());
+
+		// Command for opening the user creation page
+		commandMap.put("POST.updateuser", new UpdateUserCommand());
 		
 		// Command for pinging server
 		commandMap.put("GET.ping", new PingCommand());

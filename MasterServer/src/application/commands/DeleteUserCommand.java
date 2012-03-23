@@ -23,8 +23,8 @@ import exceptions.ParameterException;
 import exceptions.UnrecognizedUserException;
 
 public class DeleteUserCommand extends FrontCommand {	
-	private static final String SUCCESS_DELETE_USER = "success.jsp";
-	private static final String FAIL_DELETE_USER = "error.jsp";
+	private static final String SUCCESS_DELETE_USER = "/WEB-INF/jsp/success.jsp";
+	private static final String FAIL_DELETE_USER = "/WEB-INF/jsp/error.jsp";
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, IOException, UnrecognizedUserException, SQLException, ServletException {
 		
