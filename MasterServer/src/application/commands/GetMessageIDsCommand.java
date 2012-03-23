@@ -25,6 +25,7 @@ public class GetMessageIDsCommand extends FrontCommand{
 		String stringLongitude;
 		String stringLatitude;
 		String stringSpeed;
+		String sort = "";
 		
 		float speed = 0;
 		double longitude;
@@ -38,6 +39,9 @@ public class GetMessageIDsCommand extends FrontCommand{
 		if ((stringLatitude = request.getParameter("latitude")) == null)
 			throw new ParameterException("Missing 'latitude' parameter.");
 		
+		// Get message latitude from request object
+		if ((sort = request.getParameter("sorttype")).toUpperCase() == null)
+				throw new ParameterException("Missing 'sorttype' parameter.");
 		try {
 			// Get speed from request object
 			if ((stringSpeed = request.getParameter("speed")) != null)
@@ -49,7 +53,7 @@ public class GetMessageIDsCommand extends FrontCommand{
 			// TODO Log this shit
 			throw new ParameterException("Longitude, latitude, and/or speed number format exception.", e);
 		}
-		String sort = "type";
+		
 		List<BigInteger> ids = MessageInputMapper.findIdsInProximity(longitude, latitude, speed, sort);	
 		
 		response.setContentType("text/plain");
