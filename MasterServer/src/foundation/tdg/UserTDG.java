@@ -15,14 +15,13 @@
 
 package foundation.tdg;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import foundation.Database;
+import foundation.DbRegistry;
 
 /**
  * Foundation class for executing insert/update/delete on Users.
@@ -30,7 +29,7 @@ import foundation.Database;
  */
 public class UserTDG {
 	// Table name
-	public final static String TABLE = "User";
+	public final static String TABLE = DbRegistry.getTablePrefix() + "User";
 		
 	// Private constructor
 	private UserTDG() {}
@@ -54,7 +53,7 @@ public class UserTDG {
 	 * @throws SQLException
 	 */
 	public static int insert(BigInteger uid, int version, String email, String password, int type) throws SQLException {
-		Connection connection = Database.getConnection();
+		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(INSERT);
 		
 		ps.setBigDecimal(1, new BigDecimal(uid));
@@ -89,7 +88,7 @@ public class UserTDG {
 	 * @throws SQLException
 	 */
 	public static int update(BigInteger uid, int version, String email, String password, int type) throws SQLException {
-		Connection connection = Database.getConnection();
+		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(UPDATE);
 		
 		ps.setString(1, email);
@@ -115,7 +114,7 @@ public class UserTDG {
 	 * @throws SQLException
 	 */
 	public static int delete(BigInteger uid, int version) throws SQLException {
-		Connection connection = Database.getConnection();
+		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(DELETE);
 		ps.setBigDecimal(1, new BigDecimal(uid));
 		ps.setInt(2, version);
@@ -133,7 +132,7 @@ public class UserTDG {
 	 * @throws SQLException 
 	 */
 	public static void create() throws SQLException {
-		Connection connection = Database.getConnection();
+		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(CREATE_TABLE);
 
 		ps.executeUpdate();
@@ -148,7 +147,7 @@ public class UserTDG {
 	 * @throws SQLException
 	 */
 	public static void drop() throws SQLException {
-		Connection connection = Database.getConnection();
+		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(DROP_TABLE);
 		
 		ps.executeUpdate();

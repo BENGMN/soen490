@@ -23,6 +23,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLRecoverableException;
 import java.util.HashMap;
 
 
@@ -55,7 +56,10 @@ import application.commands.UpdateUserCommand;
 import application.commands.UpvoteMessageCommand;
 import application.commands.UserCreatorCommand;
 import application.commands.UserLookupCommand;
-import foundation.Database;
+import foundation.DbRegistry;
+import foundation.MySQLConnectionPoolFactory;
+import foundation.registry.PropertiesRegistry;
+import exceptions.PropertyNotFoundException;
 import foundation.finder.ServerListFinder;
 import foundation.tdg.ServerListTDG;
 
@@ -73,8 +77,8 @@ public class FrontController extends HttpServlet {
 	// Overridden to make sure that we have a database.
 	public void init() throws ServletException {
 		try {
-			if (!Database.isDatabaseCreated())
-				Database.createDatabaseTables();
+			if (!DbRegistry.isDatabaseCreated())
+				DbRegistry.createDatabaseTables();
 			InetAddress addr = InetAddress.getLocalHost();
 			String hostname = addr.getHostName();		
 			ResultSet rs = ServerListFinder.find(hostname);		
@@ -85,17 +89,42 @@ public class FrontController extends HttpServlet {
 			
 			// Simply to initialise
 			ServerParameters.getUniqueInstance();
+			
+			prepareDbRegistry("");
+			logger.info("DbRegistry prepared with key \"\".");
 		} catch (Exception E) {
-			// TODO Log
+			logger.error("init() ");
 			throw new ServletException(E);
 		} finally {
 			try {
-				Database.freeConnection();
+				DbRegistry.closeDbConnection();
 			} catch (SQLException e) {
 				logger = (Logger)LoggerFactory.getLogger("application");
-				logger.error("SQLException occurred when trying to free a database connection. {}", e);
+				logger.error("SQLException occurred when trying to free a database connection: {}", e);
 			}
 		}
+	}
+	
+	public void prepareDbRegistry(String db_id) throws SQLException {
+		MySQLConnectionPoolFactory f = new MySQLConnectionPoolFactory(null, null, null, null);
+		
+		try {
+			f.defaultInitialization(db_id);
+		} catch (SQLException e) {
+			logger.error("The following error occurred when preparing the DbRegistry: {}", e);
+		}
+		
+		DbRegistry.setConnectionPool(f.createConnectionPool());
+		String tablePrefix = null;
+		
+		try {
+			tablePrefix = PropertiesRegistry.getProperty(db_id + "tablePrefix");
+		} catch (PropertyNotFoundException e) {
+			logger.info("Property 'tablePrefix' was not found. Setting it to \"\", empty string.");
+			tablePrefix = "";
+		}
+		
+		DbRegistry.setTablePrefix(db_id, tablePrefix);
 	}
 	
 	/**
@@ -180,7 +209,7 @@ public class FrontController extends HttpServlet {
 		logger.trace("handleRequest() starting.");
 		
 		try {
-			conn = Database.getConnection();
+			conn = DbRegistry.getDbConnection();
 			conn.setAutoCommit(false);
 			PreparedStatement ps = conn.prepareStatement("START TRANSACTION;");
 			ps.execute();
@@ -224,7 +253,7 @@ public class FrontController extends HttpServlet {
 		}
 		
 		try {
-			conn = Database.getConnection();
+			conn = DbRegistry.getDbConnection();
 			PreparedStatement ps = conn.prepareStatement("COMMIT;");
 			ps.execute();
 			ps.close();
@@ -232,7 +261,7 @@ public class FrontController extends HttpServlet {
 			logger.debug("The following SQLException occured", e);				
 		} finally {
 			try {
-				Database.freeConnection();
+				DbRegistry.closeDbConnection();
 			} catch (SQLException e) {
 				logger.debug("The following SQLException occured", e);				
 			}

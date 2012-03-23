@@ -5,11 +5,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import foundation.Database;
+import foundation.DbRegistry;
 
 public class ServerListTDG {
 
-	public final static String TABLE = "ServerList";
+	public final static String TABLE = DbRegistry.getTablePrefix() +  "ServerList";
 	
 //	/**
 //	 * SQL query for updating an existing server parameter
@@ -42,13 +42,13 @@ public class ServerListTDG {
 		"INSERT INTO " + TABLE + "(hostname, port) VALUES (?, ?);";
 	
 	/**
-	 * TDG function for inserting the servers hostname
+	 * TDG function for inserting the server's hostname.
 	 * @return Returns the number of rows that were affected by the SQL query.
 	 * @throws SQLException
 	 * @throws UnknownHostException 
 	 */
-	public static int insert (String hostname, int port) throws SQLException, UnknownHostException {
-		Connection connection = Database.getConnection();
+	public static int insert (String hostname, int port) throws SQLException {
+		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(INSERT);
 
 		ps.setString(1, hostname);
@@ -73,7 +73,7 @@ public class ServerListTDG {
 	 * @throws SQLException
 	 */
 	public static int delete (String hostname) throws SQLException {
-		Connection connection = Database.getConnection();
+		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(DELETE);
 		
 		ps.setString(1, hostname);
@@ -95,7 +95,7 @@ public class ServerListTDG {
 		 * @throws SQLException 
 		 */
 		public static void create() throws SQLException {
-			Connection connection = Database.getConnection();
+			Connection connection = DbRegistry.getDbConnection();
 			PreparedStatement ps = connection.prepareStatement(CREATE_TABLE);
 			
 			ps.executeUpdate();
@@ -110,7 +110,7 @@ public class ServerListTDG {
 		 * @throws SQLException
 		 */
 		public static void drop() throws SQLException {
-			Connection connection = Database.getConnection();
+			Connection connection = DbRegistry.getDbConnection();
 			PreparedStatement ps = connection.prepareStatement(DROP_TABLE);
 			
 			ps.executeUpdate();

@@ -23,7 +23,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import foundation.Database;
+import foundation.DbRegistry;
 import foundation.tdg.UserTDG;
 
 /**
@@ -43,7 +43,7 @@ public class UserFinder {
 	 * @throws SQLException
 	 */
 	public static ResultSet find(BigInteger uid) throws SQLException {
-		Connection connection = Database.getConnection();
+		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(SELECT);
 
 		ps.setBigDecimal(1, new BigDecimal(uid));
@@ -64,7 +64,7 @@ public class UserFinder {
 	 * @throws SQLException
 	 */
 	public static ResultSet find(String email, String password) throws SQLException {
-		Connection connection = Database.getConnection();
+		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(SELECT_BY_EMAIL_AND_PASSWORD);
 		
 		ps.setString(1, email);
@@ -85,7 +85,7 @@ public class UserFinder {
 	 * @throws SQLException
 	 */
 	public static ResultSet find(String email) throws SQLException {
-		Connection connection = Database.getConnection();
+		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(SELECT_BY_EMAIL);
 		
 		ps.setString(1, email);
@@ -103,7 +103,7 @@ public class UserFinder {
 	 * @throws SQLException
 	 */
 	public static ResultSet findAll() throws SQLException {
-		Connection connection = Database.getConnection();
+		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(SELECT_ALL);
 		
 		ResultSet rs = ps.executeQuery();
@@ -119,7 +119,7 @@ public class UserFinder {
 	 * @throws SQLException
 	 */
 	public static long findUniqueId() throws SQLException { 
-		Connection connection = Database.getConnection();
+		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(SELECT_UNIQUE_ID);
 
 		ResultSet rs = ps.executeQuery();

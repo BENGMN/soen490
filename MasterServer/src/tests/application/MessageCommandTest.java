@@ -72,16 +72,16 @@ public class MessageCommandTest {
 	@Before
 	public void createTables() throws SQLException, IOException
 	{
-		previousDatabase = Database.isDatabaseCreated();
+		previousDatabase = DbRegistry.isDatabaseCreated();
 		if (!previousDatabase)
-			Database.createDatabaseTables();
+			DbRegistry.createDatabaseTables();
 	}
 	
 	@After
 	public void dropTables() throws SQLException, IOException
 	{
 		if (!previousDatabase)
-			Database.dropDatabaseTables();
+			DbRegistry.dropDatabaseTables();
 	}
 	
 	@Test

@@ -40,7 +40,7 @@ public class FrontControllerTest {
 	public void testFrontController() {
 		FrontController frontController;
 		try {
-			Database.dropDatabaseTables();
+			DbRegistry.dropDatabaseTables();
 			ServerListTDG.create();
 			
 			frontController = new FrontController();
@@ -56,7 +56,7 @@ public class FrontControllerTest {
 			assertEquals(hostname, rs.getString("hostname"));
 			assertEquals(port, rs.getInt("port"));
 			
-			assertTrue(Database.isDatabaseCreated());
+			assertTrue(DbRegistry.isDatabaseCreated());
 		} catch (SQLException e) {
 			e.printStackTrace();
 			fail();
@@ -69,7 +69,7 @@ public class FrontControllerTest {
 		} finally {
 			try {
 				// need to drop all tables because FrontController init creates all of them
-				Database.dropDatabaseTables();
+				DbRegistry.dropDatabaseTables();
 			} catch (SQLException e) {
 			}
 		}
