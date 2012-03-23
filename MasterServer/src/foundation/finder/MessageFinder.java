@@ -203,7 +203,7 @@ public class MessageFinder {
 	private static final String SELECT_ID_BY_RADIUS = 
 			"SELECT messages.mid,messages.uid " +
 			"FROM User AS u, " +
-			"(SELECT m.mid, m.uid, m.latitude, m.longitude, m.user_rating " +
+			"(SELECT m.mid, m.uid, m.latitude, m.longitude, m.user_rating, m.created_at " +
 			"FROM " + MessageTDG.TABLE + " AS m " +
 			"WHERE longitude BETWEEN ? AND ? AND m.latitude BETWEEN ? AND ?) AS messages WHERE u.uid = messages.uid";
 	
