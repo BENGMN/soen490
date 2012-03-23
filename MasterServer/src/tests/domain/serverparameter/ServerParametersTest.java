@@ -26,8 +26,9 @@ public class ServerParametersTest extends TestCase {
 			
 			// should have one element
 			Map<String, ServerParameter> params = ServerParameters.getUniqueInstance();
+			((ServerParameters)params).updateParameters();
 			
-			assertEquals(1, params.size());
+			assertEquals(1 + ServerParameterTDG.INSERTIONS.length, params.size());
 			
 			ServerParameter param = params.get(p.getParamName());
 			assertTrue(param.equals(param));
@@ -53,8 +54,9 @@ public class ServerParametersTest extends TestCase {
 			
 			// should have one element
 			Map<String, ServerParameter> params = ServerParameters.getUniqueInstance();
-			
-			assertEquals(1, params.size());
+			((ServerParameters)params).updateParameters();
+
+			assertEquals(1 + ServerParameterTDG.INSERTIONS.length, params.size());
 			
 			ServerParameters params2 = ServerParameters.getUniqueInstance();
 			
@@ -83,8 +85,9 @@ public class ServerParametersTest extends TestCase {
 			
 			// should have one element
 			Map<String, ServerParameter> params = ServerParameters.getUniqueInstance();
-			
-			assertEquals(1, params.size());
+			((ServerParameters)params).updateParameters();
+
+			assertEquals(1 + ServerParameterTDG.INSERTIONS.length, params.size());
 			
 			ServerParameter param = params.get(p.getParamName());
 			assertTrue(param.equals(param));
@@ -122,8 +125,9 @@ public class ServerParametersTest extends TestCase {
 			
 			// should have one element
 			Map<String, ServerParameter> params = ServerParameters.getUniqueInstance();
-			
-			assertEquals(1, params.size());
+			((ServerParameters)params).updateParameters();
+
+			assertEquals(1 + ServerParameterTDG.INSERTIONS.length, params.size());
 			
 			ServerParameter param = params.get(p.getParamName());
 			assertTrue(param.equals(param));

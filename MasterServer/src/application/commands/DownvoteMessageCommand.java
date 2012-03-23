@@ -61,7 +61,6 @@ public class DownvoteMessageCommand extends FrontCommand {
 		// decrement the message user rating
 		MessageOutputMapper.decrementRating(message);
 		
-		// TODO possibly return success message
 		response.setStatus(HttpServletResponse.SC_OK);
 	}
 }

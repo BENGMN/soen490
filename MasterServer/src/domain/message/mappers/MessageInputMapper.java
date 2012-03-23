@@ -27,7 +27,7 @@ import java.util.List;
 import exceptions.MapperException;
 import domain.message.Message;
 import domain.message.MessageFactory;
-import domain.message.MessageIdentityMap;
+
 import foundation.finder.MessageFinder;
 import domain.user.IUser;
 
@@ -43,7 +43,7 @@ public class MessageInputMapper {
 	 * @param latitude
 	 * @param radius
 	 * @return Returns a list of message objects approximately within the radius.
-	 * @throws SQLException, IOException
+	 * @throws SQLException
 	 */
 	public static List<Message> findInProximity(double longitude, double latitude, double radius) throws SQLException {
 		// TODO have not fixed this yet
@@ -58,10 +58,10 @@ public class MessageInputMapper {
 	
 	
 	/**
-	 * Find by id method for message .
+	 * Finds a Message by id.
 	 * @param mid Message id
 	 * @return Returns a message with the specified id
-	 * @throws SQLException, IOException, MapperException 
+	 * @throws SQLException, MapperException 
 	 */
 	public static Message find(BigInteger mid) throws SQLException, MapperException {
 		Message message = null;
@@ -85,8 +85,7 @@ public class MessageInputMapper {
 	 * Find all messages belonging to a user.
 	 * @param user Owner of the message(s)
 	 * @return Returns a list of messages belonging to a specified user.
-	 * @throws SQLException, IOException
-	 * @throws MapperException 
+	 * @throws SQLException
 	 */
 	public static List<Message> findByUser(IUser user) throws SQLException {
 		List<Message> messages = new LinkedList<Message>();
@@ -97,10 +96,6 @@ public class MessageInputMapper {
 		Message message = null;
 		
 		while(rs.next()) {
-			// TODO
-			// CODE FOR IDENTITY MAP HAS BEEN REMOVED
-
-			// create message
 			message = getMessage(rs);
 			
 			// add the message to the list
@@ -115,7 +110,7 @@ public class MessageInputMapper {
 	/**
 	 * Finds all messages in the table.
 	 * @return Returns a list of all messages found.
-	 * @throws IOException, SQLException
+	 * @throws SQLException
 	 */
 	public static List<Message> findAll() throws SQLException {
 		List<Message> messages = new LinkedList<Message>();
@@ -124,10 +119,6 @@ public class MessageInputMapper {
 		ResultSet rs = MessageFinder.findAll();
 		
 		while(rs.next()) {
-			// TODO
-			// CODE FOR IDENTITY MAP HAS BEEN REMOVED
-
-			// create message
 			message = getMessage(rs);
 			
 			// add the message to the list
@@ -143,7 +134,6 @@ public class MessageInputMapper {
 	 * Find expired messages using time to live
 	 * @param timeToLive
 	 * @return List of message ids
-	 * @throws IOException
 	 * @throws SQLException
 	 */
 	public static List<BigInteger> findExpiredMessages(int timeToLive) throws SQLException {
@@ -160,12 +150,34 @@ public class MessageInputMapper {
 	}
 	
 	/**
+	 * Finds messages in high density areas needed to be deleted
+	 * @param latitude
+	 * @param longitude
+	 * @param radius
+	 * @return list of message IDs to be deleted
+	 * @throws SQLException
+	 */
+	public static List<BigInteger> findMessagesToDelete(double latitude, double longitude, double radius) throws SQLException {		
+		List<BigInteger> messages = new LinkedList<BigInteger>();
+		ResultSet rs = MessageFinder.findMessagesToDelete(latitude, longitude, radius);
+				
+		// result set is null if the density of message and there are no messages to delete
+		if(rs != null) {
+			while(rs.next()) {
+				messages.add(rs.getBigDecimal("m.mid").toBigInteger());
+			}		
+			rs.close();
+		}
+				
+		return messages;
+	}
+	
+	/**
 	 * Find message ids in proximity
 	 * @param longitude
 	 * @param latitude
 	 * @param speed
 	 * @return List of message ids
-	 * @throws IOException
 	 * @throws SQLException
 	 */
 	public static List<BigInteger> findIdsInProximity(double longitude, double latitude, double speed, String sort) throws IOException, SQLException {
@@ -183,10 +195,10 @@ public class MessageInputMapper {
 		return messageIds;
 	}
 	/**
-	 * Internal use of getMessage. Does NOT check the map.
+	 * Internal use of getMessage.
 	 * Object relational mapping for the Message occurs here.
 	 * @param rs Result set containing a message
-	 * @return Message Message object created based on the result set
+	 * @return Returns a Message object created based on the result set
 	 * @throws SQLException
 	 */
 	private static Message getMessage(ResultSet rs) throws SQLException {

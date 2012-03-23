@@ -16,21 +16,18 @@ import application.IOUtils;
 
 import domain.message.Message;
 import domain.message.MessageFactory;
-import domain.user.IUser;
 import domain.user.User;
 import domain.user.UserFactory;
-import domain.user.UserProxy;
 import domain.user.UserType;
 import exceptions.CorruptStreamException;
 import junit.framework.TestCase;
 
-public class TestIOUtils extends TestCase {
+public class IOUtilsTest extends TestCase {
 	// Attributes for a User
 	private final BigInteger uid = new BigInteger("3425635465657");	
 
 	// Attributes for a Message
 	private BigInteger mid = new BigInteger("158749857935");
-	private IUser owner = new UserProxy(uid);
 	private byte[] message = { 1, 2, 3, 4, 5, 6 };
 	private float speed = 5.5f;
 	final double latitude = 29.221;
@@ -376,5 +373,70 @@ public class TestIOUtils extends TestCase {
 			if (file.exists())
 				file.delete();
 		}		
+	}
+	
+	// Testing a message to XML
+	public void testWriteAndReadStatusMessageXML() {
+		File file = new File("TestMessageUtils");
+		
+		try {
+			String tagName = "error";
+			String message = "this is an error message";
+					
+			DataOutputStream out = new DataOutputStream(new FileOutputStream(file));
+			
+			IOUtils.writeStatusMessageToXML(tagName, message, out);
+			
+			out.close();
+
+			DataInputStream in = new DataInputStream(new FileInputStream(file));
+		
+			String sameMessage = IOUtils.readStatusMessageFromXML(tagName, in);
+			
+			assertTrue(message.equals(sameMessage));
+			
+			in.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			fail();
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail();
+		} finally {
+			if (file.exists())
+				file.delete();
+		}			
+	}
+	
+	// Testing a message to stream
+	public void testWriteAndReadStatusMessageToStream() {
+		File file = new File("TestMessageUtils");
+		
+		try {
+			String message = "this is an error message";
+					
+			DataOutputStream out = new DataOutputStream(new FileOutputStream(file));
+			
+			IOUtils.writeStatusMessageToStream(message, out);
+			
+			out.close();
+
+			DataInputStream in = new DataInputStream(new FileInputStream(file));
+		
+			String sameMessage = IOUtils.readStatusMessageFromStream(in);
+			
+			assertTrue(message.equals(sameMessage));
+			
+			in.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			fail();
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail();
+		} finally {
+			if (file.exists())
+				file.delete();
+		}			
 	}
 }

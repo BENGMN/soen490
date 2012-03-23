@@ -15,15 +15,11 @@
 
 package foundation;
 
-import java.io.BufferedReader;
-
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
@@ -48,7 +44,7 @@ public class Database {
 	protected static boolean TESTING;
 	
 	// File path to properties file
-	private static final String FILENAME = "Database.properties";
+	private static final String FILENAME = "MyProperties.properties";
 	
 	static {
 		try {
@@ -100,7 +96,12 @@ public class Database {
 		
 	}
 	
-	// This function returns a singleton threadlocal connection. 
+	/**
+	 * If the current thread doesn't have one, retrieves a connection from the pool, assigns it to the current thread, and returns it.
+	 * Otherwise returns the threadlocal connection. 
+	 * @return Returns a threadlocal connection
+	 * @throws SQLException
+	 */
 	public static Connection getConnection() throws SQLException {
 		
 		if(threadConnection.get() == null) {
@@ -112,6 +113,10 @@ public class Database {
 		
 	}
 	
+	/**
+	 * If the current thread has a connection, closes it.
+	 * @throws SQLException
+	 */
 	public static void freeConnection() throws SQLException {
 		Connection connection = threadConnection.get();
 		if (connection != null) {
@@ -119,73 +124,28 @@ public class Database {
 			threadConnection.remove();
 		}
 	}
-	
-	private static void freeConnection(Connection connection) throws SQLException {
-		connection.close();
-		threadConnection.remove();
-	}
-	
-	public ResultSet query(String queryString, Object[] objects) throws SQLException
-	{
-		Connection connection = getConnection();
-		if (connection == null)
-			return null;
-		PreparedStatement statement = connection.prepareStatement(queryString);
-		if (objects != null) {
-			for (int c = 0; c < objects.length; ++c)
-				statement.setObject(c, objects[c]);
-		}
-		ResultSet rs = statement.executeQuery();
-		freeConnection(connection);
-		return rs;
-	}
-	
-	public ResultSet query(String queryString) throws SQLException
-	{
-		return query(queryString, null);
-	}
-	
-	public static int update(String queryString, Object[] objects) throws SQLException
-	{
-		Connection connection = getConnection();
-		PreparedStatement statement = connection.prepareStatement(queryString);
-		if (objects != null) {
-			for (int c = 0; c < objects.length; ++c)
-				statement.setObject(c, objects[c]);
-		}
-		int result = statement.executeUpdate();
-		freeConnection(connection);
-		return result;
-	}
-	
-	public static int update(String queryString) throws SQLException
-	{
-		return update(queryString, null);
-	}
-	
-	public boolean runFile(String path) throws IOException, SQLException
-	{
-		BufferedReader fileReader = new BufferedReader(new FileReader(path));
-		String line;
-		while ((line = fileReader.readLine()) != null)
-		{
-			update(line, null);
-		}
-		return true;
-	}
-	
+		
+	/**
+	 * Checks if the Database has a table identified by the given table name
+	 * @param tableName A table name to check for in the Database
+	 * @return Returns true if the table exists, false otherwise.
+	 * @throws SQLException
+	 */
 	public static boolean hasTable(String tableName) throws SQLException {
 		Connection connection = getConnection();
+		
 		DatabaseMetaData metaData = connection.getMetaData();
 		ResultSet tables = metaData.getTables(null, null, tableName, null);
 		boolean hasTable = tables.next();
-		
 		tables.close();
 		
 		return hasTable;
 	}
 
-	public static void createDatabase() throws SQLException {
+	/*
+	 * The following methods are used to create or drop the database in is entirety
+	 */
+	public static void createDatabaseTables() throws SQLException {
 		if (!hasTable(UserTDG.TABLE))
 			UserTDG.create();
 		if (!hasTable(MessageTDG.TABLE))
@@ -196,7 +156,7 @@ public class Database {
 			ServerParameterTDG.create();
 	}
 	
-	public static void dropDatabase() throws SQLException {
+	public static void dropDatabaseTables() throws SQLException {
 		if (hasTable(UserTDG.TABLE))
 			UserTDG.drop();
 		if (hasTable(MessageTDG.TABLE))
@@ -207,8 +167,6 @@ public class Database {
 			ServerParameterTDG.drop();
 	}
 	
-	// Refactor the hasTable method to be parameterized
-	// Note this method is called from the frontController
 	public static boolean isDatabaseCreated() throws SQLException {
 		return hasTable(UserTDG.TABLE) && hasTable(MessageTDG.TABLE) && hasTable(ServerListTDG.TABLE) && hasTable(ServerParameterTDG.TABLE); 
 	}

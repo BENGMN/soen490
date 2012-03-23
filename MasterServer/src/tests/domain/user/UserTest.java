@@ -62,8 +62,7 @@ public class UserTest {
 	}
 	
 	@Test
-	public void testEquals()
-	{	
+	public void testEquals() {	
 		User user1 = new User(uid, email, password, userType, 0);
 		User user2 = new User(uid, email, password, userType, 1);
 		

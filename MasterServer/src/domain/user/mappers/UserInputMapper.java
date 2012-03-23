@@ -15,7 +15,6 @@
 
 package domain.user.mappers;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,15 +23,21 @@ import java.util.List;
 
 import domain.user.User;
 import domain.user.UserFactory;
-import domain.user.UserIdentityMap;
 import domain.user.UserType;
 import exceptions.MapperException;
 import foundation.finder.UserFinder;
 
-
-
+/**
+ * InputMapper class that provides indirection to the Foundation classes to persist the domain model.
+ */
 public class UserInputMapper {
 
+	/**
+	 * Helper method to create a User from a row in the given ResultSet
+	 * @param rs ResultSet containing a User
+	 * @return Returns a User constructed from the ResultSet
+	 * @throws SQLException
+	 */
 	private static User getUser(ResultSet rs) throws SQLException {
 		User user = null;
 			
@@ -48,45 +53,34 @@ public class UserInputMapper {
 	}
 	
 	/**
-	 * Locate a user by ID. 
-	 * If the user is loaded within the identity map then call the foundation layer's
-	 * UserFinder to get the information needed to construct the object from the database.
-	 * If the object is reconstructed from the database it should be put back into the identity map. (Use the UserFactory create clean method instead)
-	 * @param uid
-	 * @return A user object is returned and is placed in the identity map if it has not been already.
-	 * @throws IOException
+	 * Finds a User by id.
+	 * @param uid The BigInteger id of a User
+	 * @return Returns a User instance representing the passed uid
+	 * @throws SQLException
+	 * @throws MapperException
 	 */
 	public static User find(BigInteger uid) throws SQLException, MapperException {
 		User mappedUser = null;
+	
+		ResultSet rs = UserFinder.find(uid);
 		
-		// Check if user exists in the identity map
-		mappedUser = UserIdentityMap.get(uid);
+		if (!rs.next())
+			throw new MapperException ("User with id " + uid.toString() + " does not exist.");
 		
-		// If he doesn't, check the database		
-		if (mappedUser == null) {
-			
-			ResultSet rs = UserFinder.find(uid);
-			
-			if (!rs.next())
-				throw new MapperException ("User with id " + uid.toString() + " does not exist.");
-			
-			// create the user found
-			mappedUser = getUser(rs);
-			
-			UserIdentityMap.put(uid, mappedUser);
-			
-			rs.close();
-			
-		}
+		// create the user found
+		mappedUser = getUser(rs);
+		
+		rs.close();
 		
 		return mappedUser;
 	}
 	
 	/**
-	 * Find a User by their email address. This method calls the database layer via the UserFinder.
-	 * @param email
-	 * @return
-	 * @throws IOException
+	 * Finds a User by email address. 
+	 * @param email A String email of a User
+	 * @return Returns a User instance representing the passed email
+	 * @throws SQLException
+	 * @throws MapperException
 	 */
 	public static User findByEmail(String email) throws SQLException, MapperException {		
 		User mappedUser = null;
@@ -95,12 +89,8 @@ public class UserInputMapper {
 		
 		if (!rs.next()) 
 			throw new MapperException ("User with email " + email + " does not exist.");
-		else {
-			BigInteger uid = rs.getBigDecimal("u.uid").toBigInteger();
-			if ((mappedUser = UserIdentityMap.get(uid)) == null) {
-				mappedUser = getUser(rs);
-				UserIdentityMap.put(uid, mappedUser);
-			}
+		else {	
+			mappedUser = getUser(rs);
 		}
 			
 		rs.close();
@@ -110,7 +100,7 @@ public class UserInputMapper {
 	
 	/**
 	 * Finds all users. 
-	 * @return
+	 * @return Returns a List of all User's
 	 * @throws SQLException
 	 */
 	public static List<User> findAll() throws SQLException {
@@ -120,19 +110,8 @@ public class UserInputMapper {
 		ResultSet rs = UserFinder.findAll();
 		
 		while(rs.next()) {
-			// get the user id
-			BigInteger uid = rs.getBigDecimal("u.mid").toBigInteger();
-			
-			// check if the user exists in the identity map
-			user = UserIdentityMap.get(uid);
-			
-			// if it isn't, the above statement returned null, so create it
-			if (user == null) {
-				user = getUser(rs);
-				// add the user to the identity map
-				UserIdentityMap.put(uid, user);
-			}
-			
+			user = getUser(rs);
+	
 			// add the user to the list
 			users.add(user);
 		}

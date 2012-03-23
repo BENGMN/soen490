@@ -16,7 +16,6 @@
 
 package tests.domain.message;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
@@ -33,6 +32,7 @@ import domain.user.IUser;
 import domain.user.UserFactory;
 import domain.user.UserType;
 import exceptions.MapperException;
+import foundation.tdg.MessageTDG;
 
 import junit.framework.TestCase;
 
@@ -54,95 +54,135 @@ public class MessageInputMapperTest extends TestCase {
 	private final UserType userType = UserType.USER_NORMAL;
 	private final int version = 1;
 	
-	public void testFind() throws IOException, SQLException {
+	public void testFind() {
 		// Make sure that the message does not already exist in the database
 		try {
+			MessageTDG.create();
+			
 			MessageInputMapper.find(mid);
 			fail("Mapper Exception should have been thrown");
-		}
-		catch(MapperException e) {
+			
+			// Create a new message using the factory createClean method, ensure it does not do the insertion into the database
+			Message newMessage = MessageFactory.createClean(mid, uid, message, speed, latitude, longitude, createdDate, userRating);
+			
+			// Insert the message into the database
+			MessageOutputMapper.insert(newMessage);
+			
+			Message oldMessage = null;
+			
+			try {
+				// Find the message in the database and compare it to the original
+				oldMessage = MessageInputMapper.find(mid);
+				assertTrue(newMessage.equals(oldMessage));
+			} 
+			catch(MapperException e) {
+				fail("MapperException thrown when it should not have");
+			}
+			
+			// Remove the message from the database
+			assertEquals(MessageOutputMapper.delete(oldMessage), 1);
+			
+		} catch(MapperException e) {
 			// If we make it here the test passes
-		}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail();
+		} finally {
+			try {
+				MessageTDG.drop();
+			} catch (SQLException e) {
+			}
+		}		
+	}
+	
 
-		// Create a new message using the factory createClean method, ensure it does not do the insertion into the database
-		Message newMessage = MessageFactory.createClean(mid, uid, message, speed, latitude, longitude, createdDate, userRating);
-		
-		// Insert the message into the database
-		MessageOutputMapper.insert(newMessage);
-		
-		Message oldMessage = null;
-		
+	public void testFindByUser() {
 		try {
-			// Find the message in the database and compare it to the original
-			oldMessage = MessageInputMapper.find(mid);
-			assertEquals(newMessage.equals(oldMessage), true);
-		} 
-		catch(MapperException e) {
-			fail("MapperException thrown when it should not have");
-		}
-		
-		// Remove the message from the database
-		assertEquals(MessageOutputMapper.delete(oldMessage), 1);
-		
+			MessageTDG.create();
+			// Create some custom data for the messages
+			final byte[] message1 = {0,1,2,3,4};
+			final byte[] message2 = {5,6,7,8,9};
+	
+			// Alter the time created, otherwise duplicated keys are created
+			Timestamp createdDate1 = new Timestamp(new GregorianCalendar(2011, 9, 10).getTimeInMillis());
+			Timestamp createdDate2 = new Timestamp(new GregorianCalendar(2011, 10, 10).getTimeInMillis());
+			
+			// Create a user object to associate the messages we are about to create to
+			IUser user = UserFactory.createClean(uid, email, password, userType, version);
+			
+			// Create some messages
+			Message m1 = MessageFactory.createNew(uid, message1, speed, latitude, longitude, createdDate1, userRating);
+			Message m2 = MessageFactory.createNew(uid, message2, speed, latitude, longitude, createdDate2, userRating);
+			
+			//  Save them to the database so we can find them
+			MessageOutputMapper.insert(m1);
+			MessageOutputMapper.insert(m2);
+			
+			// Find the messages from the database and make sure they match the ones we created
+			List<Message> messages = MessageInputMapper.findByUser(user);
+			
+			// Two message should be returned
+			assertTrue(messages.size() == 2);
+			
+			// Make sure that the message were persisted by deleting them
+			assertEquals(MessageOutputMapper.delete(m1), 1);
+			assertEquals(MessageOutputMapper.delete(m2), 1);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+			fail();
+		} finally {
+			try {
+				MessageTDG.drop();
+			} catch (SQLException e) {	
+			}
+		}		
 	}
 	
+	public void testFindAll() {
+		try {
+			MessageTDG.create();
+			
+			// Create some custom data for the messages
+			final byte[] message1 = {0,1,2,3,4};
+			final byte[] message2 = {5,6,7,8,9};
 
-	public void testFindByUser() throws NoSuchAlgorithmException, IOException, SQLException {
-		// Create some custom data for the messages
-		final byte[] message1 = {0,1,2,3,4};
-		final byte[] message2 = {5,6,7,8,9};
-
-		// Alter the time created, otherwise duplicated keys are created
-		Timestamp createdDate1 = new Timestamp(new GregorianCalendar(2011, 9, 10).getTimeInMillis());
-		Timestamp createdDate2 = new Timestamp(new GregorianCalendar(2011, 10, 10).getTimeInMillis());
-		
-		// Create a user object to associate the messages we are about to create to
-		IUser user = UserFactory.createClean(uid, email, password, userType, version);
-		
-		// Create some messages
-		Message m1 = MessageFactory.createNew(uid, message1, speed, latitude, longitude, createdDate1, userRating);
-		Message m2 = MessageFactory.createNew(uid, message2, speed, latitude, longitude, createdDate2, userRating);
-		
-		//  Save them to the database so we can find them
-		MessageOutputMapper.insert(m1);
-		MessageOutputMapper.insert(m2);
-		
-		// Find the messages from the database and make sure they match the ones we created
-		List<Message> messages = MessageInputMapper.findByUser(user);
-		
-		// Two message should be returned
-		assertEquals(messages.size() == 2, true);
-		
-		// Make sure that the message were persisted by deleting them
-		assertEquals(MessageOutputMapper.delete(m1), 1);
-		assertEquals(MessageOutputMapper.delete(m2), 1);
-	}
-	
-	public void testFindAll() throws IOException, NoSuchAlgorithmException, SQLException {
-		// Create some custom data for the messages
-		final byte[] message1 = {0,1,2,3,4};
-		final byte[] message2 = {5,6,7,8,9};
-
-		// Alter the time created, otherwise duplicated keys are created
-		Timestamp createdDate1 = new Timestamp(new GregorianCalendar(2011, 9, 10).getTimeInMillis());
-		Timestamp createdDate2 = new Timestamp(new GregorianCalendar(2011, 10, 10).getTimeInMillis());
-		
-		// Create some messages and save them to the database so we can find them
-		Message m1 = MessageFactory.createNew(uid, message1, speed, latitude, longitude, createdDate1, userRating);
-		Message m2 = MessageFactory.createNew(uid, message2, speed, latitude, longitude, createdDate2, userRating);
-		
-		MessageOutputMapper.insert(m1);
-		MessageOutputMapper.insert(m2);
-		
-		// Find all of the messages from the database and make sure they match the ones we created
-		List<Message> messages = MessageInputMapper.findAll();
-		
-		// Two message should be returned
-		assertEquals(messages.size(), 2);
-		
-		// Make sure that the message were persisted by deleting them
-		assertEquals(MessageOutputMapper.delete(m1), 1);
-		assertEquals(MessageOutputMapper.delete(m2), 1);
+			// Alter the time created, otherwise duplicated keys are created
+			Timestamp createdDate1 = new Timestamp(new GregorianCalendar(2011, 9, 10).getTimeInMillis());
+			Timestamp createdDate2 = new Timestamp(new GregorianCalendar(2011, 10, 10).getTimeInMillis());
+			
+			// Create some messages and save them to the database so we can find them
+			Message m1 = MessageFactory.createNew(uid, message1, speed, latitude, longitude, createdDate1, userRating);
+			Message m2 = MessageFactory.createNew(uid, message2, speed, latitude, longitude, createdDate2, userRating);
+			
+			// Insert both
+			MessageOutputMapper.insert(m1);
+			MessageOutputMapper.insert(m2);
+			
+			// Find all of the messages from the database and make sure they match the ones we created
+			List<Message> messages = MessageInputMapper.findAll();
+			
+			// Two message should be returned
+			assertEquals(messages.size(), 2);
+			
+			// Make sure that the message were persisted by deleting them
+			assertEquals(MessageOutputMapper.delete(m1), 1);
+			assertEquals(MessageOutputMapper.delete(m2), 1);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+			fail();
+		} finally {
+			try {
+				MessageTDG.drop();
+			} catch (SQLException e) {
+			}
+		}		
 	}
 	
 	public void testFindInProximity() {

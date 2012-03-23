@@ -1,12 +1,11 @@
 package tests.domain.user;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.SQLException;
 
-
 import domain.user.User;
-import domain.user.UserIdentityMap;
+import domain.user.UserFactory;
+
 import domain.user.mappers.UserInputMapper;
 import domain.user.mappers.UserOutputMapper;
 import domain.user.UserType;
@@ -24,54 +23,110 @@ public class UserOutputMapperTest extends TestCase {
 	private final BigInteger uid = new BigInteger("3325635465657");
 	private User user = null;
 	
-	public UserOutputMapperTest() {
-		user = new User(uid, email, password, userType, version);
-	}
-	public void testInsert() throws IOException, SQLException, MapperException {
-		// Use the UserOutputMapper to deconstruct the object and place it into the database
-		UserOutputMapper.insert(user);
-		
-		// Confirm that the object has in fact made it into the database by retrieving it
-		User userCopy = UserInputMapper.find(uid);
-		
-		// Ensure that the retrieved copy matches the one the OutputMapper stored
-		assertEquals(user.equals(userCopy), true);
-		
-		// Delete the newly created record from the database and the identity map
-		assertEquals(UserTDG.delete(uid, version),1);
-		UserIdentityMap.remove(uid);
+	public void testInsert() {
+		try {
+			UserTDG.create();
+			
+			user = UserFactory.createClean(uid, email, password, userType, version);
+			
+			UserOutputMapper.insert(user);
+			
+			User userCopy = UserInputMapper.find(uid);
+			assertEquals(user.equals(userCopy), true);
+			try {
+				UserOutputMapper.insert(userCopy);
+				fail();
+			} catch (SQLException e) {
+				// should reach here
+			}
+						
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail();
+		} catch (MapperException e) {
+			e.printStackTrace();
+			fail();
+		} finally {
+			try {
+				UserTDG.drop();
+			} catch (SQLException e) {				
+			}
+		}
+	
 	}
 	
-	public void testUpdate() throws IOException, SQLException, MapperException, LostUpdateException {
-		// Use the UserOutputMapper to deconstruct the object and place it into the database
-		UserOutputMapper.insert(user);
-		
-		// Change a property of the object and update the version
-		String newEmail = "test@example.com";
-		user.setEmail(newEmail);
-		
-		// update the user in the database
-		UserOutputMapper.update(user); 
-		
-		// retrieve the object from the database
-		User userCopy = UserInputMapper.find(uid);
-
-		// Make sure the retrieved object was updated
-		assertEquals(userCopy.getUid(), uid);
-		assertEquals(userCopy.getEmail(),newEmail);		// Email changes
-		// assertEquals(userCopy.getPassword(), password); // Note the password is not returned by the UserInputMapper
-		assertEquals(userCopy.getType(), userType);
-		assertEquals(userCopy.getVersion(), 2);			// Version changes
-		
-		// Delete the newly created record from the database
-		assertEquals(UserTDG.delete(uid, 2),1);	
+	public void testDelete() {
+		try {
+			UserTDG.create();
+			
+			user = UserFactory.createClean(uid, email, password, userType, version);
+			
+			UserOutputMapper.insert(user);
+			
+			User userCopy = UserInputMapper.find(uid);
+			assertEquals(user.equals(userCopy), true);
+			
+			assertEquals(UserOutputMapper.delete(userCopy), 1);
+						
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail();
+		} catch (MapperException e) {
+			e.printStackTrace();
+			fail();
+		} catch (LostUpdateException e) {
+			e.printStackTrace();
+			fail();
+		} finally {
+			try {
+				UserTDG.drop();
+			} catch (SQLException e) {				
+			}
+		}
+	
 	}
-
-	public void testDelete() throws IOException, SQLException, LostUpdateException {
-		// Use the UserOutputMapper to deconstruct the object and place it into the database
-		UserOutputMapper.insert(user);
-		
-		// Delete the user from the database and make sure the count of records changed equals 1.
-		assertEquals(UserOutputMapper.delete(user),1);
+	
+	public void testUpdate()  {
+		try {
+			UserTDG.create();
+			
+			user = UserFactory.createClean(uid, email, password, userType, version);
+			
+			UserOutputMapper.insert(user);
+	
+			User userCopy = UserInputMapper.find(uid);
+			assertEquals(user.equals(userCopy), true);
+			
+			// after update
+			user.setEmail(email + " new email ");
+			UserOutputMapper.update(user);
+			// increment version to simulate what the update does
+			user.setVersion(user.getVersion() + 1);
+			
+			userCopy = UserInputMapper.find(uid);
+			
+			// We can't compare objects because the ones returned from finder does not contain password
+			assertTrue(user.getEmail().equals(userCopy.getEmail()));
+			assertTrue(user.getUid().equals(userCopy.getUid()));
+			assertTrue(user.getVersion() == userCopy.getVersion());
+			assertTrue(user.getType() == userCopy.getType());
+			
+			assertEquals(UserOutputMapper.delete(userCopy), 1);
+						
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail();
+		} catch (MapperException e) {
+			e.printStackTrace();
+			fail();
+		} catch (LostUpdateException e) {
+			e.printStackTrace();
+			fail();
+		} finally {
+			try {
+				UserTDG.drop();
+			} catch (SQLException e) {				
+			}
+		}
 	}
 }

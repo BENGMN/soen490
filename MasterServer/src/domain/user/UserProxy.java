@@ -95,14 +95,6 @@ public class UserProxy implements IUser {
 		getRealUser().setVersion(version);
 	}
 
-	public void writeServer(DataOutputStream out) throws IOException, MapperException {
-		getRealUser().writeServer(out);
-	}
-
-	public void readServer(DataInputStream in) throws IOException, MapperException {
-		getRealUser().readServer(in);
-	}
-
 	@Override
 	public boolean equals(Object o) {
 		// If the object is not null and is of the type User

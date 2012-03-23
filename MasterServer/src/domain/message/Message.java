@@ -15,23 +15,9 @@
 
 package domain.message;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.Timestamp;
-import java.util.List;
-
-import org.msgpack.MessagePack;
-import org.msgpack.packer.Packer;
-import org.msgpack.unpacker.Unpacker;
-import org.slf4j.LoggerFactory;
-
-import ch.qos.logback.classic.Logger;
-
 import domain.user.IUser;
-import domain.user.UserProxy;
-import exceptions.MapperException;
 
 public class Message {	
 	private BigInteger mid;
@@ -122,59 +108,5 @@ public class Message {
 				" Owner: "+getOwner().getUid()+
 				" CreatedAt: "+getCreatedAt()
 				;
-	}
-	
-	public void writeServer(DataOutputStream out) throws IOException
-	{
-		Packer packer = (new MessagePack()).createPacker(out);
-		packer.write(mid);
-		packer.write(getOwner().getUid());
-		packer.write(message);
-		packer.write(speed);
-		packer.write(getCreatedAt());
-		packer.write(getLongitude());
-		packer.write(getLatitude());
-		packer.write(getUserRating());
-	}
-	
-	public void readServer(DataInputStream in) throws IOException
-	{
-		Unpacker unpacker = (new MessagePack()).createUnpacker(in);
-		mid = new BigInteger(unpacker.readString());
-		owner = new UserProxy(unpacker.readBigInteger());
-		message = unpacker.readByteArray();
-		speed = unpacker.readFloat();
-		createdAt = unpacker.read(Timestamp.class);
-		longitude = unpacker.readDouble();
-		latitude = unpacker.readDouble();
-		userRating = unpacker.readInt();
-	}
-	
-	// Allowing us to use MessagePack in our domain layer, outside of our application layer.
-	public static void writeListClient(List<Message> messages, DataOutputStream out) throws IOException
-	{
-		Packer packer = (new MessagePack()).createPacker(out);
-		packer.write(messages.size());
-		for (Message message : messages)
-			message.writeClient(out);
-	}
-	
-	public void writeClient(DataOutputStream out) throws IOException
-	{
-		MessagePack pack = new MessagePack();
-		Packer packer = pack.createPacker(out);
-		packer.write(mid.toString());
-		try {
-			packer.write(getOwner().getEmail());
-		} catch (MapperException e) {
-			Logger logger = (Logger)LoggerFactory.getLogger("application");
-			logger.error("MapperException occurred when writing to client: {}", e);
-		}
-		packer.write(message);
-		packer.write(speed);
-		packer.write(getCreatedAt().getTime());
-		packer.write(getLongitude());
-		packer.write(getLatitude());
-		packer.write(getUserRating());
 	}
 }

@@ -46,17 +46,22 @@ import application.commands.DownvoteMessageCommand;
 import application.commands.FrontCommand;
 import application.commands.GetMessageIDsCommand;
 import application.commands.GetServerParametersCommand;
+import application.commands.PingCommand;
 import application.commands.ReadMessageCommand;
 import application.commands.ReadUserCommand;
 import application.commands.UnsupportedCommand;
 import application.commands.UpdateServerParametersCommand;
 import application.commands.UpdateUserCommand;
 import application.commands.UpvoteMessageCommand;
+import application.commands.UserCreatorCommand;
+import application.commands.UserLookupCommand;
 import foundation.Database;
 import foundation.finder.ServerListFinder;
 import foundation.tdg.ServerListTDG;
 
-
+/**
+ * Entry point for all HTTP Requests.
+ */
 public class FrontController extends HttpServlet {
 
 	private static final long serialVersionUID = 8691536805973858130L;
@@ -69,7 +74,7 @@ public class FrontController extends HttpServlet {
 	public void init() throws ServletException {
 		try {
 			if (!Database.isDatabaseCreated())
-				Database.createDatabase();
+				Database.createDatabaseTables();
 			InetAddress addr = InetAddress.getLocalHost();
 			String hostname = addr.getHostName();		
 			ResultSet rs = ServerListFinder.find(hostname);		
@@ -77,8 +82,11 @@ public class FrontController extends HttpServlet {
 				int port = 8080;
 				ServerListTDG.insert(hostname, port);
 			}						
+			
+			// Simply to initialise
+			ServerParameters.getUniqueInstance();
 		} catch (Exception E) {
-			// TODO why was this commented out?
+			// TODO Log
 			throw new ServletException(E);
 		} finally {
 			try {
@@ -89,7 +97,7 @@ public class FrontController extends HttpServlet {
 			}
 		}
 	}
-
+	
 	/**
 	 * Constructor
 	 * Initialises the commands in the command map. It will be used to determine the right command to execute depending on the command parameter in the query string
@@ -128,16 +136,22 @@ public class FrontController extends HttpServlet {
 		commandMap.put("POST.createuser", new CreateUserCommand());
 		
 		// Command for getting a user
-		commandMap.put("GET.readuser", new ReadUserCommand());
+		commandMap.put("POST.readuser", new ReadUserCommand());
 		
 		// Command for deleting a user
-		commandMap.put("DELETE.deleteuser", new DeleteUserCommand());
+		commandMap.put("POST.deleteuser", new DeleteUserCommand());
 		
-		// Simply to initialise
-		ServerParameters.getUniqueInstance();
-	
-		// Frees the connection from the connection pool
-		Database.freeConnection();
+		// Command for looking up a user
+		commandMap.put("GET.userlookup", new UserLookupCommand());
+
+		// Command for opening the user creation page
+		commandMap.put("GET.usercreator", new UserCreatorCommand());
+
+		// Command for opening the user creation page
+		commandMap.put("POST.updateuser", new UpdateUserCommand());
+		
+		// Command for pinging server
+		commandMap.put("GET.ping", new PingCommand());
 		
 		// Initialize the logger
 		logger = (Logger)LoggerFactory.getLogger("application");
@@ -216,13 +230,11 @@ public class FrontController extends HttpServlet {
 			ps.close();
 		} catch (SQLException e) {
 			logger.debug("The following SQLException occured", e);				
-			e.printStackTrace();
 		} finally {
 			try {
 				Database.freeConnection();
 			} catch (SQLException e) {
 				logger.debug("The following SQLException occured", e);				
-				e.printStackTrace();
 			}
 		}
 		

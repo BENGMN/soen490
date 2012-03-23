@@ -37,7 +37,11 @@ import domain.user.UserFactory;
 import domain.user.UserType;
 import exceptions.CorruptStreamException;
 
-
+/**
+ * This class serves to perform IO operatins to an OutputStream. 
+ * It uses the msgpack library to write to stream in binary. It uses w3c libraries to write to stream as XML.
+ * It also provides a validation method for email addresses.
+ */
 public class IOUtils {
 
 	/**
@@ -48,7 +52,7 @@ public class IOUtils {
 	 */
 	public static void writeMessageIDtoStream(BigInteger mid, DataOutputStream out) throws IOException {
 		MessagePack messagePack = new MessagePack();
-		Packer packer = messagePack.createPacker(out);
+		Packer packer = messagePack.createPacker(out); 
 		packer.write(mid.toString());	
 	}
 	
@@ -407,6 +411,71 @@ public class IOUtils {
 	}
 	
 	/**
+	 * Takes a given DataOutputStream and writes a status message to the given tagname to XML
+	 * @param tagName An xml tag name
+	 * @param message A status message
+	 * @param out A DataOutputStream to write to
+	 * @throws IOException
+	 */
+	public static void writeStatusMessageToXML(String tagName, String message, DataOutputStream out) throws IOException {
+		try {
+			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			Document doc = builder.newDocument();
+			// create the root element
+			Element root = doc.createElement(tagName);
+			
+			root.setTextContent(message);
+
+			doc.appendChild(root);
+			
+			// write to the outputstream
+			DOMSource domSource = new DOMSource(doc);
+			TransformerFactory factory = TransformerFactory.newInstance();
+			
+			Transformer transformer = factory.newTransformer();
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+			
+			transformer.transform(domSource, new StreamResult(out));
+		} catch (Exception e) {
+			Logger logger = (Logger) LoggerFactory.getLogger("application");
+			logger.error("Could not properly write status message to XML. The following exception occurred: {}", e);
+			throw new IOException("Could not write the status message to XML.");
+		}
+	}
+	
+	/**
+	 * Takes a given DataInputStream and reads a status message from a given tag name from XML
+	 * @param tagName An XML tag name
+	 * @param in A DataInputStream to read from
+	 * @return Returns a String status message
+	 * @throws IOException
+	 */
+	public static String readStatusMessageFromXML(String tagName, DataInputStream in) throws IOException {
+		String message = null;
+
+		try {
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document doc = builder.parse(in);
+			
+			// Gets all the message nodes
+			NodeList n = doc.getElementsByTagName(tagName);
+			
+			Node node = n.item(0);
+			
+			message = ((Element)node).getTextContent();
+				
+		} catch (Exception e) {
+			Logger logger = (Logger) LoggerFactory.getLogger("application");
+			logger.error("Could not properly deserialize a status message from XML. The following exception occurred: {}", e);
+			throw new IOException("Could not read a status message from XML.");
+		} 
+		
+		return message;
+	}
+	
+	/**
 	 * Takes the given DataOutputStream writes a User as XML to it.
 	 * @param user A User to write as XML
 	 * @param out A DataOutputStream to write to
@@ -488,6 +557,30 @@ public class IOUtils {
 		} 
 		
 		return users;
+	}
+	
+	/**
+	 * Takes a given DataOutputStream and writes a status message to it
+	 * @param message A status message to write
+	 * @param out A DataOutputStream to write to
+	 * @throws IOException
+	 */
+	public static void writeStatusMessageToStream(String message, DataOutputStream out) throws IOException {
+		MessagePack messagePack = new MessagePack();
+		Packer packer = messagePack.createPacker(out);	
+		packer.write(message);
+	}
+	
+	/**
+	 * Takes a given DataInputStream and reads a status message from it
+	 * @param out A DataInputStream to read from
+	 * @returns Returns a String status message
+	 * @throws IOException
+	 */
+	public static String readStatusMessageFromStream(DataInputStream in) throws IOException {
+		MessagePack messagePack = new MessagePack();
+		Unpacker unpacker = messagePack.createUnpacker(in);
+		return unpacker.readString();
 	}
 	
 	/**

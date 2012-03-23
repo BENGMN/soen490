@@ -1,3 +1,4 @@
+package Client;
 /**
  * SOEN 490
  * Capstone 2011
@@ -110,7 +111,7 @@ public class DemoGui extends JFrame {
 				deleteFiles(directory);			
 				//Retrieve audio files	
 				try {
-					messages = fileTransfer.downloadFiles(inputFields[0].getText(), inputFields[1].getText(), inputFields[2].getText(), DIRECTORY_PATH);
+					messages = fileTransfer.downloadFiles(inputFields[0].getText(), inputFields[1].getText(), inputFields[2].getText(), "bin", DIRECTORY_PATH);
 				} catch (ClientProtocolException e1) {
 					e1.printStackTrace();
 				} catch (IOException e1) {

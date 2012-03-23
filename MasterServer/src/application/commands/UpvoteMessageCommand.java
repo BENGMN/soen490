@@ -60,8 +60,7 @@ public class UpvoteMessageCommand extends FrontCommand {
 		
 		// increment the message user rating
 		MessageOutputMapper.incrementRating(message);
-		
-		// TODO Possibly return success message
+
 		response.setStatus(HttpServletResponse.SC_OK);
 	}
 }

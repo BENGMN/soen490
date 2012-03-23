@@ -1,25 +1,173 @@
 package application.commands;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.LoggerFactory;
+
+import application.IOUtils;
+import application.ResponseType;
+import application.ServerParameters;
+import ch.qos.logback.classic.Logger;
+import domain.user.User;
+import domain.user.UserType;
+import domain.user.mappers.UserOutputMapper;
+
+import exceptions.LostUpdateException;
 import exceptions.MapperException;
 import exceptions.ParameterException;
 import exceptions.UnrecognizedUserException;
 
 public class UpdateUserCommand extends FrontCommand {
 
+	private static String SUCCESS_CREATE_USER = "/WEB-INF/jsp/success.jsp";
+
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response)
 			throws MapperException, ParameterException, IOException,
 			UnrecognizedUserException, SQLException, ServletException {
 		
-		response.setStatus(HttpServletResponse.SC_OK);
+		ServerParameters params = ServerParameters.getUniqueInstance();
 		
+		// Create some local variables to store the request parameters
+		String email, password, userType, responseType;
+		UserType type;
+		ResponseType resp;
+		
+		// Capture the request parameters
+		email = (String) request.getParameter("email");
+		password = request.getParameter("password");
+		userType = request.getParameter("usertype").toUpperCase();
+		responseType = request.getParameter("responsetype").toUpperCase();
+		
+		// Validation
+		if (email == null) {
+			throw new ParameterException("Missing 'email' parameter.");
+		} else if (!IOUtils.validateEmail(email)) {
+			throw new ParameterException("Invalid 'email' parameter provided");
+		} // These could totally be removed
+		else if (email.length() < Integer.getInteger(params.get("minEmailLength").getValue())) {
+			throw new ParameterException("Invalid 'email' parameter, too short.");
+		} else if (email.length() > Integer.getInteger(params.get("maxEmailLength").getValue())) {
+			throw new ParameterException("Invalid 'email' parameter, too long.");
+		}
+	
+		// Check the password length, should be validated in jsp as well	
+		if (password == null) {
+			throw new ParameterException("Missing 'password' parameter.");
+		} else if (password.length() < Integer.getInteger(params.get("minPasswordLength").getValue())) {
+			throw new ParameterException("Invalid 'password' parameter, too short.");
+		}
+
+		// Check the type of user account
+		if (userType == null) {
+			throw new ParameterException("Missing 'usertype' parameter.");
+		} 
+		
+		try {
+			// Get the type of user while validating
+			type = UserType.valueOf(userType.toUpperCase());
+		} catch (IllegalArgumentException e) {
+			throw new ParameterException("Invalid 'usertype' parameter provided.");
+		}
+		
+		// Check the response type
+		if (responseType == null) {
+			throw new ParameterException("Missing 'responsetype' parameter.");
+		} 
+		
+		try {
+			resp = ResponseType.valueOf(responseType.toUpperCase());
+		} catch (IllegalArgumentException e) {
+			throw new ParameterException("Invalid 'responsetype' parameter provided.");
+		}		
+		// End of Validation
+		
+		User user = (User) request.getAttribute("user");
+		
+		Logger logger = (Logger)LoggerFactory.getLogger("application");
+		
+		DataOutputStream out = new DataOutputStream(response.getOutputStream());
+
+		try {
+			String hashedPass = hashPassword(password);
+			
+			user.setEmail(email);
+			user.setPassword(hashedPass);
+			user.setType(type);
+			user.setVersion(user.getVersion()+1);
+			
+			// update user to the database
+			UserOutputMapper.update(user);
+			
+			// write success message to response based on the requested response type
+			response.setStatus(HttpServletResponse.SC_OK);
+			
+			String message = "User with id: " + user.getUid().toString() + " was updated successfully.";
+
+			// Format the response based on requested response type
+			switch (resp) {
+			case JSP:
+				request.setAttribute("success", message);
+				request.setAttribute("user", user);
+				
+				RequestDispatcher view = request.getRequestDispatcher(SUCCESS_CREATE_USER);
+				view.forward(request, response);
+				break;
+			case XML:
+				response.setContentType("text/xml");
+				IOUtils.writeUserToXML(user, out);
+				IOUtils.writeStatusMessageToXML("success", message, out);
+				break;
+			case BIN:
+				response.setContentType("application/octet-stream");
+				IOUtils.writeUserToStream(user, out);
+				IOUtils.writeStatusMessageToStream(message, out);
+				break;
+			}
+			
+			logger.info("User with ID {} was updated.", user.getUid().toString());
+			
+		}
+		catch (NoSuchAlgorithmException e) {			
+			logger.error("No such algorithm exception thrown when trying to create user: {}", e);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		} // The password hashing didn't work 
+		catch (UnsupportedEncodingException e) {
+			logger.error("Unsupported encoding exception thrown when trying to create user: {}", e);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		} // Updating the user didn't work
+		catch (LostUpdateException e) {
+			logger.error("Lost Update exception thrown when updating user: {}", e);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		} 
+	}
+	
+	/**
+	 * Hashes the given string
+	 * @param password String to hash
+	 * @return Returns the String value of the hash
+	 * @throws NoSuchAlgorithmException
+	 * @throws UnsupportedEncodingException
+	 */
+	private String hashPassword(String password) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+		 
+		String charSet = "Latin1";
+		byte[] passwordBytes = password.getBytes(charSet);
+		MessageDigest md = MessageDigest.getInstance("SHA");
+		byte[] encryptedPass = md.digest(passwordBytes);
+		
+		return new String(encryptedPass);
+		 
 	}
 
 }

@@ -15,19 +15,13 @@
 
 package tests.foundation;
 
-import java.util.GregorianCalendar;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-
 import org.junit.Test;
 
 import foundation.Database;
-import foundation.finder.MessageFinder;
 import foundation.finder.ServerListFinder;
-import foundation.tdg.MessageTDG;
 import foundation.tdg.ServerListTDG;
 import static org.junit.Assert.*;
 
@@ -37,11 +31,11 @@ public class ServerListTDGTest {
 	public void testFunctionality() throws SQLException, IOException {
 		boolean previousDatabase = Database.isDatabaseCreated();
 		if (!previousDatabase)
-			Database.createDatabase();
+			Database.createDatabaseTables();
 		insert();
 		delete();
 		if (!previousDatabase)
-			Database.dropDatabase();
+			Database.dropDatabaseTables();
 	}
 
 	private void insert() throws SQLException, IOException {

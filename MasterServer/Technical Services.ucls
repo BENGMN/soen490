@@ -1,0 +1,104 @@
+<class-diagram version="1.0.7" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
+  associations="true" dependencies="true" nesting-relationships="true">  
+  <class id="1" corner="BOTTOM_RIGHT" language="java" name="foundation.finder.Coordinate" project="MasterServer" 
+    file="/MasterServer/src/foundation/finder/Coordinate.java" binary="false">    
+    <position height="-1" width="-1" x="1429" y="497"/>    
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="2" corner="BOTTOM_RIGHT" language="java" name="foundation.tdg.UserTDG" project="MasterServer" 
+    file="/MasterServer/src/foundation/tdg/UserTDG.java" binary="false">    
+    <position height="-1" width="-1" x="294" y="176"/>    
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="3" corner="BOTTOM_RIGHT" language="java" name="foundation.finder.ServerListFinder" project="MasterServer" 
+    file="/MasterServer/src/foundation/finder/ServerListFinder.java" binary="false">    
+    <position height="-1" width="-1" x="410" y="673"/>    
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="4" corner="BOTTOM_RIGHT" language="java" name="foundation.tdg.MessageTDG" project="MasterServer" 
+    file="/MasterServer/src/foundation/tdg/MessageTDG.java" binary="false">    
+    <position height="-1" width="-1" x="1066" y="197"/>    
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="5" corner="BOTTOM_RIGHT" language="java" name="foundation.finder.UserFinder" project="MasterServer" 
+    file="/MasterServer/src/foundation/finder/UserFinder.java" binary="false">    
+    <position height="-1" width="-1" x="292" y="417"/>    
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="6" corner="BOTTOM_RIGHT" language="java" name="foundation.finder.MessageFinder" project="MasterServer" 
+    file="/MasterServer/src/foundation/finder/MessageFinder.java" binary="false">    
+    <position height="-1" width="-1" x="1017" y="498"/>    
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="7" corner="BOTTOM_RIGHT" language="java" name="foundation.finder.GeoSpatialSearch" project="MasterServer" 
+    file="/MasterServer/src/foundation/finder/GeoSpatialSearch.java" binary="false">    
+    <position height="-1" width="-1" x="1429" y="220"/>    
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="8" corner="BOTTOM_RIGHT" language="java" name="foundation.tdg.ServerParameterTDG" project="MasterServer" 
+    file="/MasterServer/src/foundation/tdg/ServerParameterTDG.java" binary="false">    
+    <position height="-1" width="-1" x="771" y="740"/>    
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="9" corner="BOTTOM_RIGHT" language="java" name="foundation.tdg.ServerListTDG" project="MasterServer" 
+    file="/MasterServer/src/foundation/tdg/ServerListTDG.java" binary="false">    
+    <position height="-1" width="-1" x="270" y="713"/>    
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="10" corner="BOTTOM_RIGHT" language="java" name="foundation.finder.ServerParameterFinder" 
+    project="MasterServer" file="/MasterServer/src/foundation/finder/ServerParameterFinder.java" binary="false">    
+    <position height="-1" width="-1" x="598" y="676"/>    
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="11" corner="BOTTOM_RIGHT" language="java" name="foundation.Database" project="MasterServer" 
+    file="/MasterServer/src/foundation/Database.java" binary="false">    
+    <position height="-1" width="-1" x="642" y="238"/>    
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <dependency id="12">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="1"/>  
+  </dependency>  
+  <dependency id="13">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="1"/>  
+  </dependency>  
+  <classifier-display autosize="true" package="true" initial-value="false" signature="true" visibility="true">    
+    <attributes public="true" package="true" protected="true" private="true"/>    
+    <operations public="true" package="true" protected="true" private="true"/>  
+  </classifier-display>  
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>

@@ -1,3 +1,4 @@
+package Client;
 /**
  * SOEN 490
  * Capstone 2011
@@ -56,11 +57,11 @@ public class FileTransfer {
 		return response.getStatusLine().getStatusCode();
 	}
 	
-	public Map<String, Message> downloadFiles(String latitude, String longitude, String speed, String folder) throws ClientProtocolException, IOException {
+	public Map<String, Message> downloadFiles(String latitude, String longitude, String speed, String responseType, String folder) throws ClientProtocolException, IOException {
 		HttpClient httpgetIdClient = new DefaultHttpClient();
 		//first we must get the message Ids
 		HttpGet getIds = new HttpGet("http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=getmessageids&latitude="
-                                     + latitude + "&longitude=" + longitude + "&speed=" + speed);
+                                     + latitude + "&longitude=" + longitude + "&speed=" + speed + "&responsetype=" + responseType);
 
 		HttpResponse getMessageIdResponse = httpgetIdClient.execute(getIds);
 		InputStream getMessageIdInputStream = getMessageIdResponse.getEntity().getContent();
@@ -75,7 +76,7 @@ public class FileTransfer {
 		for(int i = 0; i < size; i++) {
 			String id = unpacker.readString();
 			HttpClient httpgetMessageClient = new DefaultHttpClient();
-			readMessage = new HttpGet("http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=readmessage&messageid="+ id);		
+			readMessage = new HttpGet("http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=readmessage&messageid="+ id + "&responsetype=" + responseType);		
 			readMessageResponse = httpgetMessageClient.execute(readMessage);
 			inputStream = readMessageResponse.getEntity().getContent();
 			Message message = Message.createMessage(inputStream, TYPE, folder);

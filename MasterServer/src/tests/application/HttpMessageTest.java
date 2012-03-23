@@ -40,6 +40,7 @@ public class HttpMessageTest  {
 		messages = get();
 		assertEquals(1, messages.size());
 		assertEquals(mid, messages.get(0).getMid());
+
 		/*upvote(mid);
 		messages = get();
 		assertEquals(1, messages.size());

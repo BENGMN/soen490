@@ -1,16 +1,12 @@
 package tests.domain.message;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.GregorianCalendar;
 
 import domain.message.Message;
 import domain.message.MessageFactory;
-import domain.message.MessageIdentityMap;
-import domain.message.mappers.MessageOutputMapper;
 import domain.user.IUser;
 import domain.user.UserProxy;
 
@@ -34,25 +30,30 @@ public class MessageFactoryTest extends TestCase {
 	public void testCreateClean() {
 		Message newMsg = new Message(mid, owner, message, speed, latitude, longitude, createdAt, userRating);
 		Message factoryMsg = MessageFactory.createClean(mid, uid, message, speed, latitude, longitude, createdAt, userRating);
+		
 		assertEquals("Message created using constructor should be identical to that the factory produces", newMsg.equals(factoryMsg), true);
 		assertEquals("Message created using constructor should be identical to that the factory produces and stores in the MessageIdentityMap", newMsg.equals(factoryMsg), true);
 	}
 	
-	public void testCreateNew() throws NoSuchAlgorithmException, IOException, SQLException {
+	public void testCreateNew() {
 		// create a a new message
-		Message msg = MessageFactory.createNew(uid, message, speed, latitude, longitude, createdAt, userRating);
+		Message msg;
+		try {
+			msg = MessageFactory.createNew(uid, message, speed, latitude, longitude, createdAt, userRating);
 		
-		// test all of the attributes
-		assertEquals(msg.getLatitude(), latitude);
-		assertEquals(msg.getLongitude(), longitude);
-		assertEquals(msg.getSpeed(), speed);
-		assertEquals(msg.getUserRating(), userRating);
-		assertEquals(msg.getCreatedAt(), createdAt);
-		assertEquals(msg.getMessage(), message);
-		assertEquals(msg.getOwner(), owner);
-		
-		// Keep the database clean and make sure we delete a single record
-		//assertEquals(MessageOutputMapper.delete(msg),1);
+			// test all of the attributes
+			assertEquals(msg.getLatitude(), latitude);
+			assertEquals(msg.getLongitude(), longitude);
+			assertEquals(msg.getSpeed(), speed);
+			assertEquals(msg.getUserRating(), userRating);
+			assertEquals(msg.getCreatedAt(), createdAt);
+			assertEquals(msg.getMessage(), message);
+			assertEquals(msg.getOwner(), owner);
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+			fail();
+		}
+
 	}
 	
 }
