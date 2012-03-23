@@ -1,3 +1,4 @@
+package Client;
 /**
  * SOEN 490
  * Capstone 2011
@@ -86,8 +87,8 @@ public class DemoGui extends JFrame {
 				 if (fileChooserValue == JFileChooser.APPROVE_OPTION) {
 					 try {
 						 //send file
-						String response = fileTransfer.uploadFile(fileChooser.getSelectedFile(), inputFields[0].getText(), inputFields[1].getText(), inputFields[2].getText(), inputFields[3].getText());
-						statusField.setText("Reponse: " + response);
+						int response = fileTransfer.uploadFile(fileChooser.getSelectedFile(), inputFields[0].getText(), inputFields[1].getText(), inputFields[2].getText(), inputFields[3].getText());
+						statusField.setText("Status Code: " + response);
 					} catch (ClientProtocolException e1) {
 						e1.printStackTrace();
 					} catch (IOException e1) {
@@ -121,7 +122,6 @@ public class DemoGui extends JFrame {
 					audioFileNames.add(name);
 				}
 						
-				statusField.setText("");
 				listOfFiles.setListData(audioFileNames);
 				listScrollPane.validate();
 				listOfFiles.setSelectedIndex(0); // ensures that a file is selected

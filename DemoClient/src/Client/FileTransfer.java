@@ -1,3 +1,4 @@
+package Client;
 /**
  * SOEN 490
  * Capstone 2011
@@ -44,7 +45,7 @@ public class FileTransfer {
 	private static final String HOST_PORT = "8080";
 	private static final String TYPE = ".amr";
 
-	public String uploadFile(File file, String latitude, String longitude, String speed, String email) throws IOException {
+	public int uploadFile(File file, String latitude, String longitude, String speed, String email) throws IOException {
 		HttpClient httpClient = new DefaultHttpClient();	
 		HttpPost httpPost = new HttpPost("http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=createmessage&latitude="
 	                                  + latitude + "&longitude=" + longitude + "&speed=" + speed + "&email=" + email);
@@ -53,7 +54,7 @@ public class FileTransfer {
 		entity.addPart("bin", new FileBody(file, "audio/amr"));	
 		httpPost.setEntity(entity);
 		HttpResponse response = httpClient.execute(httpPost);	
-		return response.getStatusLine().toString();
+		return response.getStatusLine().getStatusCode();
 	}
 	
 	public Map<String, Message> downloadFiles(String latitude, String longitude, String speed, String responseType, String folder) throws ClientProtocolException, IOException {
