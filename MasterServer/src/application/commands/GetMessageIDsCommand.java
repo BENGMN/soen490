@@ -49,8 +49,8 @@ public class GetMessageIDsCommand extends FrontCommand{
 			// TODO Log this shit
 			throw new ParameterException("Longitude, latitude, and/or speed number format exception.", e);
 		}
-		
-		List<BigInteger> ids = MessageInputMapper.findIdsInProximity(longitude, latitude, speed);	
+		String sort = "";
+		List<BigInteger> ids = MessageInputMapper.findIdsInProximity(longitude, latitude, speed, sort);	
 		
 		response.setContentType("text/plain");
 		response.setStatus(HttpServletResponse.SC_OK);
