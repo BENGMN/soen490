@@ -92,7 +92,7 @@ public class MessageFinder {
 		Connection connection = Database.getConnection();
 		PreparedStatement ps = connection.prepareStatement(SELECT);
 		
-		ps.setObject(1, mid);
+		ps.setBigDecimal(1, new BigDecimal(mid.toString()));
 		ResultSet rs = ps.executeQuery();
 		return rs;
 	}
@@ -200,22 +200,20 @@ public class MessageFinder {
 		return rs;
 	}
 
-	private static final String SELECT_ID_BY_RADIUS2 = 
-			"SELECT messages.mid " +
-					"FROM User AS u, " +
-					"(SELECT m.mid, m.uid, m.latitude, m.longitude, m.user_rating " +
-					"FROM Message AS m " +
-					"WHERE longitude BETWEEN ? AND ? AND m.latitude BETWEEN ? AND ?) AS messages WHERE u.uid = messages.uid ORDER BY ? DESC;";
-
-	//SELECT * FROM User AS u, (SELECT m.mid, m.uid, m.latitude, m.longitude, 
-	//m.user_rating FROM Message AS m WHERE longitude BETWEEN 0 AND 100 AND m.latitude BETWEEN 0 AND 100) 
-	//AS messages WHERE u.uid = messages.uid ORDER BY messages.user_rating DESC;
+	private static final String SELECT_ID_BY_RADIUS = 
+			"SELECT messages.mid,messages.uid " +
+			"FROM User AS u, " +
+			"(SELECT m.mid, m.uid, m.latitude, m.longitude, m.user_rating " +
+			"FROM " + MessageTDG.TABLE + " AS m " +
+			"WHERE longitude BETWEEN ? AND ? AND m.latitude BETWEEN ? AND ?) AS messages WHERE u.uid = messages.uid";
 	
+	private static final String ORDER_BY_USER_TYPE = " ORDER BY u.type DESC;";
+	private static final String ORDER_BY_USER_RATING = " ORDER BY messages.user_rating DESC;";
+	private static final String ORDER_BY_CREATED_TYPE = " ORDER BY messages.created_at DESC;";
 	
 	private static String GET_SIZE = 
 			"SELECT COUNT(m.mid) AS size " +
 			"FROM " + MessageTDG.TABLE + " AS m " + "WHERE m.longitude BETWEEN ? AND ? AND m.latitude BETWEEN ? AND ?;";
-	
 
 	/**
 	 * 
@@ -226,32 +224,26 @@ public class MessageFinder {
 	 * @throws SQLException
 	 */		
 	
-	public static ResultSet findIdsInProximity(double longitude, double latitude, double speed, String sort) throws SQLException, IOException {
+	public static ResultSet findIdsInProximity(double longitude, double latitude, double speed, String orderBy) throws SQLException, IOException {
 		
 		Connection connection = Database.getConnection();
 		ServerParameters params = ServerParameters.getUniqueInstance();
 		int minMessages = Integer.parseInt(params.get("minMessages").getValue());
 		int maxMessages = Integer.parseInt(params.get("maxMessages").getValue());
 
+		String query = "";
+		
+		if(orderBy.equals("user_rating"))
+			query = SELECT_ID_BY_RADIUS+ORDER_BY_USER_RATING;
+		else if(orderBy.equals("type"))
+			query = SELECT_ID_BY_RADIUS+ORDER_BY_USER_TYPE;
+		else if(orderBy.equals("created_type"))
+			query = SELECT_ID_BY_RADIUS+ORDER_BY_CREATED_TYPE;
+			
 		double radius = 0;
 		double multiplier = 0;
 		double radiusAdder = 500;
 		double maxRadius = 0;
-		
-		String[] sortedType = sort.split(",");
-		
-		StringBuilder buffer = new StringBuilder();
-		
-		for(int i=0; i<sortedType.length; i++) {
-			
-			if(i!=0) 
-				buffer.append("message."); 
-				
-			buffer.append("message."+sortedType[i]);
-		}
-
-		String orderBy =buffer.toString();
-		
 		
 		//If the gps doesn't return a speed the default speed is 30
 		if(speed == 0)
@@ -312,20 +304,15 @@ public class MessageFinder {
 		
 		//Getting the actual ids at this point
 		ResultSet finaleRs;
-		System.out.println(SELECT_ID_BY_RADIUS2);
-		PreparedStatement finalPs = connection.prepareStatement(SELECT_ID_BY_RADIUS2);
+
+		//SELECT_ID_BY_RADIUS2 PreparedStatement finalPs = connection.prepareStatement(SELECT_ID_BY_RADIUS+" ORDER BY "+orderBy+" DESC;");
+		PreparedStatement finalPs = connection.prepareStatement(query);
 		List<Coordinate> rectangle = GeoSpatialSearch.convertPointToRectangle(new Coordinate(longitude, latitude), radius);
 		finalPs.setDouble(1, rectangle.get(0).getLongitude());
 		finalPs.setDouble(2, rectangle.get(1).getLongitude());
 		finalPs.setDouble(3, rectangle.get(0).getLatitude());
 		finalPs.setDouble(4, rectangle.get(1).getLatitude());
-		finalPs.setString(5, orderBy);
-		
-		System.out.println(rectangle.get(0).getLongitude());
-		System.out.println(rectangle.get(1).getLongitude());
-		System.out.println(rectangle.get(0).getLatitude());
-		System.out.println(rectangle.get(1).getLatitude());
-		
+
 		finaleRs = finalPs.executeQuery();
 
 		return finaleRs;
