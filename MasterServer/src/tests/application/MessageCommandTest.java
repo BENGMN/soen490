@@ -213,10 +213,9 @@ public class MessageCommandTest {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		request.setParameter("messageid", message.getMid().toString());
-		//request.setParameter("longitude", Double.toString(longitude));
-		//request.setParameter("latitude", Double.toString(latitude));
 		upvoteMessageCommand.execute(request, response);
 		assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+		message = MessageInputMapper.find(message.getMid());
 		assertEquals(userRating + 1, message.getUserRating());
 		assertEquals(1, MessageOutputMapper.delete(message));
 	}
@@ -231,14 +230,15 @@ public class MessageCommandTest {
 		Timestamp createdDate = new Timestamp(GregorianCalendar.getInstance().getTimeInMillis());
 		final int userRating = 0;
 		Message message = MessageFactory.createNew(new BigInteger("0"), bytes, speed, latitude, longitude, createdDate, userRating);
-		DownvoteMessageCommand rateMessageCommand = new DownvoteMessageCommand();
+		assertEquals(MessageOutputMapper.insert(message),1);
+		assertEquals(MessageInputMapper.find(message.getMid()), message);
+		DownvoteMessageCommand downVoteCommand = new DownvoteMessageCommand();
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		request.setParameter("messageid", message.getMid().toString());
-		request.setParameter("longitude", Double.toString(longitude));
-		request.setParameter("latitude", Double.toString(latitude));
-		rateMessageCommand.execute(request, response);
+		downVoteCommand.execute(request, response);
 		assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+		message = MessageInputMapper.find(message.getMid());
 		assertEquals(userRating - 1, message.getUserRating());
 		assertEquals(1, MessageOutputMapper.delete(message));
 	}

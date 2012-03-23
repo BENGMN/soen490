@@ -7,8 +7,8 @@ use Data::Random qw(:all);
 use POSIX qw(floor);
 use POSIX qw(strftime);
 
-my $UsersToGenerate = 20;
-my $MessagesToGenerate = 100;
+my $UsersToGenerate = 2000;
+my $MessagesToGenerate = 10000;
 
 my $AdvertiserChance = 0.1;
 my $PasswordMinCharacters = 6;
@@ -43,7 +43,7 @@ for (my $MID = 0; $MID < $MessagesToGenerate; ++$MID) {
 	my $Longitude = rand(360.0) - 180.0;
 	my $CreatedAt = rand_datetime();
 	my $UserRating = int(rand($MaxRating - $MinRating)) + $MinRating;
-	print "INSERT INTO Message (mid, uid, message, speed, latitude, longitude, created_at, user_rating, version) VALUES ('$MessageID', $UID, x'$Message', " . ((defined $Speed) ? $Speed : "NULL") . ", $Latitude, $Longitude, '$CreatedAt', $UserRating, 0);\n";
+	print "INSERT INTO Message (mid, uid, message, speed, latitude, longitude, created_at, user_rating) VALUES ('$MessageID', $UID, x'$Message', " . ((defined $Speed) ? $Speed : "NULL") . ", $Latitude, $Longitude, '$CreatedAt', $UserRating);\n";
 }
 
 

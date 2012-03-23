@@ -168,7 +168,7 @@ public class FrontController extends HttpServlet {
 		commandMap.put("POST.readuser", new ReadUserCommand());
 		
 		// Command for deleting a user
-		commandMap.put("POST.deleteuser", new DeleteUserCommand());
+		commandMap.put("DELETE.deleteuser", new DeleteUserCommand());
 		
 		// Command for looking up a user
 		commandMap.put("GET.userlookup", new UserLookupCommand());

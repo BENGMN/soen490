@@ -36,6 +36,7 @@ import domain.user.UserType;
 
 import foundation.DbRegistry;
 import foundation.tdg.MessageTDG;
+import foundation.tdg.UserTDG;
 
 
 /**
@@ -91,7 +92,7 @@ public class MessageFinder {
 		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(SELECT);
 		
-		ps.setObject(1, mid);
+		ps.setBigDecimal(1, new BigDecimal(mid.toString()));
 		ResultSet rs = ps.executeQuery();
 		return rs;
 	}
@@ -199,9 +200,16 @@ public class MessageFinder {
 		return rs;
 	}
 
-	private static final String SELECT_ID_BY_RADIUS =
-			"SELECT m.mid " +
-			"FROM " + MessageTDG.TABLE + " AS m " + "WHERE m.longitude BETWEEN ? AND ? AND m.latitude BETWEEN ? AND ? LIMIT ?;";
+	private static final String SELECT_ID_BY_RADIUS = 
+			"SELECT messages.mid,messages.uid " +
+			"FROM User AS u, " +
+			"(SELECT m.mid, m.uid, m.latitude, m.longitude, m.user_rating, m.created_at " +
+			"FROM " + MessageTDG.TABLE + " AS m " +
+			"WHERE longitude BETWEEN ? AND ? AND m.latitude BETWEEN ? AND ?) AS messages WHERE u.uid = messages.uid";
+	
+	private static final String ORDER_BY_USER_TYPE = " ORDER BY u.type DESC;";
+	private static final String ORDER_BY_USER_RATING = " ORDER BY messages.user_rating DESC;";
+	private static final String ORDER_BY_CREATED_TYPE = " ORDER BY messages.created_at DESC;";
 	
 	private static String GET_SIZE = 
 			"SELECT COUNT(m.mid) AS size " +
@@ -216,20 +224,26 @@ public class MessageFinder {
 	 * @throws SQLException
 	 */		
 	
-	public static ResultSet findIdsInProximity(double longitude, double latitude, double speed) throws SQLException, IOException {
+	public static ResultSet findIdsInProximity(double longitude, double latitude, double speed, String orderBy) throws SQLException, IOException {
 		
 		Connection connection = DbRegistry.getDbConnection();
 		ServerParameters params = ServerParameters.getUniqueInstance();
 		int minMessages = Integer.parseInt(params.get("minMessages").getValue());
 		int maxMessages = Integer.parseInt(params.get("maxMessages").getValue());
 
-		//////////////////////////////////////////////////////////////////////
+		String query = "";
 		
+		if(orderBy.equals("user_rating"))
+			query = SELECT_ID_BY_RADIUS+ORDER_BY_USER_RATING;
+		else if(orderBy.equals("type"))
+			query = SELECT_ID_BY_RADIUS+ORDER_BY_USER_TYPE;
+		else if(orderBy.equals("created_type"))
+			query = SELECT_ID_BY_RADIUS+ORDER_BY_CREATED_TYPE;
+			
 		double radius = 0;
 		double multiplier = 0;
 		double radiusAdder = 500;
 		double maxRadius = 0;
-		
 		
 		//If the gps doesn't return a speed the default speed is 30
 		if(speed == 0)
@@ -265,7 +279,7 @@ public class MessageFinder {
 		ResultSet rsSize;
 		//flag for not incrementing the radius on the first run
 		boolean flag = false;
-		int count = 0; // Used to stop the loop if the algorithm can't find 10 messages after a certain amount of iterations. 
+
 		int size = 0;
 		do {		
 			PreparedStatement psSize = connection.prepareStatement(GET_SIZE);
@@ -283,25 +297,22 @@ public class MessageFinder {
 			else
 				flag = true;
 			
-			count++;		
-			
 			size = rsSize.getInt("size");
-			if(size > maxMessages) {
-				size = maxMessages;  
-			}
+
 		}
-		while(size <= minMessages && radius <= maxRadius && count <= 2);
+		while(size <= minMessages && radius <= maxRadius);
 		
 		//Getting the actual ids at this point
 		ResultSet finaleRs;
-		
-		PreparedStatement finalPs = connection.prepareStatement(SELECT_ID_BY_RADIUS);
+
+		//SELECT_ID_BY_RADIUS2 PreparedStatement finalPs = connection.prepareStatement(SELECT_ID_BY_RADIUS+" ORDER BY "+orderBy+" DESC;");
+		PreparedStatement finalPs = connection.prepareStatement(query);
 		List<Coordinate> rectangle = GeoSpatialSearch.convertPointToRectangle(new Coordinate(longitude, latitude), radius);
 		finalPs.setDouble(1, rectangle.get(0).getLongitude());
 		finalPs.setDouble(2, rectangle.get(1).getLongitude());
 		finalPs.setDouble(3, rectangle.get(0).getLatitude());
 		finalPs.setDouble(4, rectangle.get(1).getLatitude());
-		finalPs.setInt(5, size);
+
 		finaleRs = finalPs.executeQuery();
 
 		return finaleRs;

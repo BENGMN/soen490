@@ -44,3 +44,10 @@ Follow this tutorial:
   http://help.github.com/win-set-up-git/
 Type git remote add origin git@github.com:BENGMN/soen490.git
 Type git pull origin master
+
+/** DATABASE SETUP **/
+Create the User table
+CREATE TABLE User (uid decimal(39) NOT NULL, email varchar(64) NOT NULL, password varchar(256) NOT NULL, type tinyint NOT NULL, version int NOT NULL, CONSTRAINT pk_uid PRIMARY KEY (uid));
+
+Create the Message table
+CREATE TABLE Message (mid decimal(39) NOT NULL, uid decimal(39) NOT NULL, message blob NOT NULL, speed float, latitude double NOT NULL, longitude double NOT NULL, created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, user_rating int NOT NULL, CONSTRAINT pk_mid PRIMARY KEY(mid));
