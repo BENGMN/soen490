@@ -39,14 +39,16 @@ import ch.qos.logback.classic.Logger;
 import domain.user.User;
 import domain.user.UserFactory;
 import domain.user.UserType;
+import domain.user.mappers.UserInputMapper;
 import domain.user.mappers.UserOutputMapper;
+import exceptions.MapperException;
 import exceptions.ParameterException;
 
 public class CreateUserCommand extends FrontCommand {
 	private static String SUCCESS_CREATE_USER = "success.jsp";
 	
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws ParameterException, SQLException, ServletException, IOException {
+	public void execute(HttpServletRequest request, HttpServletResponse response) throws ParameterException, SQLException, ServletException, IOException, MapperException {
 		ServerParameters params = ServerParameters.getUniqueInstance();
 		
 		// Create some local variables to store the request parameters
@@ -71,7 +73,16 @@ public class CreateUserCommand extends FrontCommand {
 		} else if (email.length() > Integer.parseInt(params.get("maxEmailLength").getValue())) {
 			throw new ParameterException("Invalid 'email' parameter, too long.");
 		}
-	
+		
+		//Checking to see if the user already exists
+		try{
+			UserInputMapper.findByEmail(email);
+			throw new ParameterException("User already exists.");
+		}
+		catch(MapperException e)
+		{
+		}
+		
 		// Check the password length, should be validated in jsp as well	
 		if (password == null) {
 			throw new ParameterException("Missing 'password' parameter.");
