@@ -187,7 +187,7 @@ public class MessageInputMapper {
 		List<BigInteger> messageIds = new LinkedList<BigInteger>();
 
 		while(rs.next()) {
-			messageIds.add(rs.getBigDecimal("m.mid").toBigInteger());
+			messageIds.add(rs.getBigDecimal("messages.mid").toBigInteger());
 		}
 		
 		rs.close();

@@ -78,7 +78,7 @@ public class UserInputMapperTest extends TestCase {
 		}
 	}
 	
-	public void testFindAll() {
+	public void testFindAll() throws MapperException {
 		try {
 			UserTDG.create();
 		
