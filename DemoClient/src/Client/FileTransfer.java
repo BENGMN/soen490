@@ -57,11 +57,11 @@ public class FileTransfer {
 		return response.getStatusLine().getStatusCode();
 	}
 	
-	public Map<String, Message> downloadFiles(String latitude, String longitude, String speed, String responseType, String folder) throws ClientProtocolException, IOException {
+	public Map<String, Message> downloadFiles(String latitude, String longitude, String speed, String responseType, String folder, String sort) throws ClientProtocolException, IOException {
 		HttpClient httpgetIdClient = new DefaultHttpClient();
 		//first we must get the message Ids
 		HttpGet getIds = new HttpGet("http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=getmessageids&latitude="
-                                     + latitude + "&longitude=" + longitude + "&speed=" + speed + "&responsetype=" + responseType);
+                                     + latitude + "&longitude=" + longitude + "&speed=" + speed + "&responsetype=" + responseType + "&sorttype=" + sort);
 
 		HttpResponse getMessageIdResponse = httpgetIdClient.execute(getIds);
 		InputStream getMessageIdInputStream = getMessageIdResponse.getEntity().getContent();
