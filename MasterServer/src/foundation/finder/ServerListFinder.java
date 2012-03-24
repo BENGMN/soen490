@@ -5,7 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import foundation.Database;
+import foundation.DbRegistry;
 import foundation.tdg.ServerListTDG;
 
 public class ServerListFinder {
@@ -21,7 +21,7 @@ public class ServerListFinder {
 	 * @throws SQLException
 	 */
 	public static ResultSet findAll() throws SQLException {
-		Connection connection = Database.getConnection();
+		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(SELECT_ALL);
 		
 		ResultSet rs = ps.executeQuery();
@@ -41,7 +41,7 @@ public class ServerListFinder {
 	 * @throws SQLException
 	 */
 	public static ResultSet find(String hostname) throws SQLException {
-		Connection connection = Database.getConnection();
+		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(SELECT);
 		
 		ps.setString(1, hostname);

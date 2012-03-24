@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import foundation.Database;
+import foundation.DbRegistry;
 
 
 /**
@@ -14,7 +14,7 @@ public class ServerParameterTDG {
 	/**
 	 * SQL table name of parameters
 	 */
-	public final static String TABLE = "ServerParameters";
+	public final static String TABLE = DbRegistry.getTablePrefix() + "ServerParameters";
 	
 	/**
 	 * SQL query for updating an existing server parameter
@@ -31,7 +31,7 @@ public class ServerParameterTDG {
 	 * @return Returns the number of rows that were affected by the SQL query.
 	 */
 	public static int update (String paramName, String description, String value) throws SQLException {
-		Connection connection = Database.getConnection();
+		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(UPDATE);
 		
 		ps.setString(1, description);
@@ -65,7 +65,7 @@ public class ServerParameterTDG {
 	 * @throws SQLException
 	 */
 	public static int insert (String paramName, String description, String value) throws SQLException {
-		Connection connection = Database.getConnection();
+		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(INSERT);
 		
 		ps.setString(1, paramName);
@@ -91,7 +91,7 @@ public class ServerParameterTDG {
 	 * @throws SQLException
 	 */
 	public static int delete (String paramName) throws SQLException {
-		Connection connection = Database.getConnection();
+		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(DELETE);
 		
 		ps.setString(1, paramName);
@@ -114,7 +114,7 @@ public class ServerParameterTDG {
 	 * @throws SQLException 
 	 */
 	public static void create() throws SQLException {
-		Connection connection = Database.getConnection();
+		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(CREATE);
 		ps.executeUpdate();
 		ps.close();
@@ -139,7 +139,7 @@ public class ServerParameterTDG {
 	 * @throws SQLException
 	 */
 	public static void drop() throws SQLException {
-		Connection connection = Database.getConnection();
+		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(DROP);
 		
 		ps.executeUpdate();
@@ -151,40 +151,40 @@ public class ServerParameterTDG {
 	 */
 	public static final String INSERTIONS[] = 
 		{
-		"INSERT INTO ServerParameters " +
+		"INSERT INTO " + TABLE + " " +
 		"VALUES ('minMessageSizeBytes', 'The minimum size of uploaded audio files that should be accepted, in bytes.', 2000);",
 
-		"INSERT INTO ServerParameters " + 
+		"INSERT INTO " + TABLE + " " +
 		"VALUES ('maxMessageSizeBytes', 'The maximum size of uploaded audio files that should be accepted, in bytes.', 50000);",
 
-		"INSERT INTO ServerParameters " + 
+		"INSERT INTO " + TABLE + " " +
 		"VALUES ('messageLifeDays', 'The time to live of regular messages. If a message is older than this amount, in days, it should be deleted.', 7);",
 
-		"INSERT INTO ServerParameters " + 
+		"INSERT INTO " + TABLE + " " +
 		"VALUES ('advertiserMessageLifeDays', 'The time to live of advertiser messages.', 30);",
 
-		"INSERT INTO ServerParameters " + 
+		"INSERT INTO " + TABLE + " " +
 		"VALUES ('minEmailLength', 'The minimum character length of email addresses when creating user accounts.', 15);",
 
-		"INSERT INTO ServerParameters " + 
+		"INSERT INTO " + TABLE + " " +
 		"VALUES ('maxEmailLength', 'The maximum character length of email addresses when creating user accounts.', 50);",
 
-		"INSERT INTO ServerParameters " + 
+		"INSERT INTO " + TABLE + " " + 
 		"VALUES ('minPasswordLength', 'The minimum character length of password when creating user accounts.', 6);",
 
-		"INSERT INTO ServerParameters " + 
+		"INSERT INTO " + TABLE + " " + 
 		"VALUES ('maxPasswordLength', 'The maximum character length of password when creating user accounts.', 20);",
 
-		"INSERT INTO ServerParameters " + 
+		"INSERT INTO " + TABLE + " " + 
 		"VALUES ('speedThreshold', 'The speed threshold to compare against a user requesting messages.', 15);",
 
-		"INSERT INTO ServerParameters " + 
+		"INSERT INTO " + TABLE + " " + 
 		"VALUES ('defaultMessageRadiusMeters', 'The default radius, in meters, in which to check if there are any messages.', 100);",
 
-		"INSERT INTO ServerParameters " + 
+		"INSERT INTO " + TABLE + " " + 
 		"VALUES ('minMessages', 'The minimum amount of messages fetched to the user.', 10);",
 
-		"INSERT INTO ServerParameters " + 
+		"INSERT INTO " + TABLE + " " + 
 		"VALUES ('maxMessages', 'The maximum amount of messages fetched to the user.', 50);",
 		};
 }

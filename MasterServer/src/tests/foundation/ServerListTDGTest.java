@@ -15,46 +15,69 @@
 
 package tests.foundation;
 
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import org.junit.Test;
 
-import foundation.Database;
+import junit.framework.TestCase;
+
 import foundation.finder.ServerListFinder;
 import foundation.tdg.ServerListTDG;
-import static org.junit.Assert.*;
 
-public class ServerListTDGTest {
-
-	@Test
-	public void testFunctionality() throws SQLException, IOException {
-		boolean previousDatabase = Database.isDatabaseCreated();
-		if (!previousDatabase)
-			Database.createDatabaseTables();
-		insert();
-		delete();
-		if (!previousDatabase)
-			Database.dropDatabaseTables();
-	}
-
-	private void insert() throws SQLException, IOException {
-		final String hostname = "http://ericsson1.ericsson.com/";
-		int port = 8080;
-		ResultSet rs = ServerListFinder.find(hostname);
-		assertFalse(rs.next());
-		assertEquals(1, ServerListTDG.insert(hostname, port));
-		rs = ServerListFinder.find(hostname);
-		assertTrue(rs.next());
-		assertEquals(hostname, rs.getString("hostname"));
-		assertEquals(port, rs.getInt("port"));
+public class ServerListTDGTest extends TestCase {
+	private final static String HOSTNAME = "http://ericsson1.ericsson.com/";
+	private static final int PORT = 8080;
+	
+	public void testInsert() {
+		try {
+			ServerListTDG.create();
+			// Should not be in there
+			ResultSet rs = ServerListFinder.find(HOSTNAME);
+			assertFalse(rs.next());
+			rs.close();
+			
+			int inserted = ServerListTDG.insert(HOSTNAME, PORT);
+			assertEquals(1, inserted);
+			
+			// Should find one
+			rs = ServerListFinder.find(HOSTNAME);
+			assertTrue(rs.next());
+			String hostname = rs.getString("hostname");
+			int port = rs.getInt("port");
+			
+			assertEquals(hostname, HOSTNAME);
+			assertEquals(port, PORT);
+			
+			assertFalse(rs.next());
+			rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail();
+		} finally {
+			try {
+				ServerListTDG.drop();
+			} catch(SQLException e) {
+			}
+		}
 	}
 	
-	private void delete() throws SQLException, IOException {
-		final String hostname = "http://ericsson1.ericsson.com/";
-		int port = 8080;
-		ResultSet rs = ServerListFinder.find(hostname);
-		assertTrue(rs.next());
-		assertEquals(1, ServerListTDG.delete(hostname));
+	public void testDelete() {
+		try {
+			ServerListTDG.create();
+				
+			int inserted = ServerListTDG.insert(HOSTNAME, PORT);
+			assertEquals(1, inserted);
+
+			int deleted = ServerListTDG.delete(HOSTNAME);
+			
+			assertEquals(1, deleted);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail();
+		} finally {
+			try {
+				ServerListTDG.drop();
+			} catch(SQLException e) {
+			}
+		}
 	}
 }

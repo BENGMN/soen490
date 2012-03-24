@@ -34,7 +34,7 @@ import domain.message.mappers.MessageOutputMapper;
 import domain.serverparameter.ServerParameter;
 import domain.user.UserType;
 
-import foundation.Database;
+import foundation.DbRegistry;
 import foundation.tdg.MessageTDG;
 import foundation.tdg.UserTDG;
 
@@ -62,7 +62,7 @@ public class MessageFinder {
 	 * @throws SQLException
 	 */
 	public static ResultSet findAll() throws SQLException {
-		Connection connection = Database.getConnection();
+		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(SELECT_ALL);
 		
 		ResultSet rs = ps.executeQuery();
@@ -89,7 +89,7 @@ public class MessageFinder {
 	 * @throws SQLException
 	 */
 	public static ResultSet find(BigInteger mid) throws SQLException {
-		Connection connection = Database.getConnection();
+		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(SELECT);
 		
 		ps.setBigDecimal(1, new BigDecimal(mid.toString()));
@@ -101,7 +101,7 @@ public class MessageFinder {
 			"SELECT * FROM " + MessageTDG.TABLE + " AS m WHERE m.uid = ?;";
 
 	public static ResultSet findByUser(BigInteger uid) throws SQLException {
-		Connection connection = Database.getConnection();
+		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(SELECT_BY_EMAIL);
 		
 		ps.setBigDecimal(1, new BigDecimal(uid));
@@ -146,7 +146,7 @@ public class MessageFinder {
 		// Get all the points in the database close to the coordinates supplied
 		Coordinate coordinate = new Coordinate(latitude, longitude);
 		List<Coordinate> rectangle = GeoSpatialSearch.convertPointToRectangle(coordinate, radius);
-		Connection connection = Database.getConnection();
+		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(COUNT_NORMAL_MESSAGES_PER_SQUARE);
 		ps.setDouble(1, rectangle.get(0).getLongitude());
 		ps.setDouble(2, rectangle.get(1).getLongitude());
@@ -188,7 +188,7 @@ public class MessageFinder {
 			"FROM " + MessageTDG.TABLE + " AS m " + "WHERE m.longitude BETWEEN ? AND ? AND m.latitude BETWEEN ? AND ?;";
 
 	public static ResultSet findInProximity(double longitude, double latitude, double radius) throws SQLException {
-		Connection connection = Database.getConnection();
+		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(SELECT_BY_RADIUS);
 		
 		List<Coordinate> rectangle = GeoSpatialSearch.convertPointToRectangle(new Coordinate(longitude, latitude), radius);
@@ -226,7 +226,7 @@ public class MessageFinder {
 	
 	public static ResultSet findIdsInProximity(double longitude, double latitude, double speed, String orderBy) throws SQLException, IOException {
 		
-		Connection connection = Database.getConnection();
+		Connection connection = DbRegistry.getDbConnection();
 		ServerParameters params = ServerParameters.getUniqueInstance();
 		int minMessages = Integer.parseInt(params.get("minMessages").getValue());
 		int maxMessages = Integer.parseInt(params.get("maxMessages").getValue());
@@ -331,7 +331,7 @@ public class MessageFinder {
 	 * @throws IOException
 	 */
 	public static ResultSet findExpired(int timeToLive) throws SQLException {
-		Connection connection = Database.getConnection();
+		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(SELECT_BY_DATE);	
 		
 		ps.setInt(1, timeToLive);
