@@ -27,7 +27,10 @@ import javax.servlet.ServletException;
 
 import org.junit.Test;
 
+<<<<<<< HEAD
 import foundation.Database;
+=======
+>>>>>>> a917768e3198e92495cbe394a42c767064708693
 import foundation.DbRegistry;
 import foundation.finder.ServerListFinder;
 import foundation.tdg.ServerListTDG;

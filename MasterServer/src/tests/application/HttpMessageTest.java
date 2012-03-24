@@ -32,8 +32,7 @@ public class HttpMessageTest  {
 	
 	static String serverUrl = "/MasterServer/frontController";
 	
-	public void test() throws URISyntaxException, ClientProtocolException, IOException
-	{
+	public void test() throws URISyntaxException, ClientProtocolException, IOException {
 		ArrayList<Message> messages = get();
 		assertEquals(0, messages.size());
 		long mid = put();

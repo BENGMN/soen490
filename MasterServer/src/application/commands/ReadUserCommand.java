@@ -56,7 +56,7 @@ public class ReadUserCommand extends FrontCommand {
 		
 		// Create a variable to store the user to be retrieved
 		User user = UserInputMapper.find(userID);
-		
+		DataOutputStream out = null;
 		// Format response based on request response type
 		switch (type) {
 		case JSP:
@@ -66,13 +66,15 @@ public class ReadUserCommand extends FrontCommand {
 			break;
 			
 		case XML:
+			out = new DataOutputStream(response.getOutputStream());
 			response.setContentType("application/xml");
-			IOUtils.writeUserToXML(user, new DataOutputStream(response.getOutputStream()));
+			IOUtils.writeUserToXML(user, out);
 			break;
 			
 		case BIN:
+			out = new DataOutputStream(response.getOutputStream());
 			response.setContentType("application/octet-stream");
-			IOUtils.writeUserToStream(user, new DataOutputStream(response.getOutputStream()));
+			IOUtils.writeUserToStream(user, out);
 			break;
 		}
 		

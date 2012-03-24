@@ -66,15 +66,17 @@ public class ReadMessageCommand extends FrontCommand {
 			}
 		}
 		
-		DataOutputStream out = new DataOutputStream(response.getOutputStream());
+		DataOutputStream out = null;
 		
 		// Format response based on request type
 		switch (type) {
 		case XML:
+			out = new DataOutputStream(response.getOutputStream());
 			response.setContentType("text/xml");
 			IOUtils.writeMessageListToXML(messages, out);
 			break;
 		case BIN:
+			out = new DataOutputStream(response.getOutputStream());
 			response.setContentType("application/octet-stream");
 			IOUtils.writeMessageListToStream(messages, out);
 			break;			

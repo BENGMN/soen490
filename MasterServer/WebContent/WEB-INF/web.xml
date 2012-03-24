@@ -3,6 +3,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
   http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+  	<welcome-file-list>
+  		<welcome-file>index.html</welcome-file>
+  	</welcome-file-list>
 	<display-name>Servlet 2.4 application</display-name>
 	<servlet>
 		<servlet-name>MasterServer</servlet-name>

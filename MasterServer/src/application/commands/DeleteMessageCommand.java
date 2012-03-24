@@ -33,15 +33,15 @@ public class DeleteMessageCommand extends FrontCommand {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, UnrecognizedUserException, SQLException {
-		String strId = request.getParameter("messageid");
+		String messageid = request.getParameter("messageid");
 		
-		if ("".equals(strId))
+		if ("".equals(messageid))
 			throw new ParameterException("Missing 'messageid' parameter.");
 		
 		BigInteger mid = null;
 		
 		try {
-			mid = new BigInteger(strId);
+			mid = new BigInteger(messageid);
 		} catch (NumberFormatException e) {
 			throw new ParameterException("Parameter 'messageid' is badly formatted, not a valid integer.");
 		}
@@ -49,9 +49,9 @@ public class DeleteMessageCommand extends FrontCommand {
 		// Throws MapperException if mid doesn't exist
 		Message message = MessageInputMapper.find(mid);
 		
+		// Between these two Database operations, the message returned could not be deleted elsewhere
 		MessageOutputMapper.delete(message);
-		
-		// TODO possibly return success message
+	
 		response.setStatus(HttpServletResponse.SC_OK);
 	}
 

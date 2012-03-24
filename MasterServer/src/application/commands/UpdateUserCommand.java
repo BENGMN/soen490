@@ -4,7 +4,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
@@ -34,9 +33,7 @@ public class UpdateUserCommand extends FrontCommand {
 	private static String SUCCESS_CREATE_USER = "/WEB-INF/jsp/success.jsp";
 
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response)
-			throws MapperException, ParameterException, IOException,
-			UnrecognizedUserException, SQLException, ServletException {
+	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, IOException,	UnrecognizedUserException, SQLException, ServletException {
 		
 		ServerParameters params = ServerParameters.getUniqueInstance();
 		
@@ -112,10 +109,10 @@ public class UpdateUserCommand extends FrontCommand {
 		
 		Logger logger = (Logger)LoggerFactory.getLogger("application");
 		
-		DataOutputStream out = new DataOutputStream(response.getOutputStream());
+		DataOutputStream out = null;
 
 		try {
-			String hashedPass = hashPassword(password);
+			String hashedPass = IOUtils.hashPassword(password);
 			
 			user.setPassword(hashedPass);
 			user.setType(type);
@@ -139,11 +136,13 @@ public class UpdateUserCommand extends FrontCommand {
 				view.forward(request, response);
 				break;
 			case XML:
+				out = new DataOutputStream(response.getOutputStream());
 				response.setContentType("text/xml");
 				IOUtils.writeUserToXML(user, out);
 				IOUtils.writeStatusMessageToXML("success", message, out);
 				break;
 			case BIN:
+				out = new DataOutputStream(response.getOutputStream());
 				response.setContentType("application/octet-stream");
 				IOUtils.writeUserToStream(user, out);
 				IOUtils.writeStatusMessageToStream(message, out);
@@ -167,22 +166,6 @@ public class UpdateUserCommand extends FrontCommand {
 		} 
 	}
 	
-	/**
-	 * Hashes the given string
-	 * @param password String to hash
-	 * @return Returns the String value of the hash
-	 * @throws NoSuchAlgorithmException
-	 * @throws UnsupportedEncodingException
-	 */
-	private String hashPassword(String password) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-		 
-		String charSet = "Latin1";
-		byte[] passwordBytes = password.getBytes(charSet);
-		MessageDigest md = MessageDigest.getInstance("SHA");
-		byte[] encryptedPass = md.digest(passwordBytes);
-		
-		return new String(encryptedPass);
-		 
-	}
+
 
 }
