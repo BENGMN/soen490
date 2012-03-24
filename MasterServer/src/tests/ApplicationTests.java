@@ -10,7 +10,6 @@ import tests.application.*;
 
 @SuiteClasses({
 		FrontControllerTest.class, 
-		HttpMessageTest.class,
 		UnsupportedCommandTest.class,
 		MessageCommandTest.class		 
 })

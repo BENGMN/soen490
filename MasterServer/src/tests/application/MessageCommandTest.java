@@ -20,7 +20,6 @@ import static org.junit.Assert.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -75,6 +74,7 @@ public class MessageCommandTest {
 	
 	boolean previousDatabase = false;
 	
+	/*
 	@Before
 	public void createTables() throws SQLException, IOException
 	{
@@ -86,13 +86,18 @@ public class MessageCommandTest {
 	@After
 	public void dropTables() throws SQLException, IOException
 	{
+		
 		if (!previousDatabase)
 			DbRegistry.dropDatabaseTables();
 	}
-	
+	*/
 	@Test
 	public void getCommand() throws SQLException, IOException, NoSuchAlgorithmException, MapperException, ParameterException, exceptions.UnrecognizedUserException, LostUpdateException
 	{
+		
+		if (!DbRegistry.isDatabaseCreated())
+			DbRegistry.createDatabaseTables();
+		
 		final double longitude = 10.0;
 		final double latitude = 30.0;
 		final float speed = 20.0f;
@@ -113,37 +118,40 @@ public class MessageCommandTest {
 		
 		request.setParameter("messageid", message.getMid().toString());
 		request.setParameter("responsetype", "bin");
-		//request.setParameter("longitude", Double.toString(longitude));
-		//request.setParameter("latitude", Double.toString(latitude));
-		//request.setParameter("speed", Float.toString(speed));
 		
 		ReadMessageCommand getMessageCommand = new ReadMessageCommand();
 		
 		getMessageCommand.execute(request, response);
 		assertEquals(HttpServletResponse.SC_OK, response.getStatus());
 		
-		byte[] responseBytes = response.getContentAsByteArray();
-		MessagePack pack = new MessagePack();
-		Unpacker unpacker = pack.createUnpacker(new ByteArrayInputStream(responseBytes));
-		int messageCount = unpacker.readInt();
+		DataInputStream in = new DataInputStream(new ByteArrayInputStream(response.getContentAsByteArray()));
 		
-		assertEquals(1, messageCount);
-		assertEquals(message.getMid(), new BigInteger(unpacker.readString()));
-		assertEquals(message.getOwner().getEmail(), unpacker.readString());
-		assertArrayEquals(message.getMessage(), unpacker.readByteArray());
-		assertEquals(message.getSpeed(), unpacker.readFloat(), 0.0001);
-		assertEquals(message.getCreatedAt().getTime() >= unpacker.readLong(), true); // amended here for rounding errors
-		assertEquals(message.getLongitude(), unpacker.readDouble(), 0.000001);
-		assertEquals(message.getLatitude(), unpacker.readDouble(), 0.000001);
-		assertEquals(message.getUserRating(), unpacker.readInt());
+		List<Message> messages = null;
+		
+		try {
+			messages = IOUtils.readMessageListFromStream(in);
+		} catch (CorruptStreamException e) {
+		}
+		
+		assertEquals(1, messages.size());
+		assertEquals(message.getMid(), messages.get(0).getMid());
+		assertEquals(message.getOwner().getEmail(), messages.get(0).getOwner().getEmail());
+		assertArrayEquals(message.getMessage(), messages.get(0).getMessage());
+		assertEquals(message.getSpeed(), messages.get(0).getSpeed(), 0.0001);
+		assertEquals(message.getCreatedAt().getTime() >= messages.get(0).getCreatedAt().getTime(), true); // amended here for rounding errors
+		assertEquals(message.getLongitude(), messages.get(0).getLongitude(), 0.000001);
+		assertEquals(message.getLatitude(), messages.get(0).getLatitude(), 0.000001);
+		assertEquals(message.getUserRating(), messages.get(0).getUserRating());
 
-		assertEquals(1, UserOutputMapper.delete(user));
-		assertEquals(1, MessageOutputMapper.delete(message));		
+		DbRegistry.dropDatabaseTables();
 	}
-	
+
 	@Test
 	public void putCommand() throws SQLException, IOException, UnrecognizedUserException, ParameterException, NoSuchAlgorithmException, MapperException, exceptions.UnrecognizedUserException, LostUpdateException
 	{		
+		boolean previousDBCreated = DbRegistry.isDatabaseCreated();
+		if (!previousDBCreated)
+			DbRegistry.createDatabaseTables();
 		String fileName = "test.amr";
 		File file = new File(fileName);
 		int fileSize = (int)file.length();
@@ -175,6 +183,7 @@ public class MessageCommandTest {
 		assertArrayEquals(message.getMessage(), fileBytes);
 		assertEquals(1, MessageOutputMapper.delete(message));
 		assertEquals(1, UserOutputMapper.delete(user));
+		DbRegistry.dropDatabaseTables();
 	}
 	
 	private static final String BOUNDARY = "AaB03x";
@@ -207,6 +216,10 @@ public class MessageCommandTest {
 	@Test
 	public void upvoteCommand() throws SQLException, IOException, NoSuchAlgorithmException, MapperException, ParameterException, exceptions.UnrecognizedUserException
 	{
+		
+		if (!DbRegistry.isDatabaseCreated())
+			DbRegistry.createDatabaseTables();
+		
 		final byte[] bytes = new byte[10];
 		final float speed = 10.0f;
 		final double latitude = 20.0;
@@ -225,11 +238,15 @@ public class MessageCommandTest {
 		message = MessageInputMapper.find(message.getMid());
 		assertEquals(userRating + 1, message.getUserRating());
 		assertEquals(1, MessageOutputMapper.delete(message));
+		DbRegistry.dropDatabaseTables();
 	}
 	
 	@Test
 	public void downvoteCommand() throws NoSuchAlgorithmException, IOException, SQLException, MapperException, ParameterException, exceptions.UnrecognizedUserException
 	{
+		if (!DbRegistry.isDatabaseCreated())
+			DbRegistry.createDatabaseTables();
+		
 		final byte[] bytes = new byte[10];
 		final float speed = 10.0f;
 		final double latitude = 20.0;
@@ -248,11 +265,15 @@ public class MessageCommandTest {
 		message = MessageInputMapper.find(message.getMid());
 		assertEquals(userRating - 1, message.getUserRating());
 		assertEquals(1, MessageOutputMapper.delete(message));
+		DbRegistry.dropDatabaseTables();
 	}
 	
 	@Test
 	public void getMessageIDcommandTest() throws NoSuchAlgorithmException, SQLException, IOException, CorruptStreamException, MapperException, ParameterException, exceptions.UnrecognizedUserException 
 	{
+		if (!DbRegistry.isDatabaseCreated())
+			DbRegistry.createDatabaseTables();
+		
 		// Attributes for a User
 		final BigInteger uid1 = new BigInteger("3425635465657");
 		final String email1 = "example@example.com";
@@ -330,7 +351,7 @@ public class MessageCommandTest {
 		assertEquals(returned.get(0), mid3);
 		assertEquals(returned.get(1), mid2);
 		assertEquals(returned.get(2), mid1);
-		
+		DbRegistry.dropDatabaseTables();
 			
 	}
 }
