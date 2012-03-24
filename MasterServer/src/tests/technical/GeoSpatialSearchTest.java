@@ -17,7 +17,9 @@
 package tests.technical;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.List;
+import java.util.Locale;
 
 import foundation.finder.Coordinate;
 import foundation.finder.GeoSpatialSearch;
@@ -50,10 +52,11 @@ public class GeoSpatialSearchTest extends TestCase {
 	
 	public void testConvertPointToRectangle() {
 		List<Coordinate> rectangle = GeoSpatialSearch.convertPointToRectangle(coordinates, radius_meters);
-		for (Coordinate co : rectangle) {
-			System.out.println("Lat: "+co.getLatitude()+"\nLon: "+co.getLongitude());
-		}
-		DecimalFormat threeZeroes = new DecimalFormat("#.###");
-		assertEquals(Double.valueOf(threeZeroes.format(rectangle.get(0).getLatitude())), 40.726);		
+		
+		DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US);
+		DecimalFormat threeZeroes = new DecimalFormat("#.###", symbols);
+		String number = threeZeroes.format(rectangle.get(0).getLatitude());
+		
+		assertEquals(Double.valueOf(number), 40.726);		
 	}
 }
