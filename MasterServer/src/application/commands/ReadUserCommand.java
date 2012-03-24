@@ -20,7 +20,7 @@ import exceptions.ParameterException;
 import exceptions.UnrecognizedUserException;
 
 public class ReadUserCommand extends FrontCommand {
-	private static String USER_JSP = "/WEB-INF/jsp/UserManager.jsp";
+	private static String USER_JSP = "/WEB-INF/jsp/viewuser.jsp";
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, UnrecognizedUserException, SQLException, ServletException, IOException {

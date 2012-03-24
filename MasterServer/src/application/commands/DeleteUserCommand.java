@@ -10,6 +10,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Logger;
+
 import application.IOUtils;
 import application.ResponseType;
 
@@ -130,5 +134,8 @@ public class DeleteUserCommand extends FrontCommand {
 			}
 
 		}
+		
+		Logger logger = (Logger) LoggerFactory.getLogger("application");
+		logger.info("User with ID {} was deleted.", user.getUid());
 	}
 }

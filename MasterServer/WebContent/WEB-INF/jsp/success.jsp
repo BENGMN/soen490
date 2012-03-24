@@ -12,7 +12,7 @@
 
 <body>
 	<div>
-		<a href="${pageContext.request.contextPath}/controller?command=userlookup&responsetype=jsp">Lookup a User</a> 
+		<a href="${pageContext.request.contextPath}/controller?command=browseusers">Browse Users</a> 
 		<a href="/MasterServer/createuser.html">Create a new User</a>
 	</div>
 	<div>
