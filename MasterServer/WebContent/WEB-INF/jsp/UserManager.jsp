@@ -16,40 +16,57 @@
 		<a href="${pageContext.request.contextPath}/controller?command=usercreator&responsetype=jsp">Create a User</a>
 	</div>
 	<div>
+		<% User user = (User)request.getAttribute("user"); %>
 		<form method="POST"
 			action="${pageContext.request.contextPath}/controller?command=updateuser&responsetype=jsp"
 			name="POST.updateuser">
+			<input type="hidden" name="version" value="<%=user.getVersion() %>" />
+			<input type="hidden" name="userid" value="<%=user.getUid() %>" />
 			<table>
 				<tr>
 					<th colspan="2">Update Parameters</th>
 				</tr>
 				<tr>
 					<td>E-mail:</td>
-					<td><input type="text" name="email" value='<%= ((User)request.getAttribute("user")).getEmail() %>' /></td>
+					<td><input type="text" name="email" value='<%= user.getEmail() %>' /></td>
 				</tr>
 				<tr>
 					<td>Password:</td>
-					<td><input type="text" name="password" value = '<%= ((User)request.getAttribute("user")).getPassword() %>'/></td>
+					<td><input type="text" name="password" value = '<%= user.getPassword() %>'/></td>
 				</tr>
 				<tr>
 					<td>User type:</td>
 					<td>
-						<input type="radio" name="usertype" value="USER_NORMAL" checked='<%= Boolean.toString(UserType.convertEnum(((User)request.getAttribute("user")).getType()) == 0) %>' />Normal User
+						<input type="radio" name="usertype" value="USER_NORMAL" checked='<%= Boolean.toString(UserType.convertEnum(user.getType()) == 0) %>' />Normal User
 						<br /> 
-						<input type="radio" name="usertype" value="USER_ADVERTISER"  checked='<%=  Boolean.toString(UserType.convertEnum(((User)request.getAttribute("user")).getType()) == 1) %>' />Advertiser User
+						<input type="radio" name="usertype" value="USER_ADVERTISER"  checked='<%=  Boolean.toString(UserType.convertEnum(user.getType()) == 1) %>' />Advertiser User
 					</td>
 				</tr>
+				
 				<tr>
 					<td colspan="2"><input type="submit" value="Update User" /></td>
 				</tr>
 			</table>
 		</form>
-		<form method="POST"
-			action="${pageContext.request.contextPath}/controller?command=deleteuser&userid=<%= ((User)request.getAttribute("user")).getUid().toString() %>&version=<%= Integer.toString(((User)request.getAttribute("user")).getVersion()) %>&responsetype=jsp"
-			name="POST.deleteuser">
-			<input type="submit" value="Delete User" />
-		</form>
+		
+		<br>
+		
+		<input type="button" id="delete" value="Delete User" onclick="clickDelete()"/>
+
 		
 	</div>
+	<script type="text/javascript" src="/js/jquery-1.7.2.js">
+		
+		function clickDelete() {
+			var userid = "<%=user.getUid()%>";
+			var version = "<%= user.getVersion()%>";
+			$.ajax({
+				type: "DELETE",
+				url: "/MasterServer/controller",
+				data: "command=deleteuser&userid="+ userid + "&responsetype=jsp&version=" + version,
+			});
+		}
+		
+	</script>
 </body>
 </html>

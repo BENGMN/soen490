@@ -100,7 +100,7 @@ public class DeleteUserCommand extends FrontCommand {
 		} // LostUpdateException occurs if the version of the local user is different than the one in the database
 		catch (LostUpdateException e) {
 			String error = e.getMessage();
-			DataOutputStream out = new DataOutputStream(response.getOutputStream());
+			DataOutputStream out = null;
 			response.setStatus(HttpServletResponse.SC_CONFLICT);
 			switch (type) {
 			case JSP:
@@ -113,6 +113,7 @@ public class DeleteUserCommand extends FrontCommand {
 				break;
 				
 			case XML:
+				out = new DataOutputStream(response.getOutputStream());
 				// HTTP 409 Status Code, request could not be completed with the state of the user
 				response.setContentType("text/xml");
 				IOUtils.writeUserToXML(user, out);
@@ -120,6 +121,7 @@ public class DeleteUserCommand extends FrontCommand {
 				break;
 				
 			case BIN:
+				out = new DataOutputStream(response.getOutputStream());
 				// HTTP 409 Status Code, request could not be completed with the state of the user
 				response.setContentType("application/octet-stream");
 				IOUtils.writeUserToStream(user, out);

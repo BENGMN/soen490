@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
@@ -438,5 +439,24 @@ public class IOUtilsTest extends TestCase {
 			if (file.exists())
 				file.delete();
 		}			
+	}
+	
+	public void testHashPassword() {
+		String password = "somePassword";
+		String hashedPassword = null;
+		String sameHashedPassword = null;
+		try {
+			hashedPassword = IOUtils.hashPassword(password);
+			sameHashedPassword = IOUtils.hashPassword(password);
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+			fail();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			fail();
+		}
+		
+		assertFalse(password.equals(hashedPassword));
+		assertTrue(hashedPassword.equals(sameHashedPassword));
 	}
 }
