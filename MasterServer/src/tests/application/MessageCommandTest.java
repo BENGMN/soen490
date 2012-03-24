@@ -19,6 +19,8 @@ import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -27,6 +29,7 @@ import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
@@ -47,7 +50,9 @@ import org.msgpack.unpacker.Unpacker;
 import technical.UnrecognizedUserException;
 
 
+import application.IOUtils;
 import application.commands.DownvoteMessageCommand;
+import application.commands.GetMessageIDsCommand;
 import application.commands.ReadMessageCommand;
 import application.commands.CreateMessageCommand;
 import application.commands.UpvoteMessageCommand;
@@ -60,6 +65,7 @@ import domain.user.User;
 import domain.user.UserFactory;
 import domain.user.mappers.UserOutputMapper;
 import domain.user.UserType;
+import exceptions.CorruptStreamException;
 import exceptions.LostUpdateException;
 import exceptions.MapperException;
 import exceptions.ParameterException;
@@ -241,5 +247,89 @@ public class MessageCommandTest {
 		message = MessageInputMapper.find(message.getMid());
 		assertEquals(userRating - 1, message.getUserRating());
 		assertEquals(1, MessageOutputMapper.delete(message));
+	}
+	
+	@Test
+	public void getMessageIDcommandTest() throws NoSuchAlgorithmException, SQLException, IOException, CorruptStreamException, MapperException, ParameterException, exceptions.UnrecognizedUserException 
+	{
+		// Attributes for a User
+		final BigInteger uid1 = new BigInteger("3425635465657");
+		final String email1 = "example@example.com";
+		final String password1 = "password";
+		final UserType userType1 = UserType.USER_NORMAL;
+		final int userVersion1 = 1;
+		
+		final BigInteger uid2 = new BigInteger("3425635465699");
+		final String email2 = "example@example.com";
+		final String password2 = "password";
+		final UserType userType2 = UserType.USER_ADVERTISER;
+		final int userVersion2 = 1;
+		
+		final BigInteger uid3 = new BigInteger("3425635465699");
+		final String email3 = "example@example.com";
+		final String password3 = "password";
+		final UserType userType3 = UserType.USER_ADVERTISER;
+		final int userVersion3 = 1;
+		
+		// Attributes for a Message
+		BigInteger mid1 = new BigInteger("158749857936");
+		User owner1 = new User(uid1, email1, password1, userType1, userVersion1);
+		byte[] message1 = { 1, 2, 3, 4, 5, 6 };
+		float speed1 = 5.5f;
+		double latitude1 = 35;
+		double longitude1 = 45;
+		Timestamp createdAt1 = new Timestamp(new GregorianCalendar(2011, 9, 10).getTimeInMillis());
+		int userRating1 = 7;
+		
+		BigInteger mid2 = new BigInteger("158749857910");
+		User owner2 = new User(uid2, email2, password2, userType2, userVersion2);
+		byte[] message2 = { 1, 2, 3, 4, 5, 6 };
+		float speed2 = 10.5f;
+		double latitude2 = 35;
+		double longitude2 = 45;
+		Timestamp createdAt2 = new Timestamp(new GregorianCalendar(2012, 10, 11).getTimeInMillis());
+		int userRating2 = 10;
+		
+		BigInteger mid3 = new BigInteger("158749857905");
+		User owner3 = new User(uid3, email3, password3, userType3, userVersion3);
+		byte[] message3 = { 1, 2, 3, 4, 5, 6 };
+		float speed3 = 12.5f;
+		double latitude3 = 35;
+		double longitude3 = 45;
+		Timestamp createdAt3 = new Timestamp(new GregorianCalendar(2012, 10, 11).getTimeInMillis());
+		int userRating3 = 10;
+		
+		Message m1 = new Message(mid1, owner1, message1, speed1, latitude1, longitude1, createdAt1, userRating1);
+		Message m2 = new Message(mid2, owner2, message2, speed2, latitude2, longitude2, createdAt2, userRating2);
+		Message m3 = new Message(mid3, owner3, message3, speed3, latitude3, longitude3, createdAt3, userRating3);
+		
+		MessageOutputMapper.insert(m1);
+		MessageOutputMapper.insert(m2);
+		MessageOutputMapper.insert(m3);
+		UserOutputMapper.insert(owner1);
+		UserOutputMapper.insert(owner2);
+		
+		GetMessageIDsCommand getcommand = new GetMessageIDsCommand();
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		MockHttpServletResponse response = new MockHttpServletResponse();
+		
+		request.setParameter("longitude","45");
+		request.setParameter("latitude","35");
+		request.setParameter("sorttype","type");
+		request.setParameter("speed","100");
+		
+		getcommand.execute(request, response);
+		
+		assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+		//new DataOutputStream(response.getOutputStream())
+		DataInputStream in = new DataInputStream(new ByteArrayInputStream(response.getContentAsByteArray()));
+		
+		ArrayList<BigInteger> returned  = (ArrayList<BigInteger>)IOUtils.readListMessageIDsFromStream(in);
+		
+		assertEquals(returned.get(0), mid3);
+		assertEquals(returned.get(1), mid2);
+		assertEquals(returned.get(2), mid1);
+		
+			
 	}
 }

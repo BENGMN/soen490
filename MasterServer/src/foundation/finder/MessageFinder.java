@@ -305,7 +305,6 @@ public class MessageFinder {
 		//Getting the actual ids at this point
 		ResultSet finaleRs;
 
-		//SELECT_ID_BY_RADIUS2 PreparedStatement finalPs = connection.prepareStatement(SELECT_ID_BY_RADIUS+" ORDER BY "+orderBy+" DESC;");
 		PreparedStatement finalPs = connection.prepareStatement(query);
 		List<Coordinate> rectangle = GeoSpatialSearch.convertPointToRectangle(new Coordinate(longitude, latitude), radius);
 		finalPs.setDouble(1, rectangle.get(0).getLongitude());
