@@ -351,6 +351,7 @@ public class MessageCommandTest {
 		assertEquals(returned.get(0), mid3);
 		assertEquals(returned.get(1), mid2);
 		assertEquals(returned.get(2), mid1);
+		
 		DbRegistry.dropDatabaseTables();
 			
 	}

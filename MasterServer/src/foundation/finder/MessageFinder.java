@@ -204,7 +204,7 @@ public class MessageFinder {
 			"FROM "+UserTDG.TABLE+" AS u, " +
 			"(SELECT m.mid, m.uid, m.latitude, m.longitude, m.user_rating, m.created_at " +
 			"FROM " + MessageTDG.TABLE + " AS m " +
-			"WHERE longitude BETWEEN ? AND ? AND m.latitude BETWEEN ? AND ?) AS messages WHERE u.uid = messages.uid";
+			"WHERE m.latitude BETWEEN ? AND ? AND m.longitude BETWEEN ? AND ?) AS messages WHERE u.uid = messages.uid";
 	
 	private static final String ORDER_BY_USER_TYPE = " ORDER BY u.type DESC;";
 	private static final String ORDER_BY_USER_RATING = " ORDER BY messages.user_rating DESC;";
