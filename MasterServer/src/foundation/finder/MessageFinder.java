@@ -111,9 +111,9 @@ public class MessageFinder {
 	
 	private static final String SELECT_MIDS_FOR_NORMAL_USER_IN_RADIUS = 
 			"SELECT messages.mid " +
-			"FROM User AS u, " +
+			"FROM "+UserTDG.TABLE+" AS u, " +
 				"(SELECT m.mid, m.uid, m.message, m.speed, m.latitude, m.longitude, m.created_at, m.user_rating " +
-				 "FROM Message AS m " +
+				 "FROM "+MessageTDG.TABLE+" AS m " +
 				 "WHERE longitude BETWEEN ? AND ? AND m.latitude BETWEEN ? AND ? LIMIT 40) AS messages " +
 			"WHERE u.uid = messages.uid AND u.type = 0 " +
 			"ORDER BY messages.user_rating DESC, messages.created_at DESC;";
@@ -122,7 +122,7 @@ public class MessageFinder {
 	/*** Get the number of all messages in the minimum sized square that are from Regular Users ***/
 	private static final String COUNT_NORMAL_MESSAGES_PER_SQUARE =
 			"SELECT COUNT(m.mid) AS messageCount " +
-			"FROM Message AS m, User AS u " +
+			"FROM "+MessageTDG.TABLE+" AS m, "+UserTDG.TABLE+" AS u " +
 			"WHERE m.longitude BETWEEN ? AND ? " +
 				"AND m.latitude BETWEEN ? AND ? AND " +
 				"u.uid = m.uid AND u.type = 0 " +
@@ -132,8 +132,7 @@ public class MessageFinder {
 	/*** Get a list of all the messages that should be deleted ***/
 	private static final String SELECT_INVALID_MESSAGES = 
 			"SELECT m.mid "+
-			"FROM Message as m,"+
-			     "User as u "+
+			"FROM "+MessageTDG.TABLE+" as m,"+ UserTDG.TABLE+" as u "+
 			"WHERE m.longitude BETWEEN ? AND ? AND "+ 
 				  "m.latitude BETWEEN ? AND ? AND "+
 				  "u.uid = m.uid AND "+
@@ -202,7 +201,7 @@ public class MessageFinder {
 
 	private static final String SELECT_ID_BY_RADIUS = 
 			"SELECT messages.mid,messages.uid " +
-			"FROM User AS u, " +
+			"FROM "+UserTDG.TABLE+" AS u, " +
 			"(SELECT m.mid, m.uid, m.latitude, m.longitude, m.user_rating, m.created_at " +
 			"FROM " + MessageTDG.TABLE + " AS m " +
 			"WHERE longitude BETWEEN ? AND ? AND m.latitude BETWEEN ? AND ?) AS messages WHERE u.uid = messages.uid";
@@ -305,7 +304,6 @@ public class MessageFinder {
 		//Getting the actual ids at this point
 		ResultSet finaleRs;
 
-		//SELECT_ID_BY_RADIUS2 PreparedStatement finalPs = connection.prepareStatement(SELECT_ID_BY_RADIUS+" ORDER BY "+orderBy+" DESC;");
 		PreparedStatement finalPs = connection.prepareStatement(query);
 		List<Coordinate> rectangle = GeoSpatialSearch.convertPointToRectangle(new Coordinate(longitude, latitude), radius);
 		finalPs.setDouble(1, rectangle.get(0).getLongitude());

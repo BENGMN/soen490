@@ -31,8 +31,6 @@ import tests.technical.GeoSpatialSearchTest;
 		 
 		 IOUtilsTest.class,
 		 
-		 HttpMessageTest.class,
-		 
 		 UnsupportedCommandTest.class,
 		 
 		 MessageCommandTest.class,

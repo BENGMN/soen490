@@ -19,6 +19,7 @@ import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -27,6 +28,7 @@ import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
@@ -47,7 +49,9 @@ import org.msgpack.unpacker.Unpacker;
 import technical.UnrecognizedUserException;
 
 
+import application.IOUtils;
 import application.commands.DownvoteMessageCommand;
+import application.commands.GetMessageIDsCommand;
 import application.commands.ReadMessageCommand;
 import application.commands.CreateMessageCommand;
 import application.commands.UpvoteMessageCommand;
@@ -60,6 +64,7 @@ import domain.user.User;
 import domain.user.UserFactory;
 import domain.user.mappers.UserOutputMapper;
 import domain.user.UserType;
+import exceptions.CorruptStreamException;
 import exceptions.LostUpdateException;
 import exceptions.MapperException;
 import exceptions.ParameterException;
@@ -69,6 +74,7 @@ public class MessageCommandTest {
 	
 	boolean previousDatabase = false;
 	
+	/*
 	@Before
 	public void createTables() throws SQLException, IOException
 	{
@@ -80,13 +86,18 @@ public class MessageCommandTest {
 	@After
 	public void dropTables() throws SQLException, IOException
 	{
+		
 		if (!previousDatabase)
 			DbRegistry.dropDatabaseTables();
 	}
-	
+	*/
 	@Test
 	public void getCommand() throws SQLException, IOException, NoSuchAlgorithmException, MapperException, ParameterException, exceptions.UnrecognizedUserException, LostUpdateException
 	{
+		
+		if (!DbRegistry.isDatabaseCreated())
+			DbRegistry.createDatabaseTables();
+		
 		final double longitude = 10.0;
 		final double latitude = 30.0;
 		final float speed = 20.0f;
@@ -107,37 +118,40 @@ public class MessageCommandTest {
 		
 		request.setParameter("messageid", message.getMid().toString());
 		request.setParameter("responsetype", "bin");
-		//request.setParameter("longitude", Double.toString(longitude));
-		//request.setParameter("latitude", Double.toString(latitude));
-		//request.setParameter("speed", Float.toString(speed));
 		
 		ReadMessageCommand getMessageCommand = new ReadMessageCommand();
 		
 		getMessageCommand.execute(request, response);
 		assertEquals(HttpServletResponse.SC_OK, response.getStatus());
 		
-		byte[] responseBytes = response.getContentAsByteArray();
-		MessagePack pack = new MessagePack();
-		Unpacker unpacker = pack.createUnpacker(new ByteArrayInputStream(responseBytes));
-		int messageCount = unpacker.readInt();
+		DataInputStream in = new DataInputStream(new ByteArrayInputStream(response.getContentAsByteArray()));
 		
-		assertEquals(1, messageCount);
-		assertEquals(message.getMid(), new BigInteger(unpacker.readString()));
-		assertEquals(message.getOwner().getEmail(), unpacker.readString());
-		assertArrayEquals(message.getMessage(), unpacker.readByteArray());
-		assertEquals(message.getSpeed(), unpacker.readFloat(), 0.0001);
-		assertEquals(message.getCreatedAt().getTime() >= unpacker.readLong(), true); // amended here for rounding errors
-		assertEquals(message.getLongitude(), unpacker.readDouble(), 0.000001);
-		assertEquals(message.getLatitude(), unpacker.readDouble(), 0.000001);
-		assertEquals(message.getUserRating(), unpacker.readInt());
+		List<Message> messages = null;
+		
+		try {
+			messages = IOUtils.readMessageListFromStream(in);
+		} catch (CorruptStreamException e) {
+		}
+		
+		assertEquals(1, messages.size());
+		assertEquals(message.getMid(), messages.get(0).getMid());
+		assertEquals(message.getOwner().getEmail(), messages.get(0).getOwner().getEmail());
+		assertArrayEquals(message.getMessage(), messages.get(0).getMessage());
+		assertEquals(message.getSpeed(), messages.get(0).getSpeed(), 0.0001);
+		assertEquals(message.getCreatedAt().getTime() >= messages.get(0).getCreatedAt().getTime(), true); // amended here for rounding errors
+		assertEquals(message.getLongitude(), messages.get(0).getLongitude(), 0.000001);
+		assertEquals(message.getLatitude(), messages.get(0).getLatitude(), 0.000001);
+		assertEquals(message.getUserRating(), messages.get(0).getUserRating());
 
-		assertEquals(1, UserOutputMapper.delete(user));
-		assertEquals(1, MessageOutputMapper.delete(message));		
+		DbRegistry.dropDatabaseTables();
 	}
-	
+
 	@Test
 	public void putCommand() throws SQLException, IOException, UnrecognizedUserException, ParameterException, NoSuchAlgorithmException, MapperException, exceptions.UnrecognizedUserException, LostUpdateException
 	{		
+		boolean previousDBCreated = DbRegistry.isDatabaseCreated();
+		if (!previousDBCreated)
+			DbRegistry.createDatabaseTables();
 		String fileName = "test.amr";
 		File file = new File(fileName);
 		int fileSize = (int)file.length();
@@ -169,6 +183,7 @@ public class MessageCommandTest {
 		assertArrayEquals(message.getMessage(), fileBytes);
 		assertEquals(1, MessageOutputMapper.delete(message));
 		assertEquals(1, UserOutputMapper.delete(user));
+		DbRegistry.dropDatabaseTables();
 	}
 	
 	private static final String BOUNDARY = "AaB03x";
@@ -201,6 +216,10 @@ public class MessageCommandTest {
 	@Test
 	public void upvoteCommand() throws SQLException, IOException, NoSuchAlgorithmException, MapperException, ParameterException, exceptions.UnrecognizedUserException
 	{
+		
+		if (!DbRegistry.isDatabaseCreated())
+			DbRegistry.createDatabaseTables();
+		
 		final byte[] bytes = new byte[10];
 		final float speed = 10.0f;
 		final double latitude = 20.0;
@@ -219,11 +238,15 @@ public class MessageCommandTest {
 		message = MessageInputMapper.find(message.getMid());
 		assertEquals(userRating + 1, message.getUserRating());
 		assertEquals(1, MessageOutputMapper.delete(message));
+		DbRegistry.dropDatabaseTables();
 	}
 	
 	@Test
 	public void downvoteCommand() throws NoSuchAlgorithmException, IOException, SQLException, MapperException, ParameterException, exceptions.UnrecognizedUserException
 	{
+		if (!DbRegistry.isDatabaseCreated())
+			DbRegistry.createDatabaseTables();
+		
 		final byte[] bytes = new byte[10];
 		final float speed = 10.0f;
 		final double latitude = 20.0;
@@ -242,5 +265,93 @@ public class MessageCommandTest {
 		message = MessageInputMapper.find(message.getMid());
 		assertEquals(userRating - 1, message.getUserRating());
 		assertEquals(1, MessageOutputMapper.delete(message));
+		DbRegistry.dropDatabaseTables();
+	}
+	
+	@Test
+	public void getMessageIDcommandTest() throws NoSuchAlgorithmException, SQLException, IOException, CorruptStreamException, MapperException, ParameterException, exceptions.UnrecognizedUserException 
+	{
+		if (!DbRegistry.isDatabaseCreated())
+			DbRegistry.createDatabaseTables();
+		
+		// Attributes for a User
+		final BigInteger uid1 = new BigInteger("3425635465657");
+		final String email1 = "example@example.com";
+		final String password1 = "password";
+		final UserType userType1 = UserType.USER_NORMAL;
+		final int userVersion1 = 1;
+		
+		final BigInteger uid2 = new BigInteger("3425635465699");
+		final String email2 = "example@example.com";
+		final String password2 = "password";
+		final UserType userType2 = UserType.USER_ADVERTISER;
+		final int userVersion2 = 1;
+		
+		final BigInteger uid3 = new BigInteger("3425635465699");
+		final String email3 = "example@example.com";
+		final String password3 = "password";
+		final UserType userType3 = UserType.USER_ADVERTISER;
+		final int userVersion3 = 1;
+		
+		// Attributes for a Message
+		BigInteger mid1 = new BigInteger("158749857936");
+		User owner1 = new User(uid1, email1, password1, userType1, userVersion1);
+		byte[] message1 = { 1, 2, 3, 4, 5, 6 };
+		float speed1 = 5.5f;
+		double latitude1 = 35;
+		double longitude1 = 45;
+		Timestamp createdAt1 = new Timestamp(new GregorianCalendar(2011, 9, 10).getTimeInMillis());
+		int userRating1 = 7;
+		
+		BigInteger mid2 = new BigInteger("158749857910");
+		User owner2 = new User(uid2, email2, password2, userType2, userVersion2);
+		byte[] message2 = { 1, 2, 3, 4, 5, 6 };
+		float speed2 = 10.5f;
+		double latitude2 = 35;
+		double longitude2 = 45;
+		Timestamp createdAt2 = new Timestamp(new GregorianCalendar(2012, 10, 11).getTimeInMillis());
+		int userRating2 = 10;
+		
+		BigInteger mid3 = new BigInteger("158749857905");
+		User owner3 = new User(uid3, email3, password3, userType3, userVersion3);
+		byte[] message3 = { 1, 2, 3, 4, 5, 6 };
+		float speed3 = 12.5f;
+		double latitude3 = 35;
+		double longitude3 = 45;
+		Timestamp createdAt3 = new Timestamp(new GregorianCalendar(2012, 10, 11).getTimeInMillis());
+		int userRating3 = 10;
+		
+		Message m1 = new Message(mid1, owner1, message1, speed1, latitude1, longitude1, createdAt1, userRating1);
+		Message m2 = new Message(mid2, owner2, message2, speed2, latitude2, longitude2, createdAt2, userRating2);
+		Message m3 = new Message(mid3, owner3, message3, speed3, latitude3, longitude3, createdAt3, userRating3);
+		
+		MessageOutputMapper.insert(m1);
+		MessageOutputMapper.insert(m2);
+		MessageOutputMapper.insert(m3);
+		UserOutputMapper.insert(owner1);
+		UserOutputMapper.insert(owner2);
+		
+		GetMessageIDsCommand getcommand = new GetMessageIDsCommand();
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		MockHttpServletResponse response = new MockHttpServletResponse();
+		
+		request.setParameter("longitude","45");
+		request.setParameter("latitude","35");
+		request.setParameter("sorttype","type");
+		request.setParameter("speed","100");
+		
+		getcommand.execute(request, response);
+		
+		assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+		//new DataOutputStream(response.getOutputStream())
+		DataInputStream in = new DataInputStream(new ByteArrayInputStream(response.getContentAsByteArray()));
+		
+		ArrayList<BigInteger> returned  = (ArrayList<BigInteger>)IOUtils.readListMessageIDsFromStream(in);
+		
+		assertEquals(returned.get(0), mid3);
+		assertEquals(returned.get(1), mid2);
+		assertEquals(returned.get(2), mid1);
+		DbRegistry.dropDatabaseTables();
+			
 	}
 }

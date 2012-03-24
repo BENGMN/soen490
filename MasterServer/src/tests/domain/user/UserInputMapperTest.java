@@ -30,6 +30,8 @@ import domain.user.mappers.UserOutputMapper;
 import domain.user.UserType;
 import exceptions.LostUpdateException;
 import exceptions.MapperException;
+import foundation.DbRegistry;
+import foundation.tdg.MessageTDG;
 import foundation.tdg.UserTDG;
 import junit.framework.TestCase;
 
@@ -43,8 +45,10 @@ public class UserInputMapperTest extends TestCase {
 	
 	public void testFindByEmail() {
 		try {
-			UserTDG.create();
-		
+			
+			if(!DbRegistry.hasTable(UserTDG.TABLE))
+				UserTDG.create();
+			
 			User user = UserFactory.createNew(email, password, userType);
 			
 			// Insert the object into the datastore
@@ -80,7 +84,8 @@ public class UserInputMapperTest extends TestCase {
 	
 	public void testFindAll() throws MapperException {
 		try {
-			UserTDG.create();
+			if(!DbRegistry.hasTable(UserTDG.TABLE))
+				UserTDG.create();
 		
 			User user1 = UserFactory.createNew(email, password, userType);
 			User user2 = UserFactory.createNew("user2" + email, password, UserType.USER_ADVERTISER);
@@ -114,7 +119,8 @@ public class UserInputMapperTest extends TestCase {
 	
 	public void testFind() {
 		try {
-			UserTDG.create();
+			if(!DbRegistry.hasTable(UserTDG.TABLE))
+				UserTDG.create();
 		
 			User user = UserFactory.createClean(uid, email, password, userType, version);
 			

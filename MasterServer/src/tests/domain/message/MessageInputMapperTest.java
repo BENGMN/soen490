@@ -32,6 +32,7 @@ import domain.user.IUser;
 import domain.user.UserFactory;
 import domain.user.UserType;
 import exceptions.MapperException;
+import foundation.DbRegistry;
 import foundation.tdg.MessageTDG;
 
 import junit.framework.TestCase;
@@ -57,7 +58,9 @@ public class MessageInputMapperTest extends TestCase {
 	public void testFind() {
 		// Make sure that the message does not already exist in the database
 		try {
-			MessageTDG.create();
+			
+			if(!DbRegistry.hasTable(MessageTDG.TABLE))
+				MessageTDG.create();
 			
 			MessageInputMapper.find(mid);
 			fail("Mapper Exception should have been thrown");
@@ -98,7 +101,8 @@ public class MessageInputMapperTest extends TestCase {
 
 	public void testFindByUser() {
 		try {
-			MessageTDG.create();
+			if(!DbRegistry.hasTable(MessageTDG.TABLE))
+				MessageTDG.create();
 			// Create some custom data for the messages
 			final byte[] message1 = {0,1,2,3,4};
 			final byte[] message2 = {5,6,7,8,9};
@@ -143,7 +147,9 @@ public class MessageInputMapperTest extends TestCase {
 	
 	public void testFindAll() {
 		try {
-			MessageTDG.create();
+			
+			if(!DbRegistry.hasTable(MessageTDG.TABLE))
+				MessageTDG.create();
 			
 			// Create some custom data for the messages
 			final byte[] message1 = {0,1,2,3,4};
