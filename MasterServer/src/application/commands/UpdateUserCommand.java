@@ -3,6 +3,7 @@ package application.commands;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
@@ -20,6 +21,7 @@ import application.ServerParameters;
 import ch.qos.logback.classic.Logger;
 import domain.user.User;
 import domain.user.UserType;
+import domain.user.mappers.UserInputMapper;
 import domain.user.mappers.UserOutputMapper;
 
 import exceptions.LostUpdateException;
@@ -39,34 +41,48 @@ public class UpdateUserCommand extends FrontCommand {
 		ServerParameters params = ServerParameters.getUniqueInstance();
 		
 		// Create some local variables to store the request parameters
-		String email, password, userType, responseType;
+		String password, userType, responseType, userid;
+		String version;
+		int intVersion;
 		UserType type;
 		ResponseType resp;
+		BigInteger uid;
 		
 		// Capture the request parameters
-		email = (String) request.getParameter("email");
 		password = request.getParameter("password");
-		userType = request.getParameter("usertype").toUpperCase();
-		responseType = request.getParameter("responsetype").toUpperCase();
-		
+		userType = request.getParameter("usertype");
+		responseType = request.getParameter("responsetype");
+		userid = request.getParameter("userid");
+		version = request.getParameter("version");
+
 		// Validation
-		if (email == null) {
-			throw new ParameterException("Missing 'email' parameter.");
-		} else if (!IOUtils.validateEmail(email)) {
-			throw new ParameterException("Invalid 'email' parameter provided");
-		} // These could totally be removed
-		else if (email.length() < Integer.getInteger(params.get("minEmailLength").getValue())) {
-			throw new ParameterException("Invalid 'email' parameter, too short.");
-		} else if (email.length() > Integer.getInteger(params.get("maxEmailLength").getValue())) {
-			throw new ParameterException("Invalid 'email' parameter, too long.");
+		if (userid == null) {
+			throw new ParameterException("Missing 'userid' parameter.");
 		}
-	
+		
+		try {
+			uid = new BigInteger(userid);
+		} catch (NumberFormatException e) {
+			throw new ParameterException("Invalid 'userid' parameter provided.");
+		}
+			
 		// Check the password length, should be validated in jsp as well	
 		if (password == null) {
 			throw new ParameterException("Missing 'password' parameter.");
-		} else if (password.length() < Integer.getInteger(params.get("minPasswordLength").getValue())) {
+		} else if (password.length() < Integer.parseInt(params.get("minPasswordLength").getValue())) {
 			throw new ParameterException("Invalid 'password' parameter, too short.");
 		}
+		
+		if(version == null) {
+			throw new ParameterException("Missing 'version' parameter.");
+		}
+		
+		try {
+			intVersion = Integer.parseInt(version);
+		} catch (NumberFormatException e) {
+			throw new ParameterException("Invalid 'version' parameter provided.");
+		}
+		
 
 		// Check the type of user account
 		if (userType == null) {
@@ -92,7 +108,7 @@ public class UpdateUserCommand extends FrontCommand {
 		}		
 		// End of Validation
 		
-		User user = (User) request.getAttribute("user");
+		User user = UserInputMapper.find(uid);
 		
 		Logger logger = (Logger)LoggerFactory.getLogger("application");
 		
@@ -101,10 +117,9 @@ public class UpdateUserCommand extends FrontCommand {
 		try {
 			String hashedPass = hashPassword(password);
 			
-			user.setEmail(email);
 			user.setPassword(hashedPass);
 			user.setType(type);
-			user.setVersion(user.getVersion()+1);
+			user.setVersion(intVersion);
 			
 			// update user to the database
 			UserOutputMapper.update(user);

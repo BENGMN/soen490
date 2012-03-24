@@ -21,6 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.GregorianCalendar;
+
 import foundation.finder.MessageFinder;
 import foundation.tdg.MessageTDG;
 

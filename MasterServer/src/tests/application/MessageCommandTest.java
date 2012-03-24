@@ -70,6 +70,7 @@ import exceptions.LostUpdateException;
 import exceptions.MapperException;
 import exceptions.ParameterException;
 import foundation.Database;
+import foundation.DbRegistry;
 
 public class MessageCommandTest {
 	
@@ -78,16 +79,16 @@ public class MessageCommandTest {
 	@Before
 	public void createTables() throws SQLException, IOException
 	{
-		previousDatabase = Database.isDatabaseCreated();
+		previousDatabase = DbRegistry.isDatabaseCreated();
 		if (!previousDatabase)
-			Database.createDatabaseTables();
+			DbRegistry.createDatabaseTables();
 	}
 	
 	@After
 	public void dropTables() throws SQLException, IOException
 	{
 		if (!previousDatabase)
-			Database.dropDatabaseTables();
+			DbRegistry.dropDatabaseTables();
 	}
 	
 	@Test

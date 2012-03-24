@@ -2,7 +2,7 @@ package tests.foundation;
 
 import java.sql.SQLException;
 
-import foundation.Database;
+import foundation.DbRegistry;
 import foundation.tdg.ServerParameterTDG;
 import junit.framework.TestCase;
 
@@ -13,7 +13,7 @@ public class ServerParameterTDGTest extends TestCase {
 	public void testCreate() {
 		try {
 			ServerParameterTDG.create();
-			assertTrue(Database.hasTable(ServerParameterTDG.TABLE));
+			assertTrue(DbRegistry.hasTable(ServerParameterTDG.TABLE));
 			ServerParameterTDG.drop();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -32,9 +32,9 @@ public class ServerParameterTDGTest extends TestCase {
 	public void testDrop() {
 		try {
 			ServerParameterTDG.create();
-			assertTrue(Database.hasTable(ServerParameterTDG.TABLE));
+			assertTrue(DbRegistry.hasTable(ServerParameterTDG.TABLE));
 			ServerParameterTDG.drop();
-			assertFalse(Database.hasTable(ServerParameterTDG.TABLE));
+			assertFalse(DbRegistry.hasTable(ServerParameterTDG.TABLE));
 		} catch (SQLException e) {
 			e.printStackTrace();
 			fail();

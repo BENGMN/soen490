@@ -25,8 +25,6 @@ import org.msgpack.unpacker.Unpacker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import exceptions.CorruptStreamException;
-
 public class CommandTests {
 	private static final String HOST_NAME = "localhost";
 	private static final String HOST_PORT = "8080";
@@ -50,14 +48,12 @@ public class CommandTests {
 		}
 	}
 	
-	public static String testGetMessageIdsCommand(String latitude, String longitude, String speed, String responseType) throws IOException {
+	public static String testGetMessageIdsCommand(String latitude, String longitude, String speed, String responseType, String sortType) throws IOException {
 		HttpClient httpgetIdClient = new DefaultHttpClient();
 		HttpGet httpGet = new HttpGet("http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=getmessageids&latitude="
-                                     + latitude + "&longitude=" + longitude + "&speed=" + speed + "&responsetype=" + responseType);
+                                     + latitude + "&longitude=" + longitude + "&speed=" + speed + "&responsetype=" + responseType + "&sorttype=" + sortType);
 
-		HttpResponse response = httpgetIdClient.execute(httpGet);
-        return response.toString();
-        
+		HttpResponse response = httpgetIdClient.execute(httpGet);        
         InputStream in = response.getEntity().getContent();
 		
 		if(response.getStatusLine().getStatusCode() == 200) {	
@@ -155,12 +151,36 @@ public class CommandTests {
         return response.toString();
 	}
 	
-	public static String testGetServerParams() throws ClientProtocolException, IOException {
+	public static String testGetServerParamsCommand() throws ClientProtocolException, IOException {
 		HttpClient client = new DefaultHttpClient();
 		HttpGet httpGet = new HttpGet("http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=getserverparameters");
 
 		HttpResponse response = client.execute(httpGet);
         return response.toString();
 	}
-		
+	
+	public static String testPingCommand() throws ClientProtocolException, IOException {
+		HttpClient client = new DefaultHttpClient();
+		HttpGet httpGet = new HttpGet("http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=ping");
+
+		HttpResponse response = client.execute(httpGet);
+        return response.toString();		
+	}
+
+	public static String testUnsupportedCommand() throws ClientProtocolException, IOException {
+		HttpClient client = new DefaultHttpClient();
+		HttpGet httpGet = new HttpGet("http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=test");
+
+		HttpResponse response = client.execute(httpGet);
+        return response.toString();	
+	}
+	
+	public static String testUpdateUserCommand(String uid, String password, String userType, String responseType, String version) throws ClientProtocolException, IOException {
+		HttpClient client = new DefaultHttpClient();
+		HttpPost httpPost = new HttpPost("http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=updateuser&password=" + password + 
+				                         "&usertype=" + userType + "&responsetype=" + responseType + "&userid=" + uid + "&version=" + version);
+
+		HttpResponse response = client.execute(httpPost);
+        return response.toString();
+	}
 }

@@ -93,6 +93,10 @@ public class CreateMessageCommand extends FrontCommand {
 		if (email == null)
 			throw new ParameterException("Missing 'email' parameter.");
 		
+		if(!IOUtils.validateEmail(email)) {
+			throw new ParameterException("Invalid 'email' parameter provided.");
+		}
+		
 		User user = UserInputMapper.findByEmail(email);
 		
 		if (user == null)

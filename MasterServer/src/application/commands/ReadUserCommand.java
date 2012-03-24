@@ -48,7 +48,11 @@ public class ReadUserCommand extends FrontCommand {
 		}
 		// End of Validation
 		
-		userID = new BigInteger(userid);
+		try {
+			userID = new BigInteger(userid);
+		} catch (NumberFormatException e) {
+			throw new ParameterException("Invalid 'userid' parameter provided.");
+		}
 		
 		// Create a variable to store the user to be retrieved
 		User user = UserInputMapper.find(userID);

@@ -24,7 +24,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import javax.sql.rowset.serial.SerialBlob;
 
-import foundation.Database;
+
+import foundation.DbRegistry;
 
 
 /**
@@ -34,7 +35,7 @@ import foundation.Database;
  */
 public class MessageTDG {
 	
-	public static final String TABLE = "Message";
+	public static final String TABLE = DbRegistry.getTablePrefix() + "Message";
 
 	private final static String INSERT =
 			"INSERT INTO " + TABLE + 
@@ -62,7 +63,7 @@ public class MessageTDG {
 	 * @throws SQLException
 	 */
 	public static int insert(BigInteger mid, BigInteger uid, byte[] message, float speed, double latitude , double longitude , Timestamp created_at , int user_rating) throws SQLException {
-		Connection connection = Database.getConnection();
+		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(INSERT);
 		
 		ps.setBigDecimal(1, new BigDecimal(mid));
@@ -93,7 +94,7 @@ public class MessageTDG {
 	 * @throws SQLException
 	 */
 	public static int update(BigInteger mid, int user_rating) throws SQLException {
-		Connection connection = Database.getConnection();
+		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(UPDATE);
 		
 		ps.setInt(1, user_rating);
@@ -115,7 +116,7 @@ public class MessageTDG {
 		"WHERE mid = ?";
 	
 	public static int decrementRating (BigInteger mid) throws SQLException {
-		Connection connection = Database.getConnection();
+		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(UPDATE_DECREMENT);
 		ps.setBigDecimal(1, new BigDecimal(mid));
 		int count = ps.executeUpdate();
@@ -129,7 +130,7 @@ public class MessageTDG {
 		"WHERE mid = ?";
 	
 	public static int incrementRating (BigInteger mid) throws SQLException {
-		Connection connection = Database.getConnection();
+		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(UPDATE_INCREMENT);
 		ps.setBigDecimal(1, new BigDecimal(mid));
 		int count = ps.executeUpdate();
@@ -147,7 +148,7 @@ public class MessageTDG {
 	 * @throws SQLException
 	 */
 	public static int delete(BigInteger mid) throws SQLException {
-		Connection connection = Database.getConnection();
+		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(DELETE);
 		
 		ps.setBigDecimal(1, new BigDecimal(mid));
@@ -175,7 +176,7 @@ public class MessageTDG {
 	 * @throws SQLException 
 	 */
 	public static void create() throws SQLException {
-		Connection connection = Database.getConnection();
+		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(CREATE_TABLE);
 		
 		ps.executeUpdate();
@@ -190,7 +191,7 @@ public class MessageTDG {
 	 * @throws SQLException
 	 */
 	public static void drop() throws SQLException {
-		Connection connection = Database.getConnection();
+		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(DROP_TABLE);
 		
 		ps.executeUpdate();
