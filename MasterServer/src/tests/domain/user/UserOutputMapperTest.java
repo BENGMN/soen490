@@ -1,7 +1,11 @@
 package tests.domain.user;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+
+import application.IOUtils;
 
 import domain.user.User;
 import domain.user.UserFactory;
@@ -122,6 +126,32 @@ public class UserOutputMapperTest extends TestCase {
 		} catch (LostUpdateException e) {
 			e.printStackTrace();
 			fail();
+		} finally {
+			try {
+				UserTDG.drop();
+			} catch (SQLException e) {				
+			}
+		}
+	}
+	
+	public void testUpdateHashPassword() {
+		try {
+			UserTDG.create();
+			
+			user = UserFactory.createClean(uid, email, IOUtils.hashPassword(password), userType, version);
+			
+			int inserted = UserOutputMapper.insert(user);
+						
+			assertEquals(1, inserted);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} finally {
 			try {
 				UserTDG.drop();

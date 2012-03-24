@@ -3,7 +3,10 @@ package application;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -617,6 +620,22 @@ public class IOUtils {
 		Pattern pattern = Pattern.compile(email_regex, Pattern.CASE_INSENSITIVE);  
 		Matcher matcher = pattern.matcher(emailAddress);
 		return matcher.matches();
+	}
+	
+	/**
+	 * Hashes the given string
+	 * @param password String to hash
+	 * @return Returns the String value of the hash
+	 * @throws NoSuchAlgorithmException
+	 * @throws UnsupportedEncodingException
+	 */
+	public static String hashPassword(String password) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+		String charSet = "UTF-8";
+		byte[] passwordBytes = password.getBytes(charSet);
+		MessageDigest md = MessageDigest.getInstance("SHA-256");
+		byte[] encryptedPass = md.digest(passwordBytes);
+		
+		return new String(encryptedPass);
 	}
 
 	/*

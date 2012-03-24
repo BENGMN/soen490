@@ -19,7 +19,6 @@ package application.commands;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
@@ -45,7 +44,7 @@ import exceptions.MapperException;
 import exceptions.ParameterException;
 
 public class CreateUserCommand extends FrontCommand {
-	private static String SUCCESS_CREATE_USER = "success.jsp";
+	private static String SUCCESS_CREATE_USER = "/WEB-INF/jsp/success.jsp";
 	
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ParameterException, SQLException, ServletException, IOException, MapperException {
@@ -59,8 +58,8 @@ public class CreateUserCommand extends FrontCommand {
 		// Capture the request parameters
 		email = (String) request.getParameter("email");
 		password = request.getParameter("password");
-		userType = request.getParameter("usertype").toUpperCase();
-		responseType = request.getParameter("responsetype").toUpperCase();
+		userType = request.getParameter("usertype");
+		responseType = request.getParameter("responsetype");
 				
 		// Validation
 		if (email == null) {
@@ -78,9 +77,7 @@ public class CreateUserCommand extends FrontCommand {
 		try{
 			UserInputMapper.findByEmail(email);
 			throw new ParameterException("User already exists.");
-		}
-		catch(MapperException e)
-		{
+		} catch(MapperException e) {
 		}
 		
 		// Check the password length, should be validated in jsp as well	
@@ -118,10 +115,8 @@ public class CreateUserCommand extends FrontCommand {
 		
 		Logger logger = (Logger)LoggerFactory.getLogger("application");
 		
-		DataOutputStream out = new DataOutputStream(response.getOutputStream());
-
 		try {
-			String hashedPass = hashPassword(password);
+			String hashedPass = IOUtils.hashPassword(password);
 			
 			newUser = UserFactory.createNew(email, hashedPass, type);
 			
@@ -132,7 +127,7 @@ public class CreateUserCommand extends FrontCommand {
 			response.setStatus(HttpServletResponse.SC_OK);
 			
 			String message = "User with id: " + newUser.getUid().toString() + " was created successfully.";
-
+			DataOutputStream out;
 			// Format the response based on requested response type
 			switch (resp) {
 			case JSP:
@@ -143,11 +138,13 @@ public class CreateUserCommand extends FrontCommand {
 				view.forward(request, response);
 				break;
 			case XML:
+				out = new DataOutputStream(response.getOutputStream());
 				response.setContentType("text/xml");
 				IOUtils.writeUserToXML(newUser, out);
 				IOUtils.writeStatusMessageToXML("success", message, out);
 				break;
 			case BIN:
+				out = new DataOutputStream(response.getOutputStream());
 				response.setContentType("application/octet-stream");
 				IOUtils.writeUserToStream(newUser, out);
 				IOUtils.writeStatusMessageToStream(message, out);
@@ -165,24 +162,5 @@ public class CreateUserCommand extends FrontCommand {
 			logger.error("Unsupported encoding exception thrown when trying to create user: {}", e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
-	}
-	
-	/**
-	 * Hashes the given string
-	 * @param password String to hash
-	 * @return Returns the String value of the hash
-	 * @throws NoSuchAlgorithmException
-	 * @throws UnsupportedEncodingException
-	 */
-	private String hashPassword(String password) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-		 
-		String charSet = "Latin1";
-		byte[] passwordBytes = password.getBytes(charSet);
-		MessageDigest md = MessageDigest.getInstance("SHA");
-		byte[] encryptedPass = md.digest(passwordBytes);
-		
-		return new String(encryptedPass);
-		 
-	}
-	
+	}	
 }

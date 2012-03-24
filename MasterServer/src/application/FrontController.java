@@ -23,9 +23,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLRecoverableException;
 import java.util.HashMap;
-
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -39,6 +37,7 @@ import ch.qos.logback.classic.Logger;
 import exceptions.MapperException;
 import exceptions.ParameterException;
 import exceptions.UnrecognizedUserException;
+import application.commands.BrowseUsersCommand;
 import application.commands.CreateMessageCommand;
 import application.commands.CreateUserCommand;
 import application.commands.DeleteMessageCommand;
@@ -77,6 +76,9 @@ public class FrontController extends HttpServlet {
 	// Overridden to make sure that we have a database.
 	public void init() throws ServletException {
 		try {
+			prepareDbRegistry("");
+			logger.info("DbRegistry prepared with key \"\".");
+			
 			if (!DbRegistry.isDatabaseCreated())
 				DbRegistry.createDatabaseTables();
 			InetAddress addr = InetAddress.getLocalHost();
@@ -89,9 +91,7 @@ public class FrontController extends HttpServlet {
 			
 			// Simply to initialise
 			ServerParameters.getUniqueInstance();
-			
-			prepareDbRegistry("");
-			logger.info("DbRegistry prepared with key \"\".");
+		
 		} catch (Exception E) {
 			logger.error("init() ");
 			throw new ServletException(E);
@@ -165,7 +165,7 @@ public class FrontController extends HttpServlet {
 		commandMap.put("POST.createuser", new CreateUserCommand());
 		
 		// Command for getting a user
-		commandMap.put("POST.readuser", new ReadUserCommand());
+		commandMap.put("GET.readuser", new ReadUserCommand());
 		
 		// Command for deleting a user
 		commandMap.put("DELETE.deleteuser", new DeleteUserCommand());
@@ -178,6 +178,9 @@ public class FrontController extends HttpServlet {
 
 		// Command for opening the user creation page
 		commandMap.put("POST.updateuser", new UpdateUserCommand());
+		
+		// Command for browsing users
+		commandMap.put("GET.browseusers", new BrowseUsersCommand());
 		
 		// Command for pinging server
 		commandMap.put("GET.ping", new PingCommand());

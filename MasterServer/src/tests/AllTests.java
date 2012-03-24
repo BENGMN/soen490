@@ -75,7 +75,7 @@ public class AllTests {
 	private static final String TABLE_PREFIX = "tablePrefix";
 	@BeforeClass
 	public static void setupDbRegistry() {
-		System.out.println("Foundation Tests started.");
+		System.out.println("All Tests started.");
 		try {
 			MySQLConnectionPoolFactory f = new MySQLConnectionPoolFactory(null, null, null, null);
 	
@@ -98,7 +98,6 @@ public class AllTests {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		System.out.println("Foundation Tests ended.");
 	}
 	
 	@AfterClass
@@ -108,5 +107,6 @@ public class AllTests {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		System.out.println("All Tests ended.");
 	} 
 }

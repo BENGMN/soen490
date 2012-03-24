@@ -63,7 +63,7 @@ import domain.user.UserType;
 import exceptions.LostUpdateException;
 import exceptions.MapperException;
 import exceptions.ParameterException;
-import foundation.Database;
+import foundation.DbRegistry;
 
 public class MessageCommandTest {
 	
@@ -106,6 +106,7 @@ public class MessageCommandTest {
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		
 		request.setParameter("messageid", message.getMid().toString());
+		request.setParameter("responsetype", "bin");
 		//request.setParameter("longitude", Double.toString(longitude));
 		//request.setParameter("latitude", Double.toString(latitude));
 		//request.setParameter("speed", Float.toString(speed));

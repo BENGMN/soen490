@@ -56,6 +56,8 @@ public class UpdateServerParametersCommand extends FrontCommand {
 			parameterNames.add("maxPasswordLength");
 			parameterNames.add("speedThreshold");
 			parameterNames.add("defaultMessageRadiusMeters");
+			parameterNames.add("minMessages");
+			parameterNames.add("maxMessages");
 			
 			// Go through each of the above
 			for (String name: parameterNames) {
