@@ -39,7 +39,8 @@ public class MessagesCached {
 	{
 		InputStream in = HttpInterface.getInstance().getMessageIDs(AndroidLocation.getInstance().getLongitude(),
 				AndroidLocation.getInstance().getLatitude(),
-				AndroidLocation.getInstance().getSpeed());
+				AndroidLocation.getInstance().getSpeed(),
+				"created_at");
 		Unpacker unpacker = (new MessagePack()).createUnpacker(in);
 		int size = unpacker.readInt();
 		List<BigInteger> filteredIds = new ArrayList<BigInteger>();
