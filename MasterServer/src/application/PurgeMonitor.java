@@ -10,6 +10,8 @@
  * 			Anthony Boyer
  * 
  * @author Capstone 490 Team Moving Target
+ * 
+ * This class is designed to run a function that will delete messages from the database periodically.
  *
  */
 
@@ -28,10 +30,9 @@ import domain.message.mappers.MessageOutputMapper;
 
 public class PurgeMonitor {
 	
-	private final int timeToLive = 7; // In days. Temporary. Will be taken from singleton class
-	private final int initialDelay;// in seconds
-	private final int delay;// in seconds
-	private final ScheduledExecutorService  scheduler = Executors.newSingleThreadScheduledExecutor(); // Only 1 thread is used to perform this task
+	private final int initialDelay;		// in seconds
+	private final int delay;			// in seconds
+	private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(); // Only 1 thread is used to perform this task
 
 	public PurgeMonitor(int initialDelay, int delay) {
 		this.initialDelay = initialDelay;
@@ -66,9 +67,9 @@ public class PurgeMonitor {
 	 * @throws SQLException
 	 */
 	private void deleteExpiredMessages() throws IOException, SQLException {		
-		List<BigInteger> messageIds = MessageInputMapper.findExpiredMessages(timeToLive);		
+		List<BigInteger> messageIds = MessageInputMapper.findByTimeAndRatingToDestroy(); // Change which function you call here to change the deletion strategy.
 		for(BigInteger mid: messageIds) {
 			MessageOutputMapper.delete(mid);
-		}	
+		}
 	}	
 }

@@ -136,8 +136,8 @@ public class MessageInputMapper {
 	 * @return List of message ids
 	 * @throws SQLException
 	 */
-	public static List<BigInteger> findExpiredMessages(int timeToLive) throws SQLException {
-		ResultSet rs = MessageFinder.findExpired(timeToLive);
+	public static List<BigInteger> findByTimeToDestroy(int timeToLive) throws SQLException {
+		ResultSet rs = MessageFinder.findOlderMessages(timeToLive);
 		List<BigInteger> messageIds = new LinkedList<BigInteger>();
 
 		while(rs.next()) {
@@ -157,9 +157,9 @@ public class MessageInputMapper {
 	 * @return list of message IDs to be deleted
 	 * @throws SQLException
 	 */
-	public static List<BigInteger> findMessagesToDelete(double latitude, double longitude, double radius) throws SQLException {		
+	public static List<BigInteger> findByDensityToDestroy(double latitude, double longitude, double radius) throws SQLException {		
 		List<BigInteger> messages = new LinkedList<BigInteger>();
-		ResultSet rs = MessageFinder.findMessagesToDelete(latitude, longitude, radius);
+		ResultSet rs = MessageFinder.findByMaxDensityToPurge(latitude, longitude, radius);
 				
 		// result set is null if the density of message and there are no messages to delete
 		if(rs != null) {
@@ -169,6 +169,19 @@ public class MessageInputMapper {
 			rs.close();
 		}
 				
+		return messages;
+	}
+	
+	public static List<BigInteger> findByTimeAndRatingToDestroy() throws SQLException {
+		List<BigInteger> messages = new LinkedList<BigInteger>();
+		ResultSet rs = MessageFinder.findByTimeAndRatingToPurge();
+		
+		if(rs != null) {
+			while(rs.next()) {
+				messages.add(rs.getBigDecimal("m.mid").toBigInteger());
+			}		
+			rs.close();
+		}
 		return messages;
 	}
 	
