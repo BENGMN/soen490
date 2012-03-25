@@ -56,7 +56,7 @@ public class GetMessageIDsCommand extends FrontCommand{
 		
 		List<BigInteger> ids = MessageInputMapper.findIdsInProximity(longitude, latitude, speed, sort);	
 		
-		response.setContentType("text/plain");
+		response.setContentType("application/octet-stream");
 		response.setStatus(HttpServletResponse.SC_OK);
 		
 		IOUtils.writeListMessageIDsToStream(ids, new DataOutputStream(response.getOutputStream()));
