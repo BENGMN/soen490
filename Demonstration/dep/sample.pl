@@ -41,7 +41,7 @@ for (my $MID = 0; $MID < $MessagesToGenerate; ++$MID) {
 	my $Speed = (rand(1.0) < $SpeedChance) ? rand(60) : undef;
 	my $Latitude = rand(180.0) - 90.0;
 	my $Longitude = rand(360.0) - 180.0;
-	my $CreatedAt = rand_datetime();
+	my $CreatedAt = rand_datetime(min => '2011-9-21 0:0:0');
 	my $UserRating = int(rand($MaxRating - $MinRating)) + $MinRating;
 	print "INSERT INTO Message (mid, uid, message, speed, latitude, longitude, created_at, user_rating) VALUES ('$MessageID', $UID, x'$Message', " . ((defined $Speed) ? $Speed : "NULL") . ", $Latitude, $Longitude, '$CreatedAt', $UserRating);\n";
 }
