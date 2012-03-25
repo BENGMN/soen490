@@ -15,6 +15,13 @@ import foundation.MySQLConnectionPoolFactory;
 import foundation.registry.PropertiesRegistry;
 
 import tests.application.*;
+import tests.application.strategy.AllOrderByDateRetrievalStrategyTest;
+import tests.application.strategy.AllOrderByRatingRetrievalStrategyTest;
+import tests.application.strategy.AllOrderRandomlyRetrievalStrategyTest;
+import tests.application.strategy.NoAdvertisementOrderByDateRetrievalStrategyTest;
+import tests.application.strategy.NoAdvertisementOrderByRatingRetrievalStrategyTest;
+import tests.application.strategy.RetrievalStrategyFactoryTest;
+import tests.application.strategy.RetrievalStrategyTest;
 import tests.domain.message.*;
 import tests.domain.serverparameter.ServerParameterInputMapperTest;
 import tests.domain.serverparameter.ServerParameterOutputMapperTest;
@@ -32,6 +39,14 @@ import tests.technical.GeoSpatialSearchTest;
 		 IOUtilsTest.class,
 		 
 		 UnsupportedCommandTest.class,
+		 
+		 RetrievalStrategyFactoryTest.class,
+		 RetrievalStrategyTest.class,
+		 AllOrderByRatingRetrievalStrategyTest.class,
+		 AllOrderRandomlyRetrievalStrategyTest.class,
+		 AllOrderByDateRetrievalStrategyTest.class,
+		 NoAdvertisementOrderByDateRetrievalStrategyTest.class,
+		 NoAdvertisementOrderByRatingRetrievalStrategyTest.class,
 		 
 		 MessageCommandTest.class,
 		 MessageInputMapperTest.class,

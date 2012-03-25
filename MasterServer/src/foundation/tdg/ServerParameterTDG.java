@@ -179,7 +179,7 @@ public class ServerParameterTDG {
 		"VALUES ('speedThreshold', 'The speed threshold to compare against a user requesting messages.', 15);",
 
 		"INSERT INTO " + TABLE + " " + 
-		"VALUES ('defaultMessageRadiusMeters', 'The default radius, in meters, in which to check if there are any messages.', 100);",
+		"VALUES ('defaultRadiusMeters', 'The default radius, in meters, in which to check if there are any messages.', 100);",
 
 		"INSERT INTO " + TABLE + " " + 
 		"VALUES ('minMessages', 'The minimum amount of messages fetched to the user.', 10);",

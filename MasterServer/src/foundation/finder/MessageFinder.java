@@ -131,13 +131,12 @@ public class MessageFinder {
 	}
 
 	private static final String SELECT_ID_BY_RADIUS = 
-			"SELECT m.mid "+
+			"SELECT m.mid, m.user_rating, m.created_at "+
 			"FROM " + MessageTDG.TABLE + " AS m " +
-			"WHERE m.longitude BETWEEN ? AND ? AND m.latitude BETWEEN ? AND ?;";
+			"WHERE m.longitude BETWEEN ? AND ? AND m.latitude BETWEEN ? AND ?";
 	
-	private static final String ORDER_BY_USER_TYPE = " ORDER BY u.type DESC;";
-	private static final String ORDER_BY_USER_RATING = " ORDER BY messages.user_rating DESC;";
-	private static final String ORDER_BY_CREATED_TYPE = " ORDER BY messages.created_at DESC;";
+	private static final String ORDER_BY_USER_RATING = " ORDER BY m.user_rating DESC;";
+	private static final String ORDER_BY_CREATED_TYPE = " ORDER BY m.created_at DESC;";
 	
 	private static String GET_SIZE = 
 			"SELECT COUNT(m.mid) AS size " +
@@ -161,11 +160,9 @@ public class MessageFinder {
 		String query = "";
 		
 		if(orderBy.equals("user_rating"))
-			query = SELECT_ID_BY_RADIUS+ORDER_BY_USER_RATING;
-		else if(orderBy.equals("type"))
-			query = SELECT_ID_BY_RADIUS+ORDER_BY_USER_TYPE;
+			query = SELECT_ID_BY_RADIUS + ORDER_BY_USER_RATING;
 		else if(orderBy.equals("created_at"))
-			query = SELECT_ID_BY_RADIUS+ORDER_BY_CREATED_TYPE;
+			query = SELECT_ID_BY_RADIUS + ORDER_BY_CREATED_TYPE;
 			
 		double radius = 0;
 		double multiplier = 0;
@@ -276,7 +273,7 @@ public class MessageFinder {
 	
 	public static ResultSet findByTimeAndRatingToPurge() throws SQLException {
 		int DAYS_OF_GRACE = Integer.parseInt(ServerParameters.getUniqueInstance().get("dogsBeforeDelete").getValue());
-		int DAYS_OF_GRACE_UNIX = ONE_UNIX_DAY*DAYS_OF_GRACE;
+		int DAYS_OF_GRACE_UNIX = ONE_UNIX_DAY * DAYS_OF_GRACE;
 		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(SELECT_MIDS_WHOSE_RATING_IS_LESS_THAN_2_POW_DAYS_OLD_PLUS_DOG);
 		ps.setInt(1, DAYS_OF_GRACE);
@@ -361,38 +358,158 @@ public class MessageFinder {
 		ResultSet rs = ps.executeQuery();
 		return rs;
 	}
-		
-	
-	public static ResultSet findIdsInProximity(double longitude, double latitude, double speed, int radius) throws SQLException {
-		Connection connection = DbRegistry.getDbConnection();
-		PreparedStatement ps = connection.prepareStatement(FIND_PROXIMITY);
-		
-		GeoSpatialSearch.convertPointToRectangle(new Coordinate(latitude, longitude), radius);
-		
-		ps.setDouble(1, longitude);
-		
-		return null;
-	}
 	
 	private static final String FIND_PROXIMITY = "SELECT m.mid, m.uid, m.user_rating, m.created_at FROM " + MessageTDG.TABLE + " AS m " +
 			   "WHERE m.longitude BETWEEN ? AND ? AND m.latitude BETWEEN ? AND ?";
 	
+	public static ResultSet findIdsInProximity(double longitude, double latitude, int radius) throws SQLException {
+		Connection connection = DbRegistry.getDbConnection();
+		PreparedStatement ps = connection.prepareStatement(FIND_PROXIMITY);
+		
+		List<Coordinate> coordinates = GeoSpatialSearch.convertPointToRectangle(new Coordinate(latitude, longitude), radius);
+		
+		ps.setDouble(1, coordinates.get(0).getLongitude());
+		ps.setDouble(2, coordinates.get(1).getLongitude());
+		ps.setDouble(3, coordinates.get(0).getLatitude());
+		ps.setDouble(4, coordinates.get(1).getLatitude());
+		
+		ResultSet rs = ps.executeQuery();
+		
+		return rs;
+	}
+	
 	private static final String FIND_PROXIMITY_JOIN_USER = "SELECT m.mid FROM " + UserTDG.TABLE + " AS u, (" +
 				FIND_PROXIMITY + ") AS m ";
 	
-	private static final String FIND_PROXIMITY_NO_ADV_ORDER_DATE = FIND_PROXIMITY_JOIN_USER + "WHERE m.uid = u.uid AND u.type != 1 ORDER BY m.created_at DESC;";
+	private static final String FIND_PROXIMITY_NO_ADV_ORDER_DATE = FIND_PROXIMITY_JOIN_USER + "WHERE m.uid = u.uid AND u.type != 1 ORDER BY m.created_at DESC LIMIT ?;";
 	
-	private static final String FIND_PROXIMITY_NO_ADV_ORDER_RATING = FIND_PROXIMITY_JOIN_USER + "WHERE m.uid = u.uid AND u.type != 1 ORDER BY m.user_rating DESC;";																
+	public static ResultSet findIdsInProximityNoAdvertisersOrderDate(double longitude, double latitude, double radius, int limit) throws SQLException {
+		Connection connection = DbRegistry.getDbConnection();
+		PreparedStatement ps = connection.prepareStatement(FIND_PROXIMITY_NO_ADV_ORDER_DATE);
+		
+		List<Coordinate> coordinates = GeoSpatialSearch.convertPointToRectangle(new Coordinate(latitude, longitude), radius);
+		
+		ps.setDouble(1, coordinates.get(0).getLongitude());
+		ps.setDouble(2, coordinates.get(1).getLongitude());
+		ps.setDouble(3, coordinates.get(0).getLatitude());
+		ps.setDouble(4, coordinates.get(1).getLatitude());
+		
+		ps.setInt(5, limit);
+		ResultSet rs = ps.executeQuery();
+		
+		return rs;
+	}
+	
+	private static final String FIND_PROXIMITY_NO_ADV_ORDER_RATING = FIND_PROXIMITY_JOIN_USER + "WHERE m.uid = u.uid AND u.type != 1 ORDER BY m.user_rating DESC LIMIT ?;";																
 
+	public static ResultSet findIdsInProximityNoAdvertisersOrderRating(double longitude, double latitude, double radius, int limit) throws SQLException {
+		Connection connection = DbRegistry.getDbConnection();
+		PreparedStatement ps = connection.prepareStatement(FIND_PROXIMITY_NO_ADV_ORDER_RATING);
+		
+		List<Coordinate> coordinates = GeoSpatialSearch.convertPointToRectangle(new Coordinate(latitude, longitude), radius);
+		
+		ps.setDouble(1, coordinates.get(0).getLongitude());
+		ps.setDouble(2, coordinates.get(1).getLongitude());
+		ps.setDouble(3, coordinates.get(0).getLatitude());
+		ps.setDouble(4, coordinates.get(1).getLatitude());
+		
+		ps.setInt(5, limit);
+		ResultSet rs = ps.executeQuery();
+		
+		
+		return rs;
+	}
+	
 	private static final String FIND_PROXIMITY_ONLY_ADV_ORDER_RAND = FIND_PROXIMITY_JOIN_USER + "WHERE m.uid = u.uid AND u.type = 1 ORDER BY RAND();";
 	
-	private static final String FIND_PROXIMITY_ORDER_RATING = FIND_PROXIMITY + "ORDER BY m.user_rating DESC;";
+	public static ResultSet findIdsInProximityOnlyAdvertisersOrderRand(double longitude, double latitude, double radius) throws SQLException {
+		Connection connection = DbRegistry.getDbConnection();
+		PreparedStatement ps = connection.prepareStatement(FIND_PROXIMITY_ONLY_ADV_ORDER_RAND);
+		
+		List<Coordinate> coordinates = GeoSpatialSearch.convertPointToRectangle(new Coordinate(latitude, longitude), radius);
+		
+		ps.setDouble(1, coordinates.get(0).getLongitude());
+		ps.setDouble(2, coordinates.get(1).getLongitude());
+		ps.setDouble(3, coordinates.get(0).getLatitude());
+		ps.setDouble(4, coordinates.get(1).getLatitude());
+		
+		ResultSet rs = ps.executeQuery();
+		
+		return rs;
+	}
 	
-	private static final String FIND_PROXIMITY_ORDER_DATE = FIND_PROXIMITY + "ORDER BY m.created_at DESC;";
+	private static final String FIND_PROXIMITY_ORDER_RATING = FIND_PROXIMITY + "ORDER BY m.user_rating DESC LIMIT ?;";
+	
+	public static ResultSet findIdsInProximityOrderRating(double longitude, double latitude, double radius, int limit) throws SQLException {
+		Connection connection = DbRegistry.getDbConnection();
+		PreparedStatement ps = connection.prepareStatement(FIND_PROXIMITY_ORDER_RATING);
+		
+		List<Coordinate> coordinates = GeoSpatialSearch.convertPointToRectangle(new Coordinate(latitude, longitude), radius);
+		
+		ps.setDouble(1, coordinates.get(0).getLongitude());
+		ps.setDouble(2, coordinates.get(1).getLongitude());
+		ps.setDouble(3, coordinates.get(0).getLatitude());
+		ps.setDouble(4, coordinates.get(1).getLatitude());
+		
+		ps.setInt(5, limit);
+		ResultSet rs = ps.executeQuery();
+		
+		return rs;
+	}
+	
+	private static final String FIND_PROXIMITY_ORDER_DATE = FIND_PROXIMITY + "ORDER BY m.created_at DESC LIMIT ?;";
+	
+	public static ResultSet findIdsInProximityOrderDate(double longitude, double latitude, double radius, int limit) throws SQLException {
+		Connection connection = DbRegistry.getDbConnection();
+		PreparedStatement ps = connection.prepareStatement(FIND_PROXIMITY_ORDER_DATE);
+		
+		List<Coordinate> coordinates = GeoSpatialSearch.convertPointToRectangle(new Coordinate(latitude, longitude), radius);
+		
+		ps.setDouble(1, coordinates.get(0).getLongitude());
+		ps.setDouble(2, coordinates.get(1).getLongitude());
+		ps.setDouble(3, coordinates.get(0).getLatitude());
+		ps.setDouble(4, coordinates.get(1).getLatitude());
+		
+		ps.setInt(5, limit);
+		ResultSet rs = ps.executeQuery();
+		
+		return rs;
+	}
 	
 	private static final String FIND_PROXIMITY_ORDER_RAND = FIND_PROXIMITY + "ORDER BY RAND();";
 	
+	public static ResultSet findIdsInProximityOrderRand(double longitude, double latitude, double radius) throws SQLException {
+		Connection connection = DbRegistry.getDbConnection();
+		PreparedStatement ps = connection.prepareStatement(FIND_PROXIMITY_ORDER_RAND);
+		
+		List<Coordinate> coordinates = GeoSpatialSearch.convertPointToRectangle(new Coordinate(latitude, longitude), radius);
+		
+		ps.setDouble(1, coordinates.get(0).getLongitude());
+		ps.setDouble(2, coordinates.get(1).getLongitude());
+		ps.setDouble(3, coordinates.get(0).getLatitude());
+		ps.setDouble(4, coordinates.get(1).getLatitude());
+		
+		ResultSet rs = ps.executeQuery();
+		
+		return rs;
+	}
+	
 	private static final String FIND_PROXIMITY_ORDER_RAND_LIMIT = FIND_PROXIMITY + "ORDER BY RAND() LIMIT ?;";
 	
-	
+	public static ResultSet findIdsInProximityOrderRandLimit(double longitude, double latitude, double radius, int limit) throws SQLException {
+		Connection connection = DbRegistry.getDbConnection();
+		PreparedStatement ps = connection.prepareStatement(FIND_PROXIMITY_ORDER_RAND_LIMIT);
+		
+		List<Coordinate> coordinates = GeoSpatialSearch.convertPointToRectangle(new Coordinate(latitude, longitude), radius);
+		
+		ps.setDouble(1, coordinates.get(0).getLongitude());
+		ps.setDouble(2, coordinates.get(1).getLongitude());
+		ps.setDouble(3, coordinates.get(0).getLatitude());
+		ps.setDouble(4, coordinates.get(1).getLatitude());
+		
+		ps.setInt(5, limit);		
+		ResultSet rs = ps.executeQuery();
+		
+		return rs;
+	}
 }

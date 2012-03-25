@@ -208,6 +208,168 @@ public class MessageInputMapper {
 		
 		return messageIds;
 	}
+	
+	/**
+	 * Finds message ids in proximity excluding advertisers and ordered by descending date.
+	 * @param longitude
+	 * @param latitude
+	 * @param radius
+	 * @return List of message ids
+	 * @throws SQLException
+	 */
+	public static List<BigInteger> findIdsInProximityNoAdvertisersOrderDate(double longitude, double latitude, double radius, int limit) throws SQLException {
+		
+		ResultSet rs = MessageFinder.findIdsInProximityNoAdvertisersOrderDate(longitude, latitude, radius, limit);	
+		
+		List<BigInteger> messageIds = new LinkedList<BigInteger>();
+
+		while(rs.next()) {
+			messageIds.add(rs.getBigDecimal("m.mid").toBigInteger());
+		}
+		
+		rs.close();
+		
+		return messageIds;
+	}
+	
+	/**
+	 * Finds message ids in proximity excluding advertisers and ordered by descending rating.
+	 * @param longitude
+	 * @param latitude
+	 * @param radius
+	 * @return List of message ids
+	 * @throws SQLException
+	 */
+	public static List<BigInteger> findIdsInProximityNoAdvertisersOrderRating(double longitude, double latitude, double radius, int limit) throws SQLException {
+		
+		ResultSet rs = MessageFinder.findIdsInProximityNoAdvertisersOrderRating(longitude, latitude, radius, limit);	
+		
+		List<BigInteger> messageIds = new LinkedList<BigInteger>();
+
+		while(rs.next()) {
+			messageIds.add(rs.getBigDecimal("m.mid").toBigInteger());
+		}
+		
+		rs.close();
+		
+		return messageIds;
+	}
+	
+	/**
+	 * Finds message ids in proximity, only advertisers' messages and ordered randomly.
+	 * @param longitude
+	 * @param latitude
+	 * @param radius
+	 * @return List of message ids
+	 * @throws SQLException
+	 */
+	public static List<BigInteger> findIdsInProximityOnlyAdvertisersOrderRand(double longitude, double latitude, double radius) throws SQLException {
+		
+		ResultSet rs = MessageFinder.findIdsInProximityOnlyAdvertisersOrderRand(longitude, latitude, radius);	
+		
+		List<BigInteger> messageIds = new LinkedList<BigInteger>();
+
+		while(rs.next()) {
+			messageIds.add(rs.getBigDecimal("m.mid").toBigInteger());
+		}
+		
+		rs.close();
+		
+		return messageIds;
+	}
+	
+	/**
+	 * Finds message ids in proximity ordered by descending date. Returns a max of 'limit' ids.
+	 * @param longitude
+	 * @param latitude
+	 * @param radius
+	 * @return List of message ids
+	 * @throws SQLException
+	 */
+	public static List<BigInteger> findIdsInProximityOrderDate(double longitude, double latitude, double radius, int limit) throws SQLException {
+		
+		ResultSet rs = MessageFinder.findIdsInProximityOrderDate(longitude, latitude, radius, limit);	
+		
+		List<BigInteger> messageIds = new LinkedList<BigInteger>();
+
+		while(rs.next()) {
+			messageIds.add(rs.getBigDecimal("m.mid").toBigInteger());
+		}
+		
+		rs.close();
+		
+		return messageIds;
+	}
+	
+	/**
+	 * Finds message ids in proximity ordered randomly. Returns a max of 'limit' ids.
+	 * @param longitude
+	 * @param latitude
+	 * @param radius
+	 * @return List of message ids
+	 * @throws SQLException
+	 */
+	public static List<BigInteger> findIdsInProximityOrderRand(double longitude, double latitude, double radius) throws SQLException {
+		
+		ResultSet rs = MessageFinder.findIdsInProximityOrderRand(longitude, latitude, radius);	
+		
+		List<BigInteger> messageIds = new LinkedList<BigInteger>();
+
+		while(rs.next()) {
+			messageIds.add(rs.getBigDecimal("m.mid").toBigInteger());
+		}
+		
+		rs.close();
+		
+		return messageIds;
+	}
+	
+	/**
+	 * Finds message ids in proximity ordered randomly. Returns a max of 'limit' ids.
+	 * @param longitude
+	 * @param latitude
+	 * @param radius
+	 * @return List of message ids
+	 * @throws SQLException
+	 */
+	public static List<BigInteger> findIdsInProximityOrderRandLimit(double longitude, double latitude, double radius, int limit) throws SQLException {
+		
+		ResultSet rs = MessageFinder.findIdsInProximityOrderRandLimit(longitude, latitude, radius, limit);	
+		
+		List<BigInteger> messageIds = new LinkedList<BigInteger>();
+
+		while(rs.next()) {
+			messageIds.add(rs.getBigDecimal("m.mid").toBigInteger());
+		}
+		
+		rs.close();
+		
+		return messageIds;
+	}
+	
+	/**
+	 * Finds message ids in proximity ordered by rating. Returns a max of 'limit' ids.
+	 * @param longitude
+	 * @param latitude
+	 * @param radius
+	 * @return List of message ids
+	 * @throws SQLException
+	 */
+	public static List<BigInteger> findIdsInProximityOrderRatingLimit(double longitude, double latitude, double radius, int limit) throws SQLException {
+		
+		ResultSet rs = MessageFinder.findIdsInProximityOrderRating(longitude, latitude, radius, limit);	
+		
+		List<BigInteger> messageIds = new LinkedList<BigInteger>();
+
+		while(rs.next()) {
+			messageIds.add(rs.getBigDecimal("m.mid").toBigInteger());
+		}
+		
+		rs.close();
+		
+		return messageIds;
+	}
+	
 	/**
 	 * Internal use of getMessage.
 	 * Object relational mapping for the Message occurs here.
