@@ -71,6 +71,7 @@ import tests.technical.GeoSpatialSearchTest;
 public class AllTests {
 	private final static String TEST_DB_ID = "";
 	private static final String TABLE_PREFIX = "tablePrefix";
+	
 	@BeforeClass
 	public static void setupDbRegistry() {
 		System.out.println("All Tests started.");

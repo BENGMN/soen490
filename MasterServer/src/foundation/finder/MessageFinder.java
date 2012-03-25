@@ -131,11 +131,9 @@ public class MessageFinder {
 	}
 
 	private static final String SELECT_ID_BY_RADIUS = 
-			"SELECT messages.mid,messages.uid " +
-			"FROM "+UserTDG.TABLE+" AS u, " +
-			"(SELECT m.mid, m.uid, m.latitude, m.longitude, m.user_rating, m.created_at " +
+			"SELECT m.mid "+
 			"FROM " + MessageTDG.TABLE + " AS m " +
-			"WHERE m.latitude BETWEEN ? AND ? AND m.longitude BETWEEN ? AND ?) AS messages WHERE u.uid = messages.uid";
+			"WHERE m.longitude BETWEEN ? AND ? AND m.latitude BETWEEN ? AND ?;";
 	
 	private static final String ORDER_BY_USER_TYPE = " ORDER BY u.type DESC;";
 	private static final String ORDER_BY_USER_RATING = " ORDER BY messages.user_rating DESC;";
@@ -153,7 +151,6 @@ public class MessageFinder {
 	 * @return All ids of messages within a bounding rectangle that has a half cross-section of radius.
 	 * @throws SQLException
 	 */		
-	
 	public static ResultSet findIdsInProximity(double longitude, double latitude, double speed, String orderBy) throws SQLException, IOException {
 		
 		Connection connection = DbRegistry.getDbConnection();
@@ -167,7 +164,7 @@ public class MessageFinder {
 			query = SELECT_ID_BY_RADIUS+ORDER_BY_USER_RATING;
 		else if(orderBy.equals("type"))
 			query = SELECT_ID_BY_RADIUS+ORDER_BY_USER_TYPE;
-		else if(orderBy.equals("created_type"))
+		else if(orderBy.equals("created_at"))
 			query = SELECT_ID_BY_RADIUS+ORDER_BY_CREATED_TYPE;
 			
 		double radius = 0;
@@ -365,4 +362,37 @@ public class MessageFinder {
 		return rs;
 	}
 		
+	
+	public static ResultSet findIdsInProximity(double longitude, double latitude, double speed, int radius) throws SQLException {
+		Connection connection = DbRegistry.getDbConnection();
+		PreparedStatement ps = connection.prepareStatement(FIND_PROXIMITY);
+		
+		GeoSpatialSearch.convertPointToRectangle(new Coordinate(latitude, longitude), radius);
+		
+		ps.setDouble(1, longitude);
+		
+		return null;
+	}
+	
+	private static final String FIND_PROXIMITY = "SELECT m.mid, m.uid, m.user_rating, m.created_at FROM " + MessageTDG.TABLE + " AS m " +
+			   "WHERE m.longitude BETWEEN ? AND ? AND m.latitude BETWEEN ? AND ?";
+	
+	private static final String FIND_PROXIMITY_JOIN_USER = "SELECT m.mid FROM " + UserTDG.TABLE + " AS u, (" +
+				FIND_PROXIMITY + ") AS m ";
+	
+	private static final String FIND_PROXIMITY_NO_ADV_ORDER_DATE = FIND_PROXIMITY_JOIN_USER + "WHERE m.uid = u.uid AND u.type != 1 ORDER BY m.created_at DESC;";
+	
+	private static final String FIND_PROXIMITY_NO_ADV_ORDER_RATING = FIND_PROXIMITY_JOIN_USER + "WHERE m.uid = u.uid AND u.type != 1 ORDER BY m.user_rating DESC;";																
+
+	private static final String FIND_PROXIMITY_ONLY_ADV_ORDER_RAND = FIND_PROXIMITY_JOIN_USER + "WHERE m.uid = u.uid AND u.type = 1 ORDER BY RAND();";
+	
+	private static final String FIND_PROXIMITY_ORDER_RATING = FIND_PROXIMITY + "ORDER BY m.user_rating DESC;";
+	
+	private static final String FIND_PROXIMITY_ORDER_DATE = FIND_PROXIMITY + "ORDER BY m.created_at DESC;";
+	
+	private static final String FIND_PROXIMITY_ORDER_RAND = FIND_PROXIMITY + "ORDER BY RAND();";
+	
+	private static final String FIND_PROXIMITY_ORDER_RAND_LIMIT = FIND_PROXIMITY + "ORDER BY RAND() LIMIT ?;";
+	
+	
 }

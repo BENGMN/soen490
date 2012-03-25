@@ -179,15 +179,16 @@ public class MessageInputMapper {
 	 * @param speed
 	 * @return List of message ids
 	 * @throws SQLException
+	 * @throws IOException 
 	 */
-	public static List<BigInteger> findIdsInProximity(double longitude, double latitude, double speed, String sort) throws IOException, SQLException {
+	public static List<BigInteger> findIdsInProximity(double longitude, double latitude, double speed, String sort) throws SQLException, IOException {
 		
 		ResultSet rs = MessageFinder.findIdsInProximity(longitude, latitude, speed, sort);	
 		
 		List<BigInteger> messageIds = new LinkedList<BigInteger>();
 
 		while(rs.next()) {
-			messageIds.add(rs.getBigDecimal("messages.mid").toBigInteger());
+			messageIds.add(rs.getBigDecimal("m.mid").toBigInteger());
 		}
 		
 		rs.close();
