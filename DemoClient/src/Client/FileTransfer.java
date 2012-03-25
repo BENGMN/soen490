@@ -14,18 +14,11 @@ package Client;
  *
  */
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigInteger;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.http.HttpResponse;
@@ -37,7 +30,6 @@ import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.msgpack.MessagePack;
-import org.msgpack.packer.Packer;
 import org.msgpack.unpacker.Unpacker;
 
 public class FileTransfer {	
