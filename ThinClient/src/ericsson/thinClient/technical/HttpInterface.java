@@ -38,14 +38,15 @@ public class HttpInterface {
 		return singleton;
 	}
 	
-	public InputStream getMessageIDs(double longitude, double latitude, float speed) throws IOException
+	public InputStream getMessageIDs(double longitude, double latitude, float speed, String sorttype) throws IOException
 	{
-		final String url = "http://" + entrypointHostname + ":" + entrypointPort + "/frontController/getmessageids";
+		final String url = "http://" + entrypointHostname + ":" + entrypointPort + "/controller?command=getmessageids";
 		HttpGet request = new HttpGet(url);
 		BasicHttpParams params = new BasicHttpParams();
 		params.setDoubleParameter("longitude", longitude);
 		params.setDoubleParameter("latitude", latitude);
 		params.setDoubleParameter("speed", speed);
+		params.setParameter("sorttype", sorttype);
 		request.setParams(params);
 		
 		HttpResponse response = client.execute(request);
@@ -56,9 +57,10 @@ public class HttpInterface {
 	
 	public InputStream getMessages(List<BigInteger> ids) throws IOException
 	{
-		final String url = "http://" + entrypointHostname + ":" + entrypointPort + "/frontController/getmessages";
+		final String url = "http://" + entrypointHostname + ":" + entrypointPort + "/controller?command=readmessage";
 		HttpGet request = new HttpGet(url);
 		BasicHttpParams params = new BasicHttpParams();
+		params.setParameter("messageid", ids);
 		request.setParams(params);
 		
 		HttpResponse response = client.execute(request);
@@ -69,8 +71,8 @@ public class HttpInterface {
 	
 	public boolean uploadMessage(File file, double longitude, double latitude, float speed, String email) throws UnsupportedEncodingException, IOException
 	{
-		final String url = "http://" + entrypointHostname + ":" + entrypointPort + "/frontController/createmessage";
-		HttpPut request = new HttpPut(url);
+		final String url = "http://" + entrypointHostname + ":" + entrypointPort + "/controller?command=createmessage";
+		HttpPost request = new HttpPost(url);
 		
 		MultipartEntity entity = new MultipartEntity();
 		entity.addPart("bin", new FileBody(file, "bin"));	
@@ -80,31 +82,31 @@ public class HttpInterface {
 		entity.addPart("email", new StringBody(email));
 		
 		HttpResponse response = client.execute(request);
-		return response.getStatusLine().getStatusCode() == 202;
+		return response.getStatusLine().getStatusCode() == 200;
 	}
 	
 	public boolean upvoteMessage(BigInteger id) throws IOException
 	{
-		final String url = "http://" + entrypointHostname + ":" + entrypointPort + "/frontController/upvote";
+		final String url = "http://" + entrypointHostname + ":" + entrypointPort + "/controller?command=upvote";
 		HttpPost request = new HttpPost(url);
 		BasicHttpParams params = new BasicHttpParams();
-		params.setParameter("mid", id);
+		params.setParameter("messageid", id);
 		request.setParams(params);
 		
 		HttpResponse response = client.execute(request);
-		return response.getStatusLine().getStatusCode() == 202;
+		return response.getStatusLine().getStatusCode() == 200;
 	}
 	
 	public boolean downvoteMessage(BigInteger id) throws IOException
 	{
-		final String url = "http://" + entrypointHostname + ":" + entrypointPort + "/frontController/downvote";
+		final String url = "http://" + entrypointHostname + ":" + entrypointPort + "/controller?command=upvote";
 		HttpPost request = new HttpPost(url);
 		BasicHttpParams params = new BasicHttpParams();
-		params.setParameter("mid", id);
+		params.setParameter("messageid", id);
 		request.setParams(params);
 		
 		HttpResponse response = client.execute(request);
-		return response.getStatusLine().getStatusCode() == 202;
+		return response.getStatusLine().getStatusCode() == 200;
 	}
 }
 

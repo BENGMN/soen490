@@ -186,5 +186,9 @@ public class ServerParameterTDG {
 
 		"INSERT INTO " + TABLE + " " + 
 		"VALUES ('maxMessages', 'The maximum amount of messages fetched to the user.', 50);",
+		
+		"INSERT INTO " + TABLE + " " + 
+		"VALUES ('dogsBeforeDelete', 'The minimum number of days a message has to live before it becomes a candidate for deletion.', 7);",
+		
 		};
 }

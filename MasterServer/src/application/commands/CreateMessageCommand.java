@@ -112,10 +112,10 @@ public class CreateMessageCommand extends FrontCommand {
 			Logger logger = (Logger)LoggerFactory.getLogger("application");
 			logger.info("New Message with ID {} was created.", msg.getMid().toString());
 			
+			response.setContentType("application/octet-stream");
 			// Write the id to the stream
 			IOUtils.writeMessageIDtoStream(msg.getMid(), new DataOutputStream(response.getOutputStream()));
 			response.setStatus(HttpServletResponse.SC_OK);
-			
 		} // The unique id generating didn't work
 		catch (NoSuchAlgorithmException e) {
 			Logger logger = (Logger)LoggerFactory.getLogger("application");

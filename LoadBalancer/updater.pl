@@ -9,6 +9,7 @@ use Net::MySQL;
 use Net::SSH::Perl;
 use File::Temp;
 use LWP::UserAgent;
+use Getopt::Long;
 
 my $ApachePath = "/etc/apache2";
 my $ConfigPath = "$ApachePath/mods-available/proxy.conf";
@@ -16,18 +17,53 @@ my $LogPath = "updater.log";
 my $ApacheHardRestartCmd = '/etc/init.d/apache2 graceful';
 my $ApacheGracefulRestartCmd = '/etc/init.d/apache2 restart';
 
-my $DatabaseHostname = '192.168.1.150';
-my $DatabaseUsername = 'soen490';
-my $DatabaseName = 'soen490';
-my $DatabasePassword = 'capstone';
-my $SSHUsername = 'root';
-my $SSHPassword = 'ah4819237';
-my $LoadBalancerHostname = 'localhost';
+my $DatabaseHostname = undef;
+my $DatabaseUsername = undef;
+my $DatabaseName = undef;
+my $DatabasePassword = undef;
+my $LoadBalancerPassword = undef;
+my $LoadBalancerHostname = undef;
+my $ErrorMessage = undef;
+my $DisplayHelp = undef;
+my $Usage = "usage: $0 [--help] [--dbhost=hostname] [--dbname=name]
+[--dbpass=password] [--lbpass=password] [--lbhost=hostname]
+
+	--help		Displays this help dialog.
+	--dbhost	Specifies the db hostname.
+	--dbname	Specifies the db name.
+	--dbpass	Specifies the db password.
+	--lbpass	Specifies the load balancer
+			root password.
+	--lbhost	Specifies the hostname of the
+			load balancer.
+
+";
+
+GetOptions("dbhost=s" => \$DatabaseHostname, "dbuser=s" => \$DatabaseUsername, "dbname=s" => \$DatabaseName, "dbpass=s" => \$DatabasePassword,
+"lbpass=s" => \$LoadBalancerPassword, "lbhost=s" => \$LoadBalancerHostname, "help" => \$DisplayHelp);
+
+if (defined $DisplayHelp) {
+	print $Usage;
+	exit 0;
+}
+
+$ErrorMessage = "Must specify a db hostname." unless defined $DatabaseHostname;
+$ErrorMessage = "Must specify a db name." unless defined $DatabaseName;
+$ErrorMessage = "Must specify a db password." unless defined $DatabasePassword;
+$ErrorMessage = "Must specify a load balancer root password." unless defined $LoadBalancerPassword;
+$ErrorMessage = "Must specify a load balancer hostname." unless defined $LoadBalancerHostname;
+
+if (defined $ErrorMessage) {
+	print STDERR "Error: $ErrorMessage\n";
+	print $Usage;
+	exit -1;
+}
+
 my $UA = LWP::UserAgent->new;
 $UA->timeout(2);
 
 our $SSH = Net::SSH::Perl->new($LoadBalancerHostname);
-$SSH->login($SSHUsername, $SSHPassword);
+$SSH->login('root', $LoadBalancerPassword);
 
 my $Log;
 open($Log, ">>", $LogPath) or die "Unable to open logfile.\n";
@@ -76,7 +112,7 @@ sub putRemoteFile($$)
 	open(my $OUTPUT, ">$TMP") or logdie("Unable to open tempporary file for remote file transfer.");
 	print $OUTPUT $Contents;
 	close($OUTPUT);
-	my $CMD = "scp $TMP $SSHUsername@" . "$LoadBalancerHostname:$Destination";
+	my $CMD = "scp $TMP root@" . "$LoadBalancerHostname:$Destination";
 	`$CMD`;
 	return $? == 0;
 }

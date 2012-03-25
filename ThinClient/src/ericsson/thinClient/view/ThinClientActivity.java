@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class ThinClientActivity extends Activity  implements OnClickListener {
@@ -22,6 +23,7 @@ public class ThinClientActivity extends Activity  implements OnClickListener {
     ImageButton recordButton;
     ImageButton upvoteButton;
     ImageButton downvoteButton;
+    ProgressBar progressBar;
     ArrayList<View> stateButtons;
     Stack< ArrayList<Pair<View,Boolean>>> buttonState;
     TextView statusView;
@@ -68,9 +70,10 @@ public class ThinClientActivity extends Activity  implements OnClickListener {
         prevButton.setOnClickListener(this);
         nextButton.setOnClickListener(this);
         upvoteButton.setOnClickListener(this);
-        downvoteButton.setOnClickListener(this);     
+        downvoteButton.setOnClickListener(this);
         
-        statusView.setText("sldfhjasdlfjlskdgjflaskg");
+        statusView.setText("No Action Underway");
+        refreshButtons();
     }
     
     private void pushButtonState() {
@@ -95,6 +98,28 @@ public class ThinClientActivity extends Activity  implements OnClickListener {
     	for (View view : stateButtons)
     		view.setEnabled(true);
     }*/
+    
+    private void refreshButtons()
+    {
+    	if (Control.getInstance().isPlaying()) {
+			actionButton.setImageResource(R.drawable.pause);
+			recordButton.setEnabled(Control.getInstance().canStopPlaying());
+		}
+		else if (Control.getInstance().isPaused()) {
+			actionButton.setImageResource(R.drawable.play);
+			recordButton.setEnabled(Control.getInstance().canStartPlaying());
+		}
+		if (Control.getInstance().isRecording()) {
+			recordButton.setImageResource(R.drawable.stoprecord);
+			recordButton.setEnabled(Control.getInstance().canStopRecording());
+		}
+		else {
+			recordButton.setImageResource(R.drawable.record);
+			recordButton.setEnabled(Control.getInstance().canStartRecording());
+		}
+		upvoteButton.setEnabled(Control.getInstance().canUpvote());
+		downvoteButton.setEnabled(Control.getInstance().canDownvote());
+    }
 	
 	private class InteractionThread extends AsyncTask<View, Void, View> {	
 		
@@ -141,24 +166,7 @@ public class ThinClientActivity extends Activity  implements OnClickListener {
 		protected void onPostExecute(View result)
 		{
 			popButtonState();
-			if (Control.getInstance().isPlaying()) {
-				actionButton.setImageResource(R.drawable.pause);
-				recordButton.setEnabled(Control.getInstance().canStopPlaying());
-			}
-			else if (Control.getInstance().isPaused()) {
-				actionButton.setImageResource(R.drawable.play);
-				recordButton.setEnabled(Control.getInstance().canStartPlaying());
-			}
-			if (Control.getInstance().isRecording()) {
-				recordButton.setImageResource(R.drawable.stoprecord);
-				recordButton.setEnabled(Control.getInstance().canStopRecording());
-			}
-			else {
-				recordButton.setImageResource(R.drawable.record);
-				recordButton.setEnabled(Control.getInstance().canStartRecording());
-			}
-			upvoteButton.setEnabled(Control.getInstance().canUpvote());
-			downvoteButton.setEnabled(Control.getInstance().canDownvote());
+			refreshButtons();
 		}
 	}
 	

@@ -1,0 +1,8 @@
+DEPLOYMENT FILES
+
+To deploy to a server, all we need is the root password, and the assurance that an SSH server is running. OpenSSH is installed by default in Ubuntu, so presumably 11.04's server will be running normally. The default install also includes zip and unzip.
+
+From there, using Deploy.pl on a zip archive will result in that archive being transferred to the target computer, the archive being extracted and the setup.sh file being run as root.
+
+From there, the Deploy script will tell you whether the process was sucessful, or whether or not there was an error, and if so, it'll dump the error log. The three scripts specified here will be part of their various archives when the time comes for things to be deployed.
+
