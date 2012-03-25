@@ -1,15 +1,11 @@
 package Tests;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -22,8 +18,6 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.msgpack.MessagePack;
 import org.msgpack.unpacker.Unpacker;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CommandTests {
 	private static final String HOST_NAME = "localhost";
@@ -31,8 +25,10 @@ public class CommandTests {
 	
 	public static String testCreateUserCommand(String email, String password, String userType, String responseType) throws ClientProtocolException, IOException {
 		HttpClient httpClient = new DefaultHttpClient();	
-		HttpPost httpPost = new HttpPost("http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=createuser&email="
-	                                  + email + "&password=" + password + "&usertype=" + userType + "&responsetype=" + responseType);
+	    String uri = "http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=createuser&email="
+                + email + "&password=" + password + "&usertype=" + userType + "&responsetype=" + responseType;
+		System.out.println(uri);
+		HttpPost httpPost = new HttpPost(uri);
 		HttpResponse response = httpClient.execute(httpPost);
 		InputStream in = response.getEntity().getContent();
 		
@@ -50,9 +46,10 @@ public class CommandTests {
 	
 	public static String testGetMessageIdsCommand(String latitude, String longitude, String speed, String responseType, String sortType) throws IOException {
 		HttpClient httpgetIdClient = new DefaultHttpClient();
-		HttpGet httpGet = new HttpGet("http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=getmessageids&latitude="
-                                     + latitude + "&longitude=" + longitude + "&speed=" + speed + "&responsetype=" + responseType + "&sorttype=" + sortType);
-
+		String uri = "http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=getmessageids&latitude="
+                + latitude + "&longitude=" + longitude + "&speed=" + speed + "&responsetype=" + responseType + "&sorttype=" + sortType;
+		System.out.println(uri);
+		HttpGet httpGet = new HttpGet(uri);
 		HttpResponse response = httpgetIdClient.execute(httpGet);        
         InputStream in = response.getEntity().getContent();
 		
@@ -76,44 +73,47 @@ public class CommandTests {
 	
 	public static String testReadMessageCommand(String messageId, String responseType) throws IOException {
 		HttpClient httpgetMessageClient = new DefaultHttpClient();
-		HttpGet readMessage = new HttpGet("http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=readmessage&messageid="+ messageId + "&responsetype=" + responseType);		
+		String uri = "http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=readmessage&messageid="+ messageId + "&responsetype=" + responseType;
+		System.out.println(uri);
+		HttpGet readMessage = new HttpGet(uri);		
 		HttpResponse readMessageResponse = httpgetMessageClient.execute(readMessage);
         return readMessageResponse.getStatusLine().toString();
 	}
 	
 	
-	public static String testUpVoteMessageCommand(String messageId) throws IOException {
+	public static String testUpvoteMessageCommand(String messageId) throws IOException {
 		HttpClient client = new DefaultHttpClient();
-		HttpPost httpPost = new HttpPost("http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=upvote&messageid="
-                                     + messageId);
-
+		String uri = "http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=upvote&messageid=" + messageId;
+		System.out.println(uri);
+		HttpPost httpPost = new HttpPost(uri);
 		HttpResponse response = client.execute(httpPost);
         return response.toString();
 	}
 	
-	public static String testDownVoteMessageCommand(String messageId) throws IOException {
+	public static String testDownvoteMessageCommand(String messageId) throws IOException {
 		HttpClient client = new DefaultHttpClient();
-		HttpPost httpPost = new HttpPost("http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=upvote&messageid="
-                					 + messageId);
-
+		String uri = "http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=upvote&messageid="+ messageId;
+		System.out.println(uri);
+		HttpPost httpPost = new HttpPost(uri);
 		HttpResponse response = client.execute(httpPost);
         return response.toString();
 	}
 	
 	public static String testReadUserCommand(String userId, String responseType) throws ClientProtocolException, IOException {
 		HttpClient client = new DefaultHttpClient();
-		HttpPost httpPost = new HttpPost("http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=readuser&userid=" + userId  + "&responsetype="
-                					 + responseType);
-
+		String uri = "http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=readuser&userid=" + userId  + "&responsetype=" + responseType;
+		System.out.println(uri);
+		HttpPost httpPost = new HttpPost(uri);
 		HttpResponse response = client.execute(httpPost);
         return response.toString();
 	}
 	
 	public static String testCreateMessage(File file, String latitude, String longitude, String speed, String email) throws IOException {
-		HttpClient httpClient = new DefaultHttpClient();	
-		HttpPost httpPost = new HttpPost("http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=createmessage&latitude="
-	                                  + latitude + "&longitude=" + longitude + "&speed=" + speed + "&email=" + email);
-		
+		HttpClient httpClient = new DefaultHttpClient();
+		String uri = "http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=createmessage&latitude="
+                + latitude + "&longitude=" + longitude + "&speed=" + speed + "&email=" + email;
+		HttpPost httpPost = new HttpPost(uri);
+		System.out.println(uri);
 		MultipartEntity entity = new MultipartEntity();
 		entity.addPart("bin", new FileBody(file, "audio/amr"));	
 		httpPost.setEntity(entity);
@@ -134,9 +134,9 @@ public class CommandTests {
 	
 	public static String testDeleteMessage(String messageId) throws ClientProtocolException, IOException {
 		HttpClient client = new DefaultHttpClient();
-		HttpDelete httpDelete = new HttpDelete("http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=deletemessage&messageid="
-                					 + messageId);
-
+		String uri = "http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=deletemessage&messageid=" + messageId;
+		HttpDelete httpDelete = new HttpDelete(uri);
+		System.out.println(uri);
 		HttpResponse response = client.execute(httpDelete);
         return response.toString();
 	}
@@ -144,42 +144,46 @@ public class CommandTests {
 	
 	public static String testDeleteUserCommand(String userId, String version, String responseType) throws ClientProtocolException, IOException {
 		HttpClient client = new DefaultHttpClient();
-		HttpDelete httpDelete = new HttpDelete("http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=deleteuser&userid=" + userId  + "&version=" + version + "&responsetype="
-                					 + responseType);
-
+		String uri = "http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=deleteuser&userid=" + userId  + "&version=" + version + "&responsetype=" + responseType;
+		System.out.println(uri);
+		HttpDelete httpDelete = new HttpDelete(uri);
 		HttpResponse response = client.execute(httpDelete);
         return response.toString();
 	}
 	
-	public static String testGetServerParamsCommand() throws ClientProtocolException, IOException {
+	public static String testGetServerParametersCommand() throws ClientProtocolException, IOException {
 		HttpClient client = new DefaultHttpClient();
-		HttpGet httpGet = new HttpGet("http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=getserverparameters");
-
+		String uri = "http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=getserverparameters";
+		System.out.println(uri);
+		HttpGet httpGet = new HttpGet(uri);
 		HttpResponse response = client.execute(httpGet);
         return response.toString();
 	}
 	
 	public static String testPingCommand() throws ClientProtocolException, IOException {
 		HttpClient client = new DefaultHttpClient();
-		HttpGet httpGet = new HttpGet("http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=ping");
-
+		String uri = "http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=ping";
+		HttpGet httpGet = new HttpGet(uri);
+		System.out.println(uri);
 		HttpResponse response = client.execute(httpGet);
         return response.toString();		
 	}
 
-	public static String testUnsupportedCommand() throws ClientProtocolException, IOException {
+	public static String testUnsupportedCommand(String command) throws ClientProtocolException, IOException {
 		HttpClient client = new DefaultHttpClient();
-		HttpGet httpGet = new HttpGet("http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=test");
-
+		String uri = "http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=" + command;
+		System.out.println(uri);
+		HttpGet httpGet = new HttpGet(uri);
 		HttpResponse response = client.execute(httpGet);
         return response.toString();	
 	}
 	
 	public static String testUpdateUserCommand(String uid, String password, String userType, String responseType, String version) throws ClientProtocolException, IOException {
 		HttpClient client = new DefaultHttpClient();
-		HttpPost httpPost = new HttpPost("http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=updateuser&password=" + password + 
-				                         "&usertype=" + userType + "&responsetype=" + responseType + "&userid=" + uid + "&version=" + version);
-
+		String uri = "http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=updateuser&password=" + password + 
+                "&usertype=" + userType + "&responsetype=" + responseType + "&userid=" + uid + "&version=" + version;
+		System.out.println(uri);
+		HttpPost httpPost = new HttpPost(uri);
 		HttpResponse response = client.execute(httpPost);
         return response.toString();
 	}
