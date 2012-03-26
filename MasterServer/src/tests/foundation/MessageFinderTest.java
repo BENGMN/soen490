@@ -357,19 +357,19 @@ public class MessageFinderTest extends TestCase {
 			// will not show up
 			MessageTDG.insert(mid1, uid2, array, speed, latitude1, longitude1, createdDate, 6);
 			// will not show up
-			MessageTDG.insert(mid2, uid2, array, speed, latitude1, longitude1, new Timestamp(System.currentTimeMillis()), 3);
+			MessageTDG.insert(mid2, uid, array, speed, latitude1, longitude1, new Timestamp(System.currentTimeMillis()), 3);
 
 			MessageTDG.insert(mid3, uid, array, speed, latitude1, longitude1, new Timestamp(System.currentTimeMillis()), 4);
 			
 			double radius = 50;
+			int limit = 1;
 			
-			ResultSet rs = MessageFinder.findIdsInProximityOnlyAdvertisersOrderRand(longitude1, latitude1, radius);
+			ResultSet rs = MessageFinder.findIdsInProximityOnlyAdvertisersOrderRand(longitude1, latitude1, radius, limit);
 			
 			// will return only the one
 			assertTrue(rs.next());
-			assertTrue(mid3.equals(rs.getBigDecimal("m.mid").toBigInteger()));
-
 			assertFalse(rs.next());
+			
 			rs.close();
 
 		} catch (SQLException e){

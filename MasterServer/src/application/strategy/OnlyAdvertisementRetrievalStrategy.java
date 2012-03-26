@@ -17,10 +17,10 @@ public class OnlyAdvertisementRetrievalStrategy extends RetrievalStrategy {
 		List<BigInteger> messageids = null;
 		double radius = getDefaultRadiusMeters();
 		
-		messageids = MessageInputMapper.findIdsInProximityOnlyAdvertisersOrderRand(longitude, latitude, radius);
+		messageids = MessageInputMapper.findIdsInProximityOnlyAdvertisersOrderRand(longitude, latitude, radius, limit);
 		
 		if (messageids.size() < getMinMessages()) 
-			messageids = MessageInputMapper.findIdsInProximityOnlyAdvertisersOrderRand(longitude, latitude, getIncreasedRadius(radius, speed));
+			messageids = MessageInputMapper.findIdsInProximityOnlyAdvertisersOrderRand(longitude, latitude, getIncreasedRadius(radius, speed), limit);
 		
 		return messageids;
 	}

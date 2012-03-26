@@ -30,7 +30,6 @@ import org.junit.Test;
 import foundation.DbRegistry;
 import foundation.finder.ServerListFinder;
 import foundation.tdg.ServerListTDG;
-
 import application.FrontController;
 
 

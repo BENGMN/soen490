@@ -34,7 +34,7 @@ public abstract class RetrievalStrategy {
 	protected double getIncreasedRadius(double radius, double speed) throws NumberFormatException, SQLException {
 		double increasedRadius = getDefaultRadiusMeters();
 		double multiplier = 0;
-		
+		//TODO fix this
 		//If the gps doesn't return a speed the default speed is 30
 		if(speed == 0)
 			speed = 30;

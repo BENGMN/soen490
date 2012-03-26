@@ -445,12 +445,13 @@ public class MessageInputMapperTest extends TestCase {
 			MessageOutputMapper.insert(m3);
 			
 			int radius = 50;
+			int limit = 1;
 			
 			// Find all of the messages from the database and make sure they match the ones we created
-			List<BigInteger> messages = MessageInputMapper.findIdsInProximityOnlyAdvertisersOrderRand(longitude, latitude, radius);
+			List<BigInteger> messages = MessageInputMapper.findIdsInProximityOnlyAdvertisersOrderRand(longitude, latitude, radius, limit);
 			
 			// Two message should be returned
-			assertEquals(messages.size(), 2);			
+			assertEquals(messages.size(), 1);			
 		} catch (SQLException e) {
 			e.printStackTrace();
 			fail();

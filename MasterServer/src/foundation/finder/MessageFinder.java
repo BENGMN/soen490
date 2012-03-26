@@ -290,9 +290,9 @@ public class MessageFinder {
 		return rs;
 	}
 	
-	private static final String FIND_PROXIMITY_ONLY_ADV_ORDER_RAND = FIND_PROXIMITY_JOIN_USER + "WHERE m.uid = u.uid AND u.type = 1 ORDER BY RAND();";
+	private static final String FIND_PROXIMITY_ONLY_ADV_ORDER_RAND = FIND_PROXIMITY_JOIN_USER + "WHERE m.uid = u.uid AND u.type = 1 ORDER BY RAND() LIMIT ?;";
 	
-	public static ResultSet findIdsInProximityOnlyAdvertisersOrderRand(double longitude, double latitude, double radius) throws SQLException {
+	public static ResultSet findIdsInProximityOnlyAdvertisersOrderRand(double longitude, double latitude, double radius, int limit) throws SQLException {
 		Connection connection = DbRegistry.getDbConnection();
 		PreparedStatement ps = connection.prepareStatement(FIND_PROXIMITY_ONLY_ADV_ORDER_RAND);
 		
@@ -303,6 +303,7 @@ public class MessageFinder {
 		ps.setDouble(3, coordinates.get(0).getLatitude());
 		ps.setDouble(4, coordinates.get(1).getLatitude());
 		
+		ps.setInt(5, limit);
 		ResultSet rs = ps.executeQuery();
 		
 		return rs;

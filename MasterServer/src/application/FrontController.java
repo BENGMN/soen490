@@ -29,6 +29,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.jsp.jstl.core.Config;
 
 import org.slf4j.LoggerFactory;
 
@@ -90,6 +91,7 @@ public class FrontController extends HttpServlet {
 			if (!DbRegistry.isDatabaseCreated())
 				DbRegistry.createDatabaseTables();
 			InetAddress addr = InetAddress.getLocalHost();
+		
 			String hostname = addr.getHostName();		
 			ResultSet rs = ServerListFinder.find(hostname);		
 			if(!rs.next()) {
@@ -99,7 +101,7 @@ public class FrontController extends HttpServlet {
 			
 			// Simply to initialise
 			ServerParameters.getUniqueInstance();
-		
+
 		} catch (Exception E) {
 			logger.error("init() ");
 			throw new ServletException(E);

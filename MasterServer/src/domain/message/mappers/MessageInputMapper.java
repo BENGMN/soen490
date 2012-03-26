@@ -210,12 +210,13 @@ public class MessageInputMapper {
 	 * @param longitude
 	 * @param latitude
 	 * @param radius
+	 * @param limit 
 	 * @return List of message ids
 	 * @throws SQLException
 	 */
-	public static List<BigInteger> findIdsInProximityOnlyAdvertisersOrderRand(double longitude, double latitude, double radius) throws SQLException {
+	public static List<BigInteger> findIdsInProximityOnlyAdvertisersOrderRand(double longitude, double latitude, double radius, int limit) throws SQLException {
 		
-		ResultSet rs = MessageFinder.findIdsInProximityOnlyAdvertisersOrderRand(longitude, latitude, radius);	
+		ResultSet rs = MessageFinder.findIdsInProximityOnlyAdvertisersOrderRand(longitude, latitude, radius, limit);	
 		
 		List<BigInteger> messageIds = new LinkedList<BigInteger>();
 
