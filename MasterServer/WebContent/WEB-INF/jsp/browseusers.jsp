@@ -10,8 +10,9 @@
 	</head>
 	<body>
 		<div>
-			<a href="${pageContext.request.contextPath}/controller?command=browseusers">Browse Users</a> 
-			<a href="/MasterServer/createuser.html">Create a new User</a>
+		   <a href="/MasterServer/controller?command=browseusers">Browse Users</a>
+		   <a href="/MasterServer/lookupuser.html">Lookup a User</a>
+		   <a href="/MasterServer/createuser.html">Create a new User</a>
 		</div>
 		<br>
 		<% List<User> users = (List<User>)request.getAttribute("users"); %>
@@ -22,6 +23,9 @@
 				<a href="/MasterServer/controller?command=readuser&userid=<%=user.getUid()%>&responsetype=jsp">View and modify user here.</a> 
 				<br> <br>
 			</div>
+		<%} %>
+		<% if(users.size() == 0){ %>
+			<p>No Users to browse</p>
 		<%} %>
 	</body>
 </html>

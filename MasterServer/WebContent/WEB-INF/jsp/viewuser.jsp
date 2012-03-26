@@ -15,6 +15,8 @@
 		<div>
 			<a href="${pageContext.request.contextPath}/controller?command=browseusers">Browse Users</a> 
 			<a href="${pageContext.request.contextPath}/createuser.html">Create a User</a>
+		    <a href="${pageContext.request.contextPath}/lookupuser.html">Lookup a User</a>
+			
 		</div>
 		<div>
 			<% User user = (User)request.getAttribute("user"); %>
