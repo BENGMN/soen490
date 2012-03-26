@@ -55,6 +55,13 @@ import application.commands.UpdateUserCommand;
 import application.commands.UpvoteMessageCommand;
 import application.commands.UserCreatorCommand;
 import application.commands.UserLookupCommand;
+import application.strategy.AllOrderByDateRetrievalStrategy;
+import application.strategy.AllOrderByRatingRetrievalStrategy;
+import application.strategy.AllOrderRandomlyRetrievalStrategy;
+import application.strategy.NoAdvertisementOrderByDateRetrievalStrategy;
+import application.strategy.NoAdvertisementOrderByRatingRetrievalStrategy;
+import application.strategy.OnlyAdvertisementRetrievalStrategy;
+import application.strategy.RetrievalStrategyFactory;
 import foundation.DbRegistry;
 import foundation.MySQLConnectionPoolFactory;
 import foundation.registry.PropertiesRegistry;
@@ -69,10 +76,11 @@ public class FrontController extends HttpServlet {
 
 	private static final long serialVersionUID = 8691536805973858130L;
 	private Logger logger;
-	
+		
 	// map that holds all the command to be executed depending on the passed command string in the request url
 	private HashMap<String, FrontCommand> commandMap = null;
-		
+	private RetrievalStrategyFactory strategyFactory = null;
+	
 	// Overridden to make sure that we have a database.
 	public void init() throws ServletException {
 		try {
@@ -184,6 +192,21 @@ public class FrontController extends HttpServlet {
 		
 		// Command for pinging server
 		commandMap.put("GET.ping", new PingCommand());
+		
+		strategyFactory = RetrievalStrategyFactory.getUniqueInstance();
+		
+		// sort + advertiser
+		// if advertiser=true, only advertisers
+		// if advertiser=false, only normal
+		// if not set then all
+		strategyFactory.registerRetrievalStrategy("date-", new AllOrderByDateRetrievalStrategy());
+		strategyFactory.registerRetrievalStrategy("rating-", new AllOrderByRatingRetrievalStrategy());
+		strategyFactory.registerRetrievalStrategy("random-", new AllOrderRandomlyRetrievalStrategy());
+		strategyFactory.registerRetrievalStrategy("date-false", new NoAdvertisementOrderByDateRetrievalStrategy());
+		strategyFactory.registerRetrievalStrategy("rating-false", new NoAdvertisementOrderByRatingRetrievalStrategy());
+		
+		strategyFactory.registerRetrievalStrategy("random-true", new OnlyAdvertisementRetrievalStrategy());
+		strategyFactory.registerRetrievalStrategy("-true", new OnlyAdvertisementRetrievalStrategy());
 		
 		// Initialize the logger
 		logger = (Logger)LoggerFactory.getLogger("application");

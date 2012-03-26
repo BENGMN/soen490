@@ -10,8 +10,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import application.IOUtils;
-
-import domain.message.mappers.MessageInputMapper;
+import application.ServerParameters;
+import application.strategy.MissingRetrievalStrategyException;
+import application.strategy.RetrievalStrategy;
+import application.strategy.RetrievalStrategyFactory;
 
 import exceptions.MapperException;
 import exceptions.ParameterException;
@@ -26,22 +28,31 @@ public class GetMessageIDsCommand extends FrontCommand{
 		String stringLatitude;
 		String stringSpeed;
 		String sort = "";
+		String isAdvertiser = "";
+		String stringLimit;
 		
 		float speed = 0;
 		double longitude;
 		double latitude;
+		int limit;
 		
-		// Get message longitude from request object
+		// Get longitude from request object
 		if ((stringLongitude = request.getParameter("longitude")) == null)
 			throw new ParameterException("Missing 'longitude' parameter.");
 		
-		// Get message latitude from request object
+		// Get latitude from request object
 		if ((stringLatitude = request.getParameter("latitude")) == null)
 			throw new ParameterException("Missing 'latitude' parameter.");
+
+		if ((sort = request.getParameter("sort")) == null)
+			throw new ParameterException("Missing 'sort' parameter.");
 		
-		// Get message latitude from request object
-		if ((sort = request.getParameter("sorttype")) == null)
-				throw new ParameterException("Missing 'sorttype' parameter.");
+		if ((isAdvertiser = request.getParameter("advertiser")) == null)
+			isAdvertiser = Boolean.toString(Boolean.parseBoolean(isAdvertiser));
+		
+		if ((stringLimit = request.getParameter("limit")) == null)
+			limit = Integer.parseInt(ServerParameters.getUniqueInstance().get("minMessages").getValue());
+		
 		try {
 			// Get speed from request object
 			if ((stringSpeed = request.getParameter("speed")) != null)
@@ -49,12 +60,21 @@ public class GetMessageIDsCommand extends FrontCommand{
 			
 			longitude = Double.parseDouble(stringLongitude);
 			latitude = Double.parseDouble(stringLatitude);
+			limit = Integer.parseInt(stringLimit);
 		} catch (NumberFormatException e) {
-			// TODO Log this shit
-			throw new ParameterException("Longitude, latitude, and/or speed number format exception.", e);
+			throw new ParameterException("Longitude, latitude, speed, and/or limit number format exception.", e);
 		}
 		
-		List<BigInteger> ids = MessageInputMapper.findIdsInProximity(longitude, latitude, speed, sort);	
+		RetrievalStrategyFactory factory = RetrievalStrategyFactory.getUniqueInstance();
+		RetrievalStrategy strategy = null;
+		
+		try {
+			strategy = factory.createStrategy(sort, isAdvertiser);
+		} catch (MissingRetrievalStrategyException e) {
+			throw new ParameterException(e.getMessage());
+		}
+		
+		List<BigInteger> ids = strategy.retrieve(longitude, latitude, speed, limit);
 		
 		response.setContentType("application/octet-stream");
 		response.setStatus(HttpServletResponse.SC_OK);

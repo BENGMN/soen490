@@ -76,8 +76,8 @@ public class CreateUserCommand extends FrontCommand {
 		//Checking to see if the user already exists
 		try{
 			UserInputMapper.findByEmail(email);
-			throw new ParameterException("User already exists.");
-		} catch(MapperException e) {
+			throw new ParameterException("User with email '" + email + "' already exists.");
+		} catch (MapperException e) {
 		}
 		
 		// Check the password length, should be validated in jsp as well	

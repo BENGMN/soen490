@@ -15,7 +15,6 @@
  */
 package domain.message.mappers;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -46,8 +45,6 @@ public class MessageInputMapper {
 	 * @throws SQLException
 	 */
 	public static List<Message> findInProximity(double longitude, double latitude, double radius) throws SQLException {
-		// TODO have not fixed this yet
-		
 		ResultSet rs = MessageFinder.findInProximity(longitude, latitude, radius);
 		List<Message> messages = new LinkedList<Message>();
 		while (rs.next()) {
@@ -131,25 +128,6 @@ public class MessageInputMapper {
 	}
 	
 	/**
-	 * Find expired messages using time to live
-	 * @param timeToLive
-	 * @return List of message ids
-	 * @throws SQLException
-	 */
-	public static List<BigInteger> findByTimeToDestroy(int timeToLive) throws SQLException {
-		ResultSet rs = MessageFinder.findOlderMessages(timeToLive);
-		List<BigInteger> messageIds = new LinkedList<BigInteger>();
-
-		while(rs.next()) {
-			messageIds.add(rs.getBigDecimal("m.mid").toBigInteger());
-		}
-
-		rs.close();
-		
-		return messageIds;
-	}
-	
-	/**
 	 * Finds messages in high density areas needed to be deleted
 	 * @param latitude
 	 * @param longitude
@@ -161,42 +139,37 @@ public class MessageInputMapper {
 		List<BigInteger> messages = new LinkedList<BigInteger>();
 		ResultSet rs = MessageFinder.findByMaxDensityToPurge(latitude, longitude, radius);
 				
-		// result set is null if the density of message and there are no messages to delete
-		if(rs != null) {
-			while(rs.next()) {
-				messages.add(rs.getBigDecimal("m.mid").toBigInteger());
-			}		
-			rs.close();
-		}
-				
+		while(rs.next()) {
+			messages.add(rs.getBigDecimal("m.mid").toBigInteger());
+		}		
+		rs.close();
+			
 		return messages;
 	}
 	
-	public static List<BigInteger> findByTimeAndRatingToDestroy() throws SQLException {
+	public static List<BigInteger> findByTimeAndRatingToDestroy(int daysOfGrace) throws SQLException {
 		List<BigInteger> messages = new LinkedList<BigInteger>();
-		ResultSet rs = MessageFinder.findByTimeAndRatingToPurge();
+		ResultSet rs = MessageFinder.findByTimeAndRatingToPurge(daysOfGrace);
 		
-		if(rs != null) {
-			while(rs.next()) {
-				messages.add(rs.getBigDecimal("m.mid").toBigInteger());
-			}		
-			rs.close();
-		}
+		while(rs.next()) {
+			messages.add(rs.getBigDecimal("m.mid").toBigInteger());
+		}		
+		rs.close();
+		
 		return messages;
 	}
 	
 	/**
-	 * Find message ids in proximity
+	 * Finds message ids in proximity excluding advertisers and ordered by descending date.
 	 * @param longitude
 	 * @param latitude
-	 * @param speed
+	 * @param radius
 	 * @return List of message ids
 	 * @throws SQLException
-	 * @throws IOException 
 	 */
-	public static List<BigInteger> findIdsInProximity(double longitude, double latitude, double speed, String sort) throws SQLException, IOException {
+	public static List<BigInteger> findIdsInProximityNoAdvertisersOrderDate(double longitude, double latitude, double radius, int limit) throws SQLException {
 		
-		ResultSet rs = MessageFinder.findIdsInProximity(longitude, latitude, speed, sort);	
+		ResultSet rs = MessageFinder.findIdsInProximityNoAdvertisersOrderDate(longitude, latitude, radius, limit);	
 		
 		List<BigInteger> messageIds = new LinkedList<BigInteger>();
 
@@ -208,6 +181,145 @@ public class MessageInputMapper {
 		
 		return messageIds;
 	}
+	
+	/**
+	 * Finds message ids in proximity excluding advertisers and ordered by descending rating.
+	 * @param longitude
+	 * @param latitude
+	 * @param radius
+	 * @return List of message ids
+	 * @throws SQLException
+	 */
+	public static List<BigInteger> findIdsInProximityNoAdvertisersOrderRating(double longitude, double latitude, double radius, int limit) throws SQLException {
+		
+		ResultSet rs = MessageFinder.findIdsInProximityNoAdvertisersOrderRating(longitude, latitude, radius, limit);	
+		
+		List<BigInteger> messageIds = new LinkedList<BigInteger>();
+
+		while(rs.next()) {
+			messageIds.add(rs.getBigDecimal("m.mid").toBigInteger());
+		}
+		
+		rs.close();
+		
+		return messageIds;
+	}
+	
+	/**
+	 * Finds message ids in proximity, only advertisers' messages and ordered randomly.
+	 * @param longitude
+	 * @param latitude
+	 * @param radius
+	 * @return List of message ids
+	 * @throws SQLException
+	 */
+	public static List<BigInteger> findIdsInProximityOnlyAdvertisersOrderRand(double longitude, double latitude, double radius) throws SQLException {
+		
+		ResultSet rs = MessageFinder.findIdsInProximityOnlyAdvertisersOrderRand(longitude, latitude, radius);	
+		
+		List<BigInteger> messageIds = new LinkedList<BigInteger>();
+
+		while(rs.next()) {
+			messageIds.add(rs.getBigDecimal("m.mid").toBigInteger());
+		}
+		
+		rs.close();
+		
+		return messageIds;
+	}
+	
+	/**
+	 * Finds message ids in proximity ordered by descending date. Returns a max of 'limit' ids.
+	 * @param longitude
+	 * @param latitude
+	 * @param radius
+	 * @return List of message ids
+	 * @throws SQLException
+	 */
+	public static List<BigInteger> findIdsInProximityOrderDate(double longitude, double latitude, double radius, int limit) throws SQLException {
+		
+		ResultSet rs = MessageFinder.findIdsInProximityOrderDate(longitude, latitude, radius, limit);	
+		
+		List<BigInteger> messageIds = new LinkedList<BigInteger>();
+
+		while(rs.next()) {
+			messageIds.add(rs.getBigDecimal("m.mid").toBigInteger());
+		}
+		
+		rs.close();
+		
+		return messageIds;
+	}
+	
+	/**
+	 * Finds message ids in proximity ordered randomly. Returns a max of 'limit' ids.
+	 * @param longitude
+	 * @param latitude
+	 * @param radius
+	 * @return List of message ids
+	 * @throws SQLException
+	 */
+	public static List<BigInteger> findIdsInProximityOrderRand(double longitude, double latitude, double radius) throws SQLException {
+		
+		ResultSet rs = MessageFinder.findIdsInProximityOrderRand(longitude, latitude, radius);	
+		
+		List<BigInteger> messageIds = new LinkedList<BigInteger>();
+
+		while(rs.next()) {
+			messageIds.add(rs.getBigDecimal("m.mid").toBigInteger());
+		}
+		
+		rs.close();
+		
+		return messageIds;
+	}
+	
+	/**
+	 * Finds message ids in proximity ordered randomly. Returns a max of 'limit' ids.
+	 * @param longitude
+	 * @param latitude
+	 * @param radius
+	 * @return List of message ids
+	 * @throws SQLException
+	 */
+	public static List<BigInteger> findIdsInProximityOrderRandLimit(double longitude, double latitude, double radius, int limit) throws SQLException {
+		
+		ResultSet rs = MessageFinder.findIdsInProximityOrderRandLimit(longitude, latitude, radius, limit);	
+		
+		List<BigInteger> messageIds = new LinkedList<BigInteger>();
+
+		while(rs.next()) {
+			messageIds.add(rs.getBigDecimal("m.mid").toBigInteger());
+		}
+		
+		rs.close();
+		
+		return messageIds;
+	}
+	
+	/**
+	 * Finds message ids in proximity ordered by rating. Returns a max of 'limit' ids.
+	 * @param longitude
+	 * @param latitude
+	 * @param radius
+	 * @return List of message ids
+	 * @throws SQLException
+	 */
+	public static List<BigInteger> findIdsInProximityOrderRatingLimit(double longitude, double latitude, double radius, int limit) throws SQLException {
+		
+		ResultSet rs = MessageFinder.findIdsInProximityOrderRating(longitude, latitude, radius, limit);	
+		
+		List<BigInteger> messageIds = new LinkedList<BigInteger>();
+
+		while(rs.next()) {
+			messageIds.add(rs.getBigDecimal("m.mid").toBigInteger());
+		}
+		
+		rs.close();
+		
+		return messageIds;
+	}
+	
 	/**
 	 * Internal use of getMessage.
 	 * Object relational mapping for the Message occurs here.
@@ -232,4 +344,28 @@ public class MessageInputMapper {
 								 rs.getInt("m.user_rating"));
 		return message;
 	}
+	
+	/**
+	 * Find message ids in proximity
+	 * @param longitude
+	 * @param latitude
+	 * @param speed
+	 * @return List of message ids
+	 * @throws SQLException
+	 * @throws IOException 
+	public static List<BigInteger> findIdsInProximity(double longitude, double latitude, double speed, String sort) throws SQLException, IOException {
+		
+		ResultSet rs = MessageFinder.findIdsInProximity(longitude, latitude, speed, sort);	
+		
+		List<BigInteger> messageIds = new LinkedList<BigInteger>();
+
+		while(rs.next()) {
+			messageIds.add(rs.getBigDecimal("m.mid").toBigInteger());
+		}
+		
+		rs.close();
+		
+		return messageIds;
+	}
+	 */
 }

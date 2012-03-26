@@ -31,7 +31,6 @@ import domain.user.UserType;
 import exceptions.LostUpdateException;
 import exceptions.MapperException;
 import foundation.DbRegistry;
-import foundation.tdg.MessageTDG;
 import foundation.tdg.UserTDG;
 import junit.framework.TestCase;
 
