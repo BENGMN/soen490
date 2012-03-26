@@ -66,6 +66,9 @@ public class ReadMessageCommand extends FrontCommand {
 			}
 		}
 		
+		if (messages.size() == 0)
+			throw new MapperException("None of the requested messages were found.");
+		
 		DataOutputStream out = null;
 		
 		// Format response based on request type

@@ -320,11 +320,11 @@ public class MessageCommandTest {
 			final String email3 = "example@example.com";
 			final String password3 = "password";
 			final UserType userType3 = UserType.USER_ADVERTISER;
-			final int userVersion3 = 1;
+			final int userVersion3 = 0;
 			
 			// Attributes for a Message
 			BigInteger mid1 = new BigInteger("158749857936");
-			User owner1 = new User(uid1, email1, password1, userType1, userVersion1);
+			User owner1 = UserFactory.createClean(uid1, email1, password1, userType1, userVersion1);
 			byte[] message1 = { 1, 2, 3, 4, 5, 6 };
 			float speed1 = 5.5f;
 			double latitude1 = 35;
@@ -333,7 +333,7 @@ public class MessageCommandTest {
 			int userRating1 = 7;
 			
 			BigInteger mid2 = new BigInteger("158749857910");
-			User owner2 = new User(uid2, email2, password2, userType2, userVersion2);
+			User owner2 = UserFactory.createClean(uid2, email2, password2, userType2, userVersion2);
 			byte[] message2 = { 1, 2, 3, 4, 5, 6 };
 			float speed2 = 10.5f;
 			double latitude2 = 35;
@@ -364,9 +364,12 @@ public class MessageCommandTest {
 			MockHttpServletRequest request = new MockHttpServletRequest();
 			MockHttpServletResponse response = new MockHttpServletResponse();
 			
+			// this request sorts on user rating without any advertisers' messages
 			request.setParameter("longitude","45");
 			request.setParameter("latitude","35");
-			request.setParameter("sorttype","user_rating");
+			request.setParameter("sort","user_rating");
+			request.setParameter("limit", "20");
+			request.setParameter("advertiser", "false");
 			request.setParameter("speed","100");
 			
 			getcommand.execute(request, response);
@@ -377,12 +380,8 @@ public class MessageCommandTest {
 			
 			List<BigInteger> returned  = IOUtils.readListMessageIDsFromStream(in);
 			
-			System.out.println(returned.get(0));
-			System.out.println(returned.get(1));
-			System.out.println(returned.get(2));
-			assertTrue(returned.get(0).equals(mid3));
-			assertTrue(returned.get(1).equals(mid2));
-			assertTrue(returned.get(2).equals(mid1));
+			assertTrue(returned.size() == 1);
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 			fail();
