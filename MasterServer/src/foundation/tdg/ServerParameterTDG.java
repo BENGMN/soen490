@@ -188,7 +188,13 @@ public class ServerParameterTDG {
 		"VALUES ('maxMessages', 'The maximum amount of messages fetched to the user.', 50);",
 		
 		"INSERT INTO " + TABLE + " " + 
-		"VALUES ('dogsBeforeDelete', 'The minimum number of days a message has to live before it becomes a candidate for deletion.', 7);",
+		"VALUES ('daysOfGrace', 'The minimum number of days a message has to live before it becomes a candidate for deletion.', 7);",
 		
+		"INSERT INTO " + TABLE + " " + 
+		"VALUES ('purgeMonitorInitialDelay', 'The initial delay, in seconds, before starting the application purge monitor for deleting old messages.', 300);",
+		
+		"INSERT INTO " + TABLE + " " + 
+		"VALUES ('purgeMonitorDelay', 'The delay, in seconds, afterwhich the application purge monitor is scheduled for deleting old messages.', 600);",
+						
 		};
 }

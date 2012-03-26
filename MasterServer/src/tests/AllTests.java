@@ -36,6 +36,8 @@ import tests.technical.GeoSpatialSearchTest;
 @SuiteClasses({
 		 FrontControllerTest.class,
 		 
+		 PurgeMonitorTest.class,
+		 
 		 IOUtilsTest.class,
 		 
 		 UnsupportedCommandTest.class,

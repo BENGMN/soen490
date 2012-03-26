@@ -25,6 +25,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import application.ServerParameters;
+
 import foundation.finder.MessageFinder;
 import foundation.tdg.MessageTDG;
 import foundation.tdg.ServerParameterTDG;
@@ -132,6 +134,8 @@ public class MessageFinderTest extends TestCase {
 		
 			int days_ago = 8;  // place a positive number here
 			
+			int dog = Integer.parseInt(ServerParameters.getUniqueInstance().get("daysOfGrace").getValue());
+			
 			Date today, xDaysAgo;
 			Calendar calendar;
 			today = new Date();
@@ -157,17 +161,16 @@ public class MessageFinderTest extends TestCase {
 			int lowUserRating = (int)Math.pow(2, (double)days_ago-(days_ago-1)) - 1;
 			// Create a high rating which should cause the message to persist
 			int highUserRating = (int)Math.pow(2, (double)days_ago-(days_ago-1)) + 1;  // We use 1 less than days ago since it's been adjusted to be 1 more than days of grace
-																					   // and we add 1 at the end so that we ensure the message lives on
-
-		
-		
+			
 			MessageTDG.insert(mid1, uid, array, speed, latitude1, longitude1, createdDate1, lowUserRating);
 			MessageTDG.insert(mid2, uid, array, speed, latitude1, longitude1, createdDate2, highUserRating);
 			
-			ResultSet rs = MessageFinder.findByTimeAndRatingToPurge();
+			ResultSet rs = MessageFinder.findByTimeAndRatingToPurge(dog);
 			
 			assertTrue(rs.next());
 			assertFalse(rs.next());
+			
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 			fail();

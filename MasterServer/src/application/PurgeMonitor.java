@@ -17,7 +17,6 @@
 
 package application;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.List;
@@ -25,20 +24,42 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Logger;
+
 import domain.message.mappers.MessageInputMapper;
 import domain.message.mappers.MessageOutputMapper;
 
 public class PurgeMonitor {
 	
-	private final int initialDelay;		// in seconds
-	private final int delay;			// in seconds
-	private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(); // Only 1 thread is used to perform this task
+	private int initialDelay = 300;		// in seconds
+	private int delay = 600;			// in seconds
+	private int DAYS_OF_GRACE = 7;
+	private Logger logger;
+	
+	// Only 1 thread is used to perform this task
+	private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(); 
 
+	public PurgeMonitor() {
+		logger = (Logger) LoggerFactory.getLogger("application");
+		try {
+			ServerParameters params = ServerParameters.getUniqueInstance();
+			this.initialDelay = Integer.parseInt(params.get("purgeMonitorInitialDelay").getValue());
+			this.delay = Integer.parseInt(params.get("purgeMonitorInitialDelay").getValue());
+		} catch (SQLException e) {
+			logger.debug("SQLException occured when trying to retrieve Server Parameters 'initialDelay' and 'delay'. Exception: {}", e);
+		} catch (NumberFormatException e) {
+			logger.debug("Could not parse the 'initialDelay' or 'delay' server parameters. Threw NumberFormatException. Using class default values '{}' and '{}', respectively.", initialDelay, delay);
+		}
+	}
+	
+	// Mostly to test, the other constructor should be called for the application.
 	public PurgeMonitor(int initialDelay, int delay) {
 		this.initialDelay = initialDelay;
 		this.delay = delay;
+		logger = (Logger) LoggerFactory.getLogger("application");
 	}
-	
 	/**
 	 * Calls the function to delete the messages at a fixed interval
 	 * @return boolean representing the state of the execution
@@ -48,10 +69,10 @@ public class PurgeMonitor {
 			public void run() {
 				try {
 					deleteExpiredMessages();
-				} catch (IOException e) {
-					e.printStackTrace();
+					ServerParameters params = ServerParameters.getUniqueInstance();
+					delay = Integer.parseInt(params.get("purgeMonitorInitialDelay").getValue());
 				} catch (SQLException e) {
-					e.printStackTrace();
+					logger.error("An SQLException occured when trying to delete old messages: {}", e);
 				}
 			};		
 		}, initialDelay, delay, TimeUnit.SECONDS);
@@ -63,11 +84,20 @@ public class PurgeMonitor {
 	
 	/**
 	 * Gets the list of expired messages and deletes htem.
-	 * @throws IOException
 	 * @throws SQLException
 	 */
-	private void deleteExpiredMessages() throws IOException, SQLException {		
-		List<BigInteger> messageIds = MessageInputMapper.findByTimeAndRatingToDestroy(); // Change which function you call here to change the deletion strategy.
+	private void deleteExpiredMessages() throws SQLException {		
+		int daysOfGrace;
+		try {
+			daysOfGrace = Integer.parseInt(ServerParameters.getUniqueInstance().get("daysOfGrace").getValue());
+		} catch (NumberFormatException e) {
+			logger.debug("Could not parse the 'daysOfGrace' server parameter. Threw NumberFormatException. Using class default value '{}'.", DAYS_OF_GRACE);
+			daysOfGrace = DAYS_OF_GRACE;
+		}
+		
+		List<BigInteger> messageIds = MessageInputMapper.findByTimeAndRatingToDestroy(daysOfGrace); 
+		
+		// Change which function you call here to change the deletion strategy.
 		for(BigInteger mid: messageIds) {
 			MessageOutputMapper.delete(mid);
 		}

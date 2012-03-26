@@ -15,7 +15,6 @@
  */
 package domain.message.mappers;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -46,8 +45,6 @@ public class MessageInputMapper {
 	 * @throws SQLException
 	 */
 	public static List<Message> findInProximity(double longitude, double latitude, double radius) throws SQLException {
-		// TODO have not fixed this yet
-		
 		ResultSet rs = MessageFinder.findInProximity(longitude, latitude, radius);
 		List<Message> messages = new LinkedList<Message>();
 		while (rs.next()) {
@@ -131,25 +128,6 @@ public class MessageInputMapper {
 	}
 	
 	/**
-	 * Find expired messages using time to live
-	 * @param timeToLive
-	 * @return List of message ids
-	 * @throws SQLException
-	 */
-	public static List<BigInteger> findByTimeToDestroy(int timeToLive) throws SQLException {
-		ResultSet rs = MessageFinder.findOlderMessages(timeToLive);
-		List<BigInteger> messageIds = new LinkedList<BigInteger>();
-
-		while(rs.next()) {
-			messageIds.add(rs.getBigDecimal("m.mid").toBigInteger());
-		}
-
-		rs.close();
-		
-		return messageIds;
-	}
-	
-	/**
 	 * Finds messages in high density areas needed to be deleted
 	 * @param latitude
 	 * @param longitude
@@ -161,52 +139,24 @@ public class MessageInputMapper {
 		List<BigInteger> messages = new LinkedList<BigInteger>();
 		ResultSet rs = MessageFinder.findByMaxDensityToPurge(latitude, longitude, radius);
 				
-		// result set is null if the density of message and there are no messages to delete
-		if(rs != null) {
-			while(rs.next()) {
-				messages.add(rs.getBigDecimal("m.mid").toBigInteger());
-			}		
-			rs.close();
-		}
-				
-		return messages;
-	}
-	
-	public static List<BigInteger> findByTimeAndRatingToDestroy() throws SQLException {
-		List<BigInteger> messages = new LinkedList<BigInteger>();
-		ResultSet rs = MessageFinder.findByTimeAndRatingToPurge();
-		
-		if(rs != null) {
-			while(rs.next()) {
-				messages.add(rs.getBigDecimal("m.mid").toBigInteger());
-			}		
-			rs.close();
-		}
-		return messages;
-	}
-	
-	/**
-	 * Find message ids in proximity
-	 * @param longitude
-	 * @param latitude
-	 * @param speed
-	 * @return List of message ids
-	 * @throws SQLException
-	 * @throws IOException 
-	 */
-	public static List<BigInteger> findIdsInProximity(double longitude, double latitude, double speed, String sort) throws SQLException, IOException {
-		
-		ResultSet rs = MessageFinder.findIdsInProximity(longitude, latitude, speed, sort);	
-		
-		List<BigInteger> messageIds = new LinkedList<BigInteger>();
-
 		while(rs.next()) {
-			messageIds.add(rs.getBigDecimal("m.mid").toBigInteger());
-		}
+			messages.add(rs.getBigDecimal("m.mid").toBigInteger());
+		}		
+		rs.close();
+			
+		return messages;
+	}
+	
+	public static List<BigInteger> findByTimeAndRatingToDestroy(int daysOfGrace) throws SQLException {
+		List<BigInteger> messages = new LinkedList<BigInteger>();
+		ResultSet rs = MessageFinder.findByTimeAndRatingToPurge(daysOfGrace);
 		
+		while(rs.next()) {
+			messages.add(rs.getBigDecimal("m.mid").toBigInteger());
+		}		
 		rs.close();
 		
-		return messageIds;
+		return messages;
 	}
 	
 	/**
@@ -394,4 +344,28 @@ public class MessageInputMapper {
 								 rs.getInt("m.user_rating"));
 		return message;
 	}
+	
+	/**
+	 * Find message ids in proximity
+	 * @param longitude
+	 * @param latitude
+	 * @param speed
+	 * @return List of message ids
+	 * @throws SQLException
+	 * @throws IOException 
+	public static List<BigInteger> findIdsInProximity(double longitude, double latitude, double speed, String sort) throws SQLException, IOException {
+		
+		ResultSet rs = MessageFinder.findIdsInProximity(longitude, latitude, speed, sort);	
+		
+		List<BigInteger> messageIds = new LinkedList<BigInteger>();
+
+		while(rs.next()) {
+			messageIds.add(rs.getBigDecimal("m.mid").toBigInteger());
+		}
+		
+		rs.close();
+		
+		return messageIds;
+	}
+	 */
 }

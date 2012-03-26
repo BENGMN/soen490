@@ -28,7 +28,6 @@ import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
@@ -40,14 +39,9 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartHttpServletRequest;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.msgpack.MessagePack;
-import org.msgpack.unpacker.Unpacker;
 
 import technical.UnrecognizedUserException;
-
 
 import application.IOUtils;
 import application.commands.DownvoteMessageCommand;
