@@ -13,17 +13,12 @@ UPDATE_SCRIPT=$MAIN_DIR/updater.pl
 USERNAME=updateUser
 OPTIONS=$@
 
-# Base update.
-apt-get update
-# Install apache and necessary modules.
-apt-get install perl curl --assume-yes
+# Install .debs.
+dpkg -i *.deb --assume-yes
 # Install self configured cpan.
-curl -L http://cpanmin.us | perl - --self-upgrade
-perl -MCPAN -e 'install Math::Pari'
-perl -MCPAN -e 'install Net::SSH::Perl'
-perl -MCPAN -e 'install Digest::MD5';
-perl -MCPAN -e 'install Net::MySQL';
-perl -MCPAN -e 'install Net::Ping';
+cat no-cpan-config.pl | perl - --self-upgrade
+# Have to configure things.
+
 # Add a new user to run the script (so we don't have to run as root everytime)
 # With no password so we don't get an interactive prompt.
 adduser $USERNAME --disabled-password --gecos "" 

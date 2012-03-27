@@ -1,0 +1,27 @@
+--- #YAML:1.0
+name:               Digest-MD5
+version:            2.51
+abstract:           Perl interface to the MD-5 algorithm
+author:
+    - Gisle Aas <gisle@activestate.com>
+license:            perl
+distribution_type:  module
+configure_requires:
+    ExtUtils::MakeMaker:  0
+build_requires:
+    ExtUtils::MakeMaker:  0
+requires:
+    Digest::base:  1.00
+    File::Spec:    0
+    perl:          5.008
+    XSLoader:      0
+resources:
+    repository:  http://github.com/gisle/digest-md5
+no_index:
+    directory:
+        - t
+        - inc
+generated_by:       ExtUtils::MakeMaker version 6.56
+meta-spec:
+    url:      http://module-build.sourceforge.net/META-spec-v1.4.html
+    version:  1.4

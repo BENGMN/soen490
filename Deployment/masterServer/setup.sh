@@ -10,10 +10,9 @@ fi
 FILE_NAME=masterServer.jar
 TOMCAT_PATH=/var/lib/tomcat6/webapps
 TOMCAT_UTIL=/etc/init.d/tomcat6
-	
-apt-get update
-# Install tomcat and apache.
-apt-get install apache2 tomcat6 --assume-yes
+
+#Install .debs
+dpkg -i *.deb --assume-yes	
 # Move the .jar archive into the tomcat folder.
 mv $FILE_NAME $TOMCAT_PATH/
 # Make sure that tomcat can access the files we just moved in.

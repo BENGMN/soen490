@@ -12,10 +12,9 @@ APACHE_SCRIPT=/etc/init.d/apache2
 MOD_ENA=$CFG_DIR/mods-enabled
 MOD_AVA=$CFG_DIR/mods-available
 
-# Base update.
-sudo apt-get update
-# Install apache and necessary modules.
-sudo apt-get install apache2-mpm-worker --assume-yes
+# Install debs.
+dpkg -i *.deb --assume-yes
+
 # Create symlinsk to load proper modules.
 sudo ln -s $MOD_AVA/proxy.conf $MOD_ENA/proxy.conf
 sudo ln -s $MOD_AVA/proxy.load $MOD_ENA/proxy.load
