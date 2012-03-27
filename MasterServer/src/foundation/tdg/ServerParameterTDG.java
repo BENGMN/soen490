@@ -164,7 +164,7 @@ public class ServerParameterTDG {
 		"VALUES ('advertiserMessageLifeDays', 'The time to live of advertiser messages.', 30);",
 
 		"INSERT INTO " + TABLE + " " +
-		"VALUES ('minEmailLength', 'The minimum character length of email addresses when creating user accounts.', 15);",
+		"VALUES ('minEmailLength', 'The minimum character length of email addresses when creating user accounts.', 5);",
 
 		"INSERT INTO " + TABLE + " " +
 		"VALUES ('maxEmailLength', 'The maximum character length of email addresses when creating user accounts.', 50);",

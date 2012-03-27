@@ -54,8 +54,6 @@ import application.commands.UnsupportedCommand;
 import application.commands.UpdateServerParametersCommand;
 import application.commands.UpdateUserCommand;
 import application.commands.UpvoteMessageCommand;
-import application.commands.UserCreatorCommand;
-import application.commands.UserLookupCommand;
 import application.strategy.AllOrderByDateRetrievalStrategy;
 import application.strategy.AllOrderByRatingRetrievalStrategy;
 import application.strategy.AllOrderRandomlyRetrievalStrategy;
@@ -180,12 +178,6 @@ public class FrontController extends HttpServlet {
 		// Command for deleting a user
 		commandMap.put("DELETE.deleteuser", new DeleteUserCommand());
 		
-		// Command for looking up a user
-		commandMap.put("GET.userlookup", new UserLookupCommand());
-
-		// Command for opening the user creation page
-		commandMap.put("GET.usercreator", new UserCreatorCommand());
-
 		// Command for opening the user creation page
 		commandMap.put("POST.updateuser", new UpdateUserCommand());
 		
