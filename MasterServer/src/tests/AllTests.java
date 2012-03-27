@@ -77,9 +77,6 @@ import tests.foundation.*;
 		 ServerParameterTest.class,
 		 ServerParameterTDGTest.class,
 		 ServerParameterFinderTest.class
-		 
-		 
-		 
 })
 
 public class AllTests {
