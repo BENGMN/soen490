@@ -33,7 +33,7 @@ td {
 }
 
 input.text {
-	width: 95%;
+	width: 85%;
 	test-alight: right;
 }
 
@@ -156,7 +156,7 @@ input.submit {
 					onkeyup='onKeyInvalid(this)' /></td>
 			</tr>
 			<%
-				param = params.get("defaultMessageRadiusMeters");
+				param = params.get("defaultRadiusMeters");
 			%>
 			<tr>
 				<td><%=param.getParamName()%></td>
@@ -165,7 +165,56 @@ input.submit {
 					name='<%=param.getParamName()%>' value='<%=param.getValue()%>'
 					onkeyup='onKeyInvalid(this)' /></td>
 			</tr>
-
+						<%
+				param = params.get("minMessages");
+			%>
+			<tr>
+				<td><%=param.getParamName()%></td>
+				<td><%=param.getDescription()%></td>
+				<td><input class='text' type='text'
+					name='<%=param.getParamName()%>' value='<%=param.getValue()%>'
+					onkeyup='onKeyInvalid(this)' /></td>
+			</tr>
+			<%
+				param = params.get("maxMessages");
+			%>
+			<tr>
+				<td><%=param.getParamName()%></td>
+				<td><%=param.getDescription()%></td>
+				<td><input class='text' type='text'
+					name='<%=param.getParamName()%>' value='<%=param.getValue()%>'
+					onkeyup='onKeyInvalid(this)' /></td>
+			</tr>
+			<%
+				param = params.get("daysOfGrace");
+			%>
+			<tr>
+				<td><%=param.getParamName()%></td>
+				<td><%=param.getDescription()%></td>
+				<td><input class='text' type='text'
+					name='<%=param.getParamName()%>' value='<%=param.getValue()%>'
+					onkeyup='onKeyInvalid(this)' /></td>
+			</tr>
+			<%
+				param = params.get("purgeMonitorInitialDelay");
+			%>
+			<tr>
+				<td><%=param.getParamName()%></td>
+				<td><%=param.getDescription()%></td>
+				<td><input class='text' type='text'
+					name='<%=param.getParamName()%>' value='<%=param.getValue()%>'
+					onkeyup='onKeyInvalid(this)' /></td>
+			</tr>
+			<%
+				param = params.get("purgeMonitorDelay");
+			%>
+			<tr>
+				<td><%=param.getParamName()%></td>
+				<td><%=param.getDescription()%></td>
+				<td><input class='text' type='text'
+					name='<%=param.getParamName()%>' value='<%=param.getValue()%>'
+					onkeyup='onKeyInvalid(this)' /></td>
+			</tr>
 		</table>
 		<p>
 			<input class='submit' type="submit" value="Update" />
