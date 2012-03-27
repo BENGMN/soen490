@@ -8,7 +8,7 @@ import domain.message.mappers.MessageInputMapper;
 
 public class AllOrderByRatingRetrievalStrategy extends RetrievalStrategy {
 
-	public AllOrderByRatingRetrievalStrategy() {
+	public AllOrderByRatingRetrievalStrategy() throws SQLException {
 		super();
 	}
 

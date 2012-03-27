@@ -1,3 +1,17 @@
+/**
+ * SOEN 490
+ * Capstone 2011
+ * Team members: 	
+ * 			Sotirios Delimanolis
+ * 			Filipe Martinho
+ * 			Adam Harrison
+ * 			Vahe Chahinian
+ * 			Ben Crudo
+ * 			Anthony Boyer
+ * 
+ * @author Capstone 490 Team Moving Target
+ *
+ */
 package application.commands;
 
 import java.io.DataOutputStream;
@@ -13,12 +27,19 @@ import javax.servlet.http.HttpServletResponse;
 import domain.user.User;
 import domain.user.mappers.UserInputMapper;
 
-import application.IOUtils;
-import application.ResponseType;
+import application.response.IOUtils;
+import application.response.ResponseType;
 import exceptions.MapperException;
 import exceptions.ParameterException;
 import exceptions.UnrecognizedUserException;
 
+/**
+ * Command for retrieving user information. 
+ * Request parameters:
+ *  - userid The unique id of the user to retrieve
+ *  - responsetype Type of response the client is expecting
+ *
+ */
 public class ReadUserCommand extends FrontCommand {
 	private static String USER_JSP = "/WEB-INF/jsp/viewuser.jsp";
 

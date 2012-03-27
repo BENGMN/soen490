@@ -1,3 +1,17 @@
+/**
+ * SOEN 490
+ * Capstone 2011
+ * Team members: 	
+ * 			Sotirios Delimanolis
+ * 			Filipe Martinho
+ * 			Adam Harrison
+ * 			Vahe Chahinian
+ * 			Ben Crudo
+ * 			Anthony Boyer
+ * 
+ * @author Capstone 490 Team Moving Target
+ *
+ */
 package foundation.tdg;
 
 import java.sql.Connection;
@@ -156,9 +170,6 @@ public class ServerParameterTDG {
 
 		"INSERT INTO " + TABLE + " " +
 		"VALUES ('maxMessageSizeBytes', 'The maximum size of uploaded audio files that should be accepted, in bytes.', 50000);",
-
-		"INSERT INTO " + TABLE + " " +
-		"VALUES ('messageLifeDays', 'The time to live of regular messages. If a message is older than this amount, in days, it should be deleted.', 7);",
 
 		"INSERT INTO " + TABLE + " " +
 		"VALUES ('advertiserMessageLifeDays', 'The time to live of advertiser messages.', 30);",

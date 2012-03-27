@@ -1,7 +1,6 @@
 /**
  * SOEN 490
  * Capstone 2011
- * Front command; simple interface shared by all front commands.
  * Team members: 	Sotirios Delimanolis
  * 			Filipe Martinho
  * 			Adam Harrison
@@ -27,6 +26,9 @@ import exceptions.MapperException;
 import exceptions.ParameterException;
 import exceptions.UnrecognizedUserException;
 
+/**
+ * Parent class of all Commands. Provides the execute(request, response) interface.
+ */
 public abstract class FrontCommand {
 	abstract public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, IOException, UnrecognizedUserException, SQLException, ServletException;
 }

@@ -1,8 +1,8 @@
 /**
  * SOEN 490
  * Capstone 2011
- * Rate message command; allows a user to thumbs up/thumbs down a command.
- * Team members: 	Sotirios Delimanolis
+ * Team members: 	
+ *          Sotirios Delimanolis
  * 			Filipe Martinho
  * 			Adam Harrison
  * 			Vahe Chahinian
@@ -33,6 +33,8 @@ import domain.message.mappers.MessageOutputMapper;
 
 /**
  * Command for downvoting a message. It finds the message and decrements its rating, then updates it in the database.
+ * Request parameters:
+ *  - messageid Unique id for the message to downvote
  *
  */
 public class DownvoteMessageCommand extends FrontCommand {

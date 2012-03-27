@@ -1,3 +1,17 @@
+/**
+ * SOEN 490
+ * Capstone 2011
+ * Team members: 	
+ * 			Sotirios Delimanolis
+ * 			Filipe Martinho
+ * 			Adam Harrison
+ * 			Vahe Chahinian
+ * 			Ben Crudo
+ * 			Anthony Boyer
+ * 
+ * @author Capstone 490 Team Moving Target
+ *
+ */
 package application.commands;
 
 import java.io.DataOutputStream;
@@ -14,9 +28,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.LoggerFactory;
 
-import application.IOUtils;
-import application.ResponseType;
 import application.ServerParameters;
+import application.response.IOUtils;
+import application.response.ResponseType;
 import ch.qos.logback.classic.Logger;
 import domain.user.User;
 import domain.user.UserType;
@@ -28,6 +42,15 @@ import exceptions.MapperException;
 import exceptions.ParameterException;
 import exceptions.UnrecognizedUserException;
 
+/**
+ * Command for updating user information 
+ * Request parameters: 
+ *  - userid Unique id of user to update
+ *  - verison User version, throws LostUpdateException if the user requested is modified before this command executes
+ *  - password New password 
+ *  - usertype The type of user to change to
+ *  - responsetype The response type the client is expecting
+ */
 public class UpdateUserCommand extends FrontCommand {
 
 	private static String SUCCESS_CREATE_USER = "/WEB-INF/jsp/success.jsp";

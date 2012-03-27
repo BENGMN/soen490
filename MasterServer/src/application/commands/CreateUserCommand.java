@@ -1,7 +1,6 @@
 /**
  * SOEN 490
  * Capstone 2011
- * Create user command; allows the creation of a user from a client.
  * Team members: 	
  * 			Sotirios Delimanolis
  * 			Filipe Martinho
@@ -29,9 +28,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.LoggerFactory;
 
-import application.IOUtils;
-import application.ResponseType;
 import application.ServerParameters;
+import application.response.IOUtils;
+import application.response.ResponseType;
 
 import ch.qos.logback.classic.Logger;
 
@@ -43,6 +42,14 @@ import domain.user.mappers.UserOutputMapper;
 import exceptions.MapperException;
 import exceptions.ParameterException;
 
+/**
+ * Command to create a user.
+ * Request parameters:
+ *  - email The email to assign to the new user account
+ *  - password The password to access the user. Not really used anywhere
+ *  - usertype The type of user, either USER_NORMAL or USER_ADVERTISER
+ *  - responsetype The type of response the client is expecting
+ */
 public class CreateUserCommand extends FrontCommand {
 	private static String SUCCESS_CREATE_USER = "/WEB-INF/jsp/success.jsp";
 	

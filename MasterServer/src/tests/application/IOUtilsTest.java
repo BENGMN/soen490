@@ -13,7 +13,8 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import application.IOUtils;
+
+import application.response.IOUtils;
 
 import domain.message.Message;
 import domain.message.MessageFactory;

@@ -1,3 +1,17 @@
+/**
+ * SOEN 490
+ * Capstone 2011
+ * Team members: 	
+ * 			Sotirios Delimanolis
+ * 			Filipe Martinho
+ * 			Adam Harrison
+ * 			Vahe Chahinian
+ * 			Ben Crudo
+ * 			Anthony Boyer
+ * 
+ * @author Capstone 490 Team Moving Target
+ *
+ */
 package application.commands;
 
 import java.io.DataOutputStream;
@@ -14,8 +28,8 @@ import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Logger;
 
-import application.IOUtils;
-import application.ResponseType;
+import application.response.IOUtils;
+import application.response.ResponseType;
 
 import domain.user.User;
 import domain.user.mappers.UserInputMapper;
@@ -26,6 +40,14 @@ import exceptions.MapperException;
 import exceptions.ParameterException;
 import exceptions.UnrecognizedUserException;
 
+/**
+ * Command to delete a user.
+ * Request parameters:
+ *  - userid Unique id for the user to delete
+ *  - version User version, will throw a LostUpdateException if the user was modified before this command can execute.
+ *  - responsetype The responsetype expected by the client
+ *
+ */
 public class DeleteUserCommand extends FrontCommand {	
 	private static final String SUCCESS_DELETE_USER = "/WEB-INF/jsp/success.jsp";
 	private static final String FAIL_DELETE_USER = "/WEB-INF/jsp/error.jsp";

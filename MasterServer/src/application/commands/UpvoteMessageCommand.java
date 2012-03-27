@@ -1,7 +1,6 @@
 /**
  * SOEN 490
  * Capstone 2011
- * Rate message command; allows a user to thumbs up/thumbs down a command.
  * Team members: 	Sotirios Delimanolis
  * 			Filipe Martinho
  * 			Adam Harrison
@@ -12,7 +11,6 @@
  * @author Capstone 490 Team Moving Target
  *
  */
-
 package application.commands;
 
 import java.io.IOException;

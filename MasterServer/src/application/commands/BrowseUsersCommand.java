@@ -1,3 +1,17 @@
+/**
+ * SOEN 490
+ * Capstone 2011
+ * Team members: 	
+ * 			Sotirios Delimanolis
+ * 			Filipe Martinho
+ * 			Adam Harrison
+ * 			Vahe Chahinian
+ * 			Ben Crudo
+ * 			Anthony Boyer
+ * 
+ * @author Capstone 490 Team Moving Target
+ *
+ */
 package application.commands;
 
 import java.io.IOException;
@@ -16,6 +30,9 @@ import exceptions.MapperException;
 import exceptions.ParameterException;
 import exceptions.UnrecognizedUserException;
 
+/**
+ * Command to retrieve all users and forward to a jsp view to display them.
+ */
 public class BrowseUsersCommand extends FrontCommand {
 
 	private final static String BROWSE_USERS_JSP = "/WEB-INF/jsp/browseusers.jsp";

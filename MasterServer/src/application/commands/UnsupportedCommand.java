@@ -1,8 +1,8 @@
 /**
  * SOEN 490
  * Capstone 2011
- * Unknown Command; basically handles what happens when there is no available command.
- * Team members: 	Sotirios Delimanolis
+ * Team members: 	
+ *  	    Sotirios Delimanolis
  * 			Filipe Martinho
  * 			Adam Harrison
  * 			Vahe Chahinian
@@ -26,7 +26,12 @@ import ch.qos.logback.classic.Logger;
 
 import exceptions.ParameterException;
 
-
+/**
+ * Command for an unsupported request type. If the command parameter in the request doesn't match any of the commands in the map,
+ * this command will be executed, informing the client of the wrong command request provided. Unlike other commands, this one has 
+ * class attributes. A new instance must be created for each wrong request.
+ *
+ */
 public class UnsupportedCommand extends FrontCommand {
 	
 	private String httpMethod;

@@ -1,3 +1,17 @@
+/**
+ * SOEN 490
+ * Capstone 2011
+ * Team members: 	
+ * 			Sotirios Delimanolis
+ * 			Filipe Martinho
+ * 			Adam Harrison
+ * 			Vahe Chahinian
+ * 			Ben Crudo
+ * 			Anthony Boyer
+ * 
+ * @author Capstone 490 Team Moving Target
+ *
+ */
 package application.commands;
 
 import java.sql.SQLException;
@@ -11,7 +25,8 @@ import exceptions.ParameterException;
 import exceptions.UnrecognizedUserException;
 
 /** 
- * This Command represents a null transaction for monitoring. It is used by the Load Balancer to check if the server is still active.
+ * This Command represents a null transaction for monitoring. 
+ * It is used by the Load Balancer and the management console to check if the server responsive.
  */
 public class PingCommand extends FrontCommand {
 

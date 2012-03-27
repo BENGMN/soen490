@@ -1,7 +1,6 @@
 /**
  * SOEN 490
  * Capstone 2011
- * Exception wrapper class
  * Team members: 	
  * 			Sotirios Delimanolis
  * 			Filipe Martinho

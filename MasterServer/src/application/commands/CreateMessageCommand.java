@@ -1,3 +1,17 @@
+/**
+ * SOEN 490
+ * Capstone 2011
+ * Team members: 	
+ * 			Sotirios Delimanolis
+ * 			Filipe Martinho
+ * 			Adam Harrison
+ * 			Vahe Chahinian
+ * 			Ben Crudo
+ * 			Anthony Boyer
+ * 
+ * @author Capstone 490 Team Moving Target
+ *
+ */
 package application.commands;
 
 import java.io.DataOutputStream;
@@ -16,8 +30,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
-import application.IOUtils;
 import application.ServerParameters;
+import application.response.IOUtils;
 
 import ch.qos.logback.classic.Logger;
 
@@ -30,17 +44,33 @@ import domain.message.mappers.MessageOutputMapper;
 import domain.user.User;
 import domain.user.mappers.UserInputMapper;
 
+/**
+ * Command for clients to upload an audio file. Maximum and minimum file sizes are parametrized in the application configuration.
+ * Request parameters: 
+ * 	- bin The file upload itself, must have content-type audip/amr
+ *  - longitude The client's longitude
+ *  - latitude The client's latitude
+ *  - speed The client's speed
+ *  - email The client's email, needs to be related to an existing user account
+ */
 public class CreateMessageCommand extends FrontCommand {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, IOException, UnrecognizedUserException, SQLException {
 		MultipartResolver resolver = new CommonsMultipartResolver();
-		
+		String contentType = null;
 		// Make sure our request is multi-part; if it's not, then it's not properly formatted.
 		if (!resolver.isMultipart(request))
 			throw new ParameterException("Put requests must be multi-part, as in RFC1867.");
 		
 		MultipartHttpServletRequest multipartRequest = resolver.resolveMultipart(request); 
+		contentType = multipartRequest.getContentType();
+		
+		// check content type of request, needs to be audio/amr
+		if (contentType == null)
+			throw new ParameterException("Missing 'ContentType' HTTP header.");	
+		if (!contentType.toLowerCase().equals("audio/amr"))
+			throw new ParameterException("Invalid content type provided. Must be 'audio/amr'.");
 		
 		// If java is smart, it will allocate this on the stack.
 		MultipartFile multipartFile = multipartRequest.getFile("bin");

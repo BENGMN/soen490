@@ -29,7 +29,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.jstl.core.Config;
 
 import org.slf4j.LoggerFactory;
 
@@ -79,6 +78,8 @@ public class FrontController extends HttpServlet {
 	// map that holds all the command to be executed depending on the passed command string in the request url
 	private HashMap<String, FrontCommand> commandMap = null;
 	private RetrievalStrategyFactory strategyFactory = null;
+	
+	private PurgeMonitor purgeMonitor;
 	
 	// Overridden to make sure that we have a database.
 	public void init() throws ServletException {
@@ -201,6 +202,10 @@ public class FrontController extends HttpServlet {
 		
 		strategyFactory.registerRetrievalStrategy("random-true", new OnlyAdvertisementRetrievalStrategy());
 		strategyFactory.registerRetrievalStrategy("-true", new OnlyAdvertisementRetrievalStrategy());
+		
+		
+		purgeMonitor = new PurgeMonitor();
+		purgeMonitor.execute();
 		
 		// Initialize the logger
 		logger = (Logger)LoggerFactory.getLogger("application");

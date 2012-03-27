@@ -60,6 +60,7 @@ public class PurgeMonitor {
 		this.delay = delay;
 		logger = (Logger) LoggerFactory.getLogger("application");
 	}
+	
 	/**
 	 * Calls the function to delete the messages at a fixed interval
 	 * @return boolean representing the state of the execution

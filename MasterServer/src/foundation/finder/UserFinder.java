@@ -1,7 +1,6 @@
 /**
  * SOEN 490
  * Capstone 2011
- * Table Data Gateway for the User Domain Object
  * Team members: 	
  * 			Sotirios Delimanolis
  * 			Filipe Martinho

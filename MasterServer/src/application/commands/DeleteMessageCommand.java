@@ -1,7 +1,6 @@
 /**
  * SOEN 490
  * Capstone 2011
- * Delete message command; allows a user to delete a message.
  * Team members: 	
  * 			Sotirios Delimanolis
  * 			Filipe Martinho
@@ -29,6 +28,12 @@ import domain.message.Message;
 import domain.message.mappers.MessageInputMapper;
 import domain.message.mappers.MessageOutputMapper;
 
+/**
+ * Command to delete a message.  
+ * Request parameters:
+ *  - messageid The unique id of the message
+ *
+ */
 public class DeleteMessageCommand extends FrontCommand {
 
 	@Override

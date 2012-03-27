@@ -1,3 +1,17 @@
+/**
+ * SOEN 490
+ * Capstone 2011
+ * Team members: 	
+ * 			Sotirios Delimanolis
+ * 			Filipe Martinho
+ * 			Adam Harrison
+ * 			Vahe Chahinian
+ * 			Ben Crudo
+ * 			Anthony Boyer
+ * 
+ * @author Capstone 490 Team Moving Target
+ *
+ */
 package application.commands;
 
 import java.io.IOException;
@@ -22,6 +36,13 @@ import exceptions.MapperException;
 import exceptions.ParameterException;
 import exceptions.UnrecognizedUserException;
 
+/**
+ * Command for updating server parameters. The list of parameters is hardcoded since we want to show
+ * Request parameters: 
+ *  - source Where the request is coming from: a jsp or from some client
+ *  - parameter name Each parameter in our configuration should have a matching value in the request
+ *
+ */
 public class UpdateServerParametersCommand extends FrontCommand {
 	private static String SERVER_PARAMETERS_JSP = "/WEB-INF/jsp/ServerConfigurationUtility.jsp";
 	
@@ -48,7 +69,6 @@ public class UpdateServerParametersCommand extends FrontCommand {
 			// HARDCODED list of server parameters
 			parameterNames.add("minMessageSizeBytes");
 			parameterNames.add("maxMessageSizeBytes");
-			parameterNames.add("messageLifeDays");
 			parameterNames.add("advertiserMessageLifeDays");
 			parameterNames.add("minEmailLength");
 			parameterNames.add("maxEmailLength");
@@ -58,6 +78,9 @@ public class UpdateServerParametersCommand extends FrontCommand {
 			parameterNames.add("defaultMessageRadiusMeters");
 			parameterNames.add("minMessages");
 			parameterNames.add("maxMessages");
+			parameterNames.add("daysOfGrace");
+			parameterNames.add("purgeMonitorInitialDelay");
+			parameterNames.add("purgeMonitorDelay");
 			
 			// Go through each of the above
 			for (String name: parameterNames) {

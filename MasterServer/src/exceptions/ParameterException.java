@@ -1,8 +1,7 @@
 /**
  * SOEN 490
  * Capstone 2011
- * Exception, passed in whenever we have invalid parameter settings.
- * Delegates to FrontCommands.
+ * Exception, passed in whenever we have invalid parameter settings
  * Team members: 	Sotirios Delimanolis
  * 			Filipe Martinho
  * 			Adam Harrison

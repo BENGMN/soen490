@@ -43,12 +43,12 @@ import org.junit.Test;
 
 import technical.UnrecognizedUserException;
 
-import application.IOUtils;
 import application.commands.DownvoteMessageCommand;
 import application.commands.GetMessageIDsCommand;
 import application.commands.ReadMessageCommand;
 import application.commands.CreateMessageCommand;
 import application.commands.UpvoteMessageCommand;
+import application.response.IOUtils;
 
 import domain.message.Message;
 import domain.message.MessageFactory;
