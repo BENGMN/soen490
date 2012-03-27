@@ -33,7 +33,7 @@ td {
 }
 
 input.text {
-	width: 85%;
+	width: 87%;
 	test-alight: right;
 }
 
