@@ -31,6 +31,7 @@ public class GetMessageIDsCommand extends FrontCommand{
 		String isAdvertiser = "";
 		String stringLimit;
 		
+		int serverLimit = Integer.parseInt(ServerParameters.getUniqueInstance().get("minMessages").getValue());
 		float speed = 0;
 		double longitude;
 		double latitude;
@@ -51,8 +52,17 @@ public class GetMessageIDsCommand extends FrontCommand{
 			isAdvertiser = Boolean.toString(Boolean.parseBoolean(isAdvertiser));
 		
 		if ((stringLimit = request.getParameter("limit")) == null)
-			limit = Integer.parseInt(ServerParameters.getUniqueInstance().get("minMessages").getValue());
-		
+			limit = serverLimit;
+		else 
+			try {
+				limit = Integer.parseInt(stringLimit);
+				// if the request limit is higher than the server limit, restrict it
+				if (limit > serverLimit) 
+					limit = serverLimit;
+			} catch (NumberFormatException e) {
+				throw new ParameterException("Longitude, latitude, speed, and/or limit number format exception.", e);
+			}
+	
 		try {
 			// Get speed from request object
 			if ((stringSpeed = request.getParameter("speed")) != null)
@@ -60,7 +70,6 @@ public class GetMessageIDsCommand extends FrontCommand{
 			
 			longitude = Double.parseDouble(stringLongitude);
 			latitude = Double.parseDouble(stringLatitude);
-			limit = Integer.parseInt(stringLimit);
 		} catch (NumberFormatException e) {
 			throw new ParameterException("Longitude, latitude, speed, and/or limit number format exception.", e);
 		}
