@@ -45,9 +45,9 @@ import domain.user.User;
 import domain.user.mappers.UserInputMapper;
 
 /**
- * Command for clients to upload an audio file. Maximum and minimum file sizes are parametrized in the application configuration.
+ * Command for clients to upload an audio file. Must be a multipart request. Maximum and minimum file sizes are parametrized in the application configuration.
  * Request parameters: 
- * 	- bin The file upload itself, must have content-type audip/amr
+ * 	- bin The file upload itself
  *  - longitude The client's longitude
  *  - latitude The client's latitude
  *  - speed The client's speed
@@ -58,20 +58,13 @@ public class CreateMessageCommand extends FrontCommand {
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws MapperException, ParameterException, IOException, UnrecognizedUserException, SQLException {
 		MultipartResolver resolver = new CommonsMultipartResolver();
-		String contentType = null;
+
 		// Make sure our request is multi-part; if it's not, then it's not properly formatted.
 		if (!resolver.isMultipart(request))
 			throw new ParameterException("Put requests must be multi-part, as in RFC1867.");
 		
 		MultipartHttpServletRequest multipartRequest = resolver.resolveMultipart(request); 
-		contentType = multipartRequest.getContentType();
-		
-		// check content type of request, needs to be audio/amr
-		if (contentType == null)
-			throw new ParameterException("Missing 'ContentType' HTTP header.");	
-		if (!contentType.toLowerCase().equals("audio/amr"))
-			throw new ParameterException("Invalid content type provided. Must be 'audio/amr'.");
-		
+				
 		// If java is smart, it will allocate this on the stack.
 		MultipartFile multipartFile = multipartRequest.getFile("bin");
 		

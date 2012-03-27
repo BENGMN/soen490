@@ -29,7 +29,6 @@ import org.junit.Test;
 
 import foundation.DbRegistry;
 import foundation.finder.ServerListFinder;
-import foundation.tdg.ServerListTDG;
 import application.FrontController;
 
 
@@ -40,7 +39,7 @@ public class FrontControllerTest {
 		FrontController frontController;
 		try {
 			DbRegistry.dropDatabaseTables();
-			ServerListTDG.create();
+			//ServerListTDG.create();
 			
 			frontController = new FrontController();
 			// init creates all database tables

@@ -41,7 +41,7 @@ import org.springframework.mock.web.MockMultipartHttpServletRequest;
 
 import org.junit.Test;
 
-import technical.UnrecognizedUserException;
+
 
 import application.commands.DownvoteMessageCommand;
 import application.commands.GetMessageIDsCommand;
@@ -62,6 +62,7 @@ import exceptions.CorruptStreamException;
 import exceptions.LostUpdateException;
 import exceptions.MapperException;
 import exceptions.ParameterException;
+import exceptions.UnrecognizedUserException;
 import foundation.DbRegistry;
 
 public class MessageCommandTest {
@@ -367,7 +368,7 @@ public class MessageCommandTest {
 			// this request sorts on user rating without any advertisers' messages
 			request.setParameter("longitude","45");
 			request.setParameter("latitude","35");
-			request.setParameter("sort","user_rating");
+			request.setParameter("sort","rating");
 			request.setParameter("limit", "20");
 			request.setParameter("advertiser", "false");
 			request.setParameter("speed","100");

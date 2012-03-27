@@ -20,6 +20,7 @@ import tests.application.strategy.AllOrderByRatingRetrievalStrategyTest;
 import tests.application.strategy.AllOrderRandomlyRetrievalStrategyTest;
 import tests.application.strategy.NoAdvertisementOrderByDateRetrievalStrategyTest;
 import tests.application.strategy.NoAdvertisementOrderByRatingRetrievalStrategyTest;
+import tests.application.strategy.OnlyAdvertisementRetrievalStrategyTest;
 import tests.application.strategy.RetrievalStrategyFactoryTest;
 import tests.application.strategy.RetrievalStrategyTest;
 import tests.domain.message.*;
@@ -29,17 +30,15 @@ import tests.domain.serverparameter.ServerParameterTest;
 import tests.domain.serverparameter.ServerParametersTest;
 import tests.domain.user.*;
 import tests.foundation.*;
-import tests.technical.GeoSpatialSearchTest;
 
 @RunWith(Suite.class)
 
 @SuiteClasses({
+		//application
 		 FrontControllerTest.class,
-		 
 		 PurgeMonitorTest.class,
-		 
 		 IOUtilsTest.class,
-		 
+		 MessageCommandTest.class,
 		 UnsupportedCommandTest.class,
 		 
 		 RetrievalStrategyFactoryTest.class,
@@ -49,8 +48,8 @@ import tests.technical.GeoSpatialSearchTest;
 		 AllOrderByDateRetrievalStrategyTest.class,
 		 NoAdvertisementOrderByDateRetrievalStrategyTest.class,
 		 NoAdvertisementOrderByRatingRetrievalStrategyTest.class,
+		 OnlyAdvertisementRetrievalStrategyTest.class,
 		 
-		 MessageCommandTest.class,
 		 MessageInputMapperTest.class,
 		 MessageOutputMapperTest.class,
 		 MessageTest.class,
@@ -67,21 +66,19 @@ import tests.technical.GeoSpatialSearchTest;
 		 UserFinderTest.class,
 		 
 		 DbRegistryTest.class,
-		 
 		 MySQLConnectionPoolFactoryTest.class,
-		 
 		 PropertiesRegistryTest.class,
-
 		 GeoSpatialSearchTest.class,
+		 ServerListTDGTest.class,
 		 
 		 ServerParameterInputMapperTest.class,
 		 ServerParameterOutputMapperTest.class,
 		 ServerParametersTest.class,
 		 ServerParameterTest.class,
 		 ServerParameterTDGTest.class,
-		 ServerParameterFinderTest.class,
+		 ServerParameterFinderTest.class
 		 
-		 ServerListTDGTest.class,
+		 
 		 
 })
 

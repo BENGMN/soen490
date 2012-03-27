@@ -100,10 +100,28 @@ public class FrontController extends HttpServlet {
 			
 			// Simply to initialise
 			ServerParameters.getUniqueInstance();
+			
+			purgeMonitor = new PurgeMonitor();
+			purgeMonitor.execute();
+			purgeMonitor.deactivate();
+			
+			// sort + advertiser
+			// if advertiser=true, only advertisers
+			// if advertiser=false, only normal
+			// if not set then all
+			strategyFactory.registerRetrievalStrategy("date-", new AllOrderByDateRetrievalStrategy());
+			strategyFactory.registerRetrievalStrategy("rating-", new AllOrderByRatingRetrievalStrategy());
+			strategyFactory.registerRetrievalStrategy("random-", new AllOrderRandomlyRetrievalStrategy());
+			strategyFactory.registerRetrievalStrategy("date-false", new NoAdvertisementOrderByDateRetrievalStrategy());
+			strategyFactory.registerRetrievalStrategy("rating-false", new NoAdvertisementOrderByRatingRetrievalStrategy());
+			
+			strategyFactory.registerRetrievalStrategy("random-true", new OnlyAdvertisementRetrievalStrategy());
+			strategyFactory.registerRetrievalStrategy("-true", new OnlyAdvertisementRetrievalStrategy());
+			
 
-		} catch (Exception E) {
-			logger.error("init() ");
-			throw new ServletException(E);
+		} catch (Exception e) {
+			logger.error("init() in FrontController failed: {}", e);
+			throw new ServletException(e);
 		} finally {
 			try {
 				DbRegistry.closeDbConnection();
@@ -142,6 +160,8 @@ public class FrontController extends HttpServlet {
 	 * @throws SQLException 
 	 */
 	public FrontController() throws SQLException {
+		
+		// Can not have anything that uses the database in here
 		
 		commandMap = new HashMap<String, FrontCommand>();
 		
@@ -189,24 +209,7 @@ public class FrontController extends HttpServlet {
 		commandMap.put("GET.ping", new PingCommand());
 		
 		strategyFactory = RetrievalStrategyFactory.getUniqueInstance();
-		
-		// sort + advertiser
-		// if advertiser=true, only advertisers
-		// if advertiser=false, only normal
-		// if not set then all
-		strategyFactory.registerRetrievalStrategy("date-", new AllOrderByDateRetrievalStrategy());
-		strategyFactory.registerRetrievalStrategy("rating-", new AllOrderByRatingRetrievalStrategy());
-		strategyFactory.registerRetrievalStrategy("random-", new AllOrderRandomlyRetrievalStrategy());
-		strategyFactory.registerRetrievalStrategy("date-false", new NoAdvertisementOrderByDateRetrievalStrategy());
-		strategyFactory.registerRetrievalStrategy("rating-false", new NoAdvertisementOrderByRatingRetrievalStrategy());
-		
-		strategyFactory.registerRetrievalStrategy("random-true", new OnlyAdvertisementRetrievalStrategy());
-		strategyFactory.registerRetrievalStrategy("-true", new OnlyAdvertisementRetrievalStrategy());
-		
-		
-		purgeMonitor = new PurgeMonitor();
-		purgeMonitor.execute();
-		
+	
 		// Initialize the logger
 		logger = (Logger)LoggerFactory.getLogger("application");
 		logger.trace("Starting Application Server. FrontController started.");
