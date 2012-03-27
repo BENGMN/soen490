@@ -56,7 +56,7 @@ public class GetMessageIDsCommand extends FrontCommand{
 		String isAdvertiser = "";
 		String stringLimit;
 		
-		int serverLimit = Integer.parseInt(ServerParameters.getUniqueInstance().get("minMessages").getValue());
+		int serverLimit = Integer.parseInt(ServerParameters.getUniqueInstance().get("maxMessages").getValue());
 		float speed = 0;
 		double longitude;
 		double latitude;
