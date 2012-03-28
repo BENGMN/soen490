@@ -50,7 +50,7 @@ input.submit {
 <body>
 
 	<form method="POST"
-		action="${pageContext.request.contextPath}/controller?command=updateserverparameters&source=client"
+		action="/MasterServer/controller?command=updateserverparameters&source=client"
 		name="POST.updateServerConfiguration">
 		<h1>Server Configuration Utility
 			${pageContext.request.contextPath}</h1>
