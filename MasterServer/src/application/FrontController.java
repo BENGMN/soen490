@@ -90,8 +90,8 @@ public class FrontController extends HttpServlet {
 			if (!DbRegistry.isDatabaseCreated())
 				DbRegistry.createDatabaseTables();
 			InetAddress addr = InetAddress.getLocalHost();
-		
-			String hostname = addr.getHostName();		
+			String hostname = addr.getHostName();
+			
 			ResultSet rs = ServerListFinder.find(hostname);		
 			if(!rs.next()) {
 				int port = 8080;

@@ -32,12 +32,18 @@ public class AndroidRecorder {
 	
 	public void start() throws IllegalStateException, IOException
 	{	
-		File outputDir = ThinClientActivity.getInstance().getCacheDir();
-		recordingFile = File.createTempFile("ericssonMessage", "amr", outputDir);
-		FileOutputStream stream = ThinClientActivity.getInstance().openFileOutput(recordingFile.getAbsolutePath(), Context.MODE_PRIVATE);
-		recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-		recorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_WB);
-		recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_WB);
+		//File outputDir = ThinClientActivity.getInstance().getCacheDir();
+		//recordingFile = File.createTempFile("ericssonMessage", ".amr", outputDir);
+		recorder.reset();
+		FileOutputStream stream = ThinClientActivity.getInstance().openFileOutput("ericssonMessage.amr", Context.MODE_PRIVATE);
+		try {
+			recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+		}
+		catch (RuntimeException e) {
+			throw e;
+		}
+		recorder.setOutputFormat(MediaRecorder.OutputFormat.RAW_AMR);
+		recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 		recorder.setOutputFile(stream.getFD());
 		recorder.prepare();
 		recorder.start();

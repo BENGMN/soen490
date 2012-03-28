@@ -12,7 +12,8 @@ import org.msgpack.MessagePack;
 import org.msgpack.unpacker.Unpacker;
 
 import ericsson.thinClient.technical.AndroidLocation;
-import ericsson.thinClient.technical.HttpInterface;
+import ericsson.thinClient.technical.AndroidLogging;
+import ericsson.thinClient.technical.AndroidHttp;
 
 public class MessagesCached {
 	private static MessagesCached singleton = null;
@@ -37,10 +38,15 @@ public class MessagesCached {
 	
 	private int retrieveMessages() throws IOException
 	{
-		InputStream in = HttpInterface.getInstance().getMessageIDs(AndroidLocation.getInstance().getLongitude(),
+		InputStream in = AndroidHttp.getInstance().getMessageIDs(AndroidLocation.getInstance().getLongitude(),
 				AndroidLocation.getInstance().getLatitude(),
 				AndroidLocation.getInstance().getSpeed(),
 				"created_at");
+		if (in == null) {
+			//AndroidLogging.getInstance().error("Failed to get list of messageids.");
+			return 0;
+		}
+		AndroidLogging.getInstance().log("Get list of messages based on location.");
 		Unpacker unpacker = (new MessagePack()).createUnpacker(in);
 		int size = unpacker.readInt();
 		List<BigInteger> filteredIds = new ArrayList<BigInteger>();
@@ -62,7 +68,7 @@ public class MessagesCached {
 			cachedMessages = newMessages;
 		}
 		
-		in = HttpInterface.getInstance().getMessages(filteredIds);
+		in = AndroidHttp.getInstance().getMessages(filteredIds);
 		unpacker = (new MessagePack()).createUnpacker(in);
 		size = unpacker.readInt();
 		for (int i = 0; i < size; ++i)
@@ -74,10 +80,11 @@ public class MessagesCached {
 	{
 		if (index < 0)
 			index = cachedMessages.size();
-		int slideIndex = 0;
 		if (index > cachedMessages.size())
-			slideIndex = retrieveMessages();
-		return cachedMessages.get(index - slideIndex);
+			index -= retrieveMessages();
+		if (index > cachedMessages.size())
+			return null;
+		return cachedMessages.get(index);
 	}
 	
 	public Message getNextMessage(Message in) throws IOException

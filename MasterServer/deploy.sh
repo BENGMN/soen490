@@ -1,5 +1,5 @@
 NAME=MasterServer
-DEPLOY_PATH=/var/lib/tomcat6/webapps
+DEPLOY_PATH=/var/lib/tomcat7/webapps
 SERVER_PATH=$DEPLOY_PATH/$NAME
 OFFENDING_LIBS=$DEPLOY_PATH/$NAME/WEB-INF/lib/servlet-api.jar
 
@@ -11,9 +11,8 @@ fi
 rm -Rf $SERVER_PATH
 mkdir $SERVER_PATH
 cp -R WebContent/* $SERVER_PATH
-mkdir $SERVER_PATH/WEB-INF/classes
-cp -R lib $SERVER_PATH/WEB-INF
+mkdir -p $SERVER_PATH/WEB-INF/classes
 cp -R bin/* $SERVER_PATH/WEB-INF/classes
-chown tomcat6 -R $SERVER_PATH
+chown tomcat7 -R $SERVER_PATH
 rm $OFFENDING_LIBS
-/etc/init.d/tomcat6 restart
+/etc/init.d/tomcat7 restart

@@ -6,16 +6,22 @@ import java.util.Stack;
 
 import ericsson.thinClient.R;
 import ericsson.thinClient.domain.Control;
+import ericsson.thinClient.technical.AndroidLogging;
 import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class ThinClientActivity extends Activity  implements OnClickListener {
+public class ThinClientActivity extends Activity implements OnClickListener {
 	
     ImageButton actionButton;
     ImageButton prevButton;
@@ -25,8 +31,10 @@ public class ThinClientActivity extends Activity  implements OnClickListener {
     ImageButton downvoteButton;
     ProgressBar progressBar;
     ArrayList<View> stateButtons;
+    
     Stack< ArrayList<Pair<View,Boolean>>> buttonState;
-    TextView statusView;
+    TextView logView;
+    TextView errorView;
     
     private static ThinClientActivity singleton = null;
     
@@ -54,7 +62,8 @@ public class ThinClientActivity extends Activity  implements OnClickListener {
         recordButton = (ImageButton)findViewById(R.id.record);
         upvoteButton = (ImageButton)findViewById(R.id.upvote);
         downvoteButton = (ImageButton)findViewById(R.id.downvote);
-        statusView = (TextView)findViewById(R.id.status);
+        errorView = (TextView)findViewById(R.id.error);
+        logView = (TextView)findViewById(R.id.log);
         
         // All of these will be included in the state stack,
         // and global enable/disable.
@@ -72,8 +81,28 @@ public class ThinClientActivity extends Activity  implements OnClickListener {
         upvoteButton.setOnClickListener(this);
         downvoteButton.setOnClickListener(this);
         
-        statusView.setText("No Action Underway");
+        logView.setText("No Action Underway");
+        logView.setTextColor(Color.WHITE);
+        errorView.setText("");
+        errorView.setTextColor(Color.RED);
         refreshButtons();
+    }
+    
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.settings, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        	case R.id.settings:
+        		Intent intent = new Intent(this, SettingsActivity.class);
+            	startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
     
     private void pushButtonState() {
@@ -121,9 +150,10 @@ public class ThinClientActivity extends Activity  implements OnClickListener {
 		downvoteButton.setEnabled(Control.getInstance().canDownvote());
     }
 	
-	private class InteractionThread extends AsyncTask<View, Void, View> {	
+	private class InteractionThread extends AsyncTask<View, String, View> implements AndroidLogging.Listener {	
 		
 		protected View doInBackground(View... params) {
+			AndroidLogging.getInstance().addListener(this);
 			try {
 				View v = params[0];
 				if (v == actionButton) {
@@ -157,16 +187,34 @@ public class ThinClientActivity extends Activity  implements OnClickListener {
 			return null;
 		}
 		
+		protected void onProgressUpdate(String... progress) {
+			if (progress[0].equals("error"))
+				errorView.setText(progress[1]);
+			else
+				logView.setText(progress[1]);
+	     }
+		
+		
 		protected void onPreExecute()
 		{
 			pushButtonState();
 			disableButtons();
+			logView.setText("");
+			errorView.setText("");
 		}
 		
 		protected void onPostExecute(View result)
 		{
 			popButtonState();
 			refreshButtons();
+		}
+
+		public void log(String message) {
+			publishProgress("log", message);
+		}
+
+		public void error(String message) {
+			publishProgress("error", message);
 		}
 	}
 	
