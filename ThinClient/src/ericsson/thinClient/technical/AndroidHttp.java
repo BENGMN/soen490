@@ -10,7 +10,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
+import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
@@ -18,23 +18,25 @@ import org.apache.http.params.BasicHttpParams;
 
 import android.net.http.AndroidHttpClient;
 
-public class HttpInterface {
+public class AndroidHttp {
 	private static final String clientName = "Ericsson Client"; 
-	private static final String entrypointHostname = "localhost";
-	private static final int entrypointPort = 8080;
+	public String entrypointHostname;
+	public int entrypointPort;
 	private HttpClient client;
 	
-	private static HttpInterface singleton = null;
+	private static AndroidHttp singleton = null;
 	
-	private HttpInterface()
+	private AndroidHttp()
 	{
+		entrypointHostname = "localhost";
+		entrypointPort = 80;
 		client = AndroidHttpClient.newInstance(clientName);
 	}
 	
-	static public HttpInterface getInstance()
+	static public AndroidHttp getInstance()
 	{
 		if (singleton == null)
-			singleton = new HttpInterface();
+			singleton = new AndroidHttp();
 		return singleton;
 	}
 	
@@ -49,9 +51,17 @@ public class HttpInterface {
 		params.setParameter("sorttype", sorttype);
 		request.setParams(params);
 		
-		HttpResponse response = client.execute(request);
+		HttpResponse response = null;
+		try {
+			response = client.execute(request);
+		}
+		catch (HttpHostConnectException e) {
+			AndroidLogging.getInstance().error("HTTP Problem: " + e);
+			return null;
+		}
 		if (response.getStatusLine().getStatusCode() == 200)
 			return response.getEntity().getContent();
+		AndroidLogging.getInstance().error("HTTP Problem: Got errror code " + response.getStatusLine().getStatusCode());
 		return null;
 	}
 	
@@ -63,9 +73,17 @@ public class HttpInterface {
 		params.setParameter("messageid", ids);
 		request.setParams(params);
 		
-		HttpResponse response = client.execute(request);
+		HttpResponse response = null;
+		try {
+			response = client.execute(request);
+		}
+		catch (HttpHostConnectException e) {
+			AndroidLogging.getInstance().error("HTTP Problem: " + e);
+			return null;
+		}
 		if (response.getStatusLine().getStatusCode() == 200)
 			return response.getEntity().getContent();
+		AndroidLogging.getInstance().error("HTTP Problem: Got errror code " + response.getStatusLine().getStatusCode());
 		return null;
 	}
 	
@@ -81,8 +99,18 @@ public class HttpInterface {
 		entity.addPart("speed", new StringBody(String.valueOf(speed)));
 		entity.addPart("email", new StringBody(email));
 		
-		HttpResponse response = client.execute(request);
-		return response.getStatusLine().getStatusCode() == 200;
+		HttpResponse response = null;
+		try {
+			response = client.execute(request);
+		}
+		catch (HttpHostConnectException e) {
+			AndroidLogging.getInstance().error("HTTP Problem: " + e);
+			return false;
+		}
+		if (response.getStatusLine().getStatusCode() == 200)
+			return true;
+		AndroidLogging.getInstance().error("HTTP Problem: Got errror code " + response.getStatusLine().getStatusCode());
+		return false;
 	}
 	
 	public boolean upvoteMessage(BigInteger id) throws IOException
@@ -93,8 +121,18 @@ public class HttpInterface {
 		params.setParameter("messageid", id);
 		request.setParams(params);
 		
-		HttpResponse response = client.execute(request);
-		return response.getStatusLine().getStatusCode() == 200;
+		HttpResponse response = null;
+		try {
+			response = client.execute(request);
+		}
+		catch (HttpHostConnectException e) {
+			AndroidLogging.getInstance().error("HTTP Problem: " + e);
+			return false;
+		}
+		if (response.getStatusLine().getStatusCode() == 200)
+			return true;
+		AndroidLogging.getInstance().error("HTTP Problem: Got errror code " + response.getStatusLine().getStatusCode());
+		return false;
 	}
 	
 	public boolean downvoteMessage(BigInteger id) throws IOException
@@ -105,8 +143,18 @@ public class HttpInterface {
 		params.setParameter("messageid", id);
 		request.setParams(params);
 		
-		HttpResponse response = client.execute(request);
-		return response.getStatusLine().getStatusCode() == 200;
+		HttpResponse response = null;
+		try {
+			response = client.execute(request);
+		}
+		catch (HttpHostConnectException e) {
+			AndroidLogging.getInstance().error("HTTP Problem: " + e);
+			return false;
+		}
+		if (response.getStatusLine().getStatusCode() == 200)
+			return true;
+		AndroidLogging.getInstance().error("HTTP Problem: Got errror code " + response.getStatusLine().getStatusCode());
+		return false;
 	}
 }
 

@@ -39,12 +39,13 @@ public class AndroidPlayer implements MediaPlayer.OnCompletionListener {
 	
 	public void stop()
 	{
-		player.stop();
-		for (Listener listener : listeners)
-			listener.onStop();
+		if (player.isPlaying()) {
+			player.stop();
+			for (Listener listener : listeners)
+				listener.onStop();
+		}
 	}
 
-	@Override
 	public void onCompletion(MediaPlayer mp) {
 		stop();
 	}

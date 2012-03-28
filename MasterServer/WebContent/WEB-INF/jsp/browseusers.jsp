@@ -64,13 +64,13 @@ input.submit {
 		<% List<User> users = (List<User>)request.getAttribute("users"); %>
 		<% for(User user : users) {%>
 			<tr>
-				<td>User id: <%=user.getUid() %> </td>
-				<td>User email: <%=user.getEmail() %> </td>
+				<td><%=user.getUid() %> </td>
+				<td><%=user.getEmail() %> </td>
 				<%if(UserType.convertEnum(user.getType()) == 0){%>
-					<td>User type: Normal </td>
+					<td>Normal </td>
 				<%} %>
 				<%if(UserType.convertEnum(user.getType()) == 1){ %>
-					<td>User type: Advertiser </td>
+					<td>Advertiser </td>
 				<%} %>
 				<td><a href="/MasterServer/controller?command=readuser&userid=<%=user.getUid()%>&responsetype=jsp">Edit User</a></td> 
 			</tr>

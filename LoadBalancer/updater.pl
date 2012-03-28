@@ -26,7 +26,7 @@ my $LoadBalancerHostname = undef;
 my $ErrorMessage = undef;
 my $DisplayHelp = undef;
 my $Usage = "usage: $0 [--help] [--dbhost=hostname] [--dbname=name]
-[--dbpass=password] [--lbpass=password] [--lbhost=hostname]
+[--dbpass=password] [--lbpass=password] [--lbhost=hostname] [--dbuser]
 
 	--help		Displays this help dialog.
 	--dbhost	Specifies the db hostname.
@@ -50,6 +50,7 @@ if (defined $DisplayHelp) {
 $ErrorMessage = "Must specify a db hostname." unless defined $DatabaseHostname;
 $ErrorMessage = "Must specify a db name." unless defined $DatabaseName;
 $ErrorMessage = "Must specify a db password." unless defined $DatabasePassword;
+$ErrorMessage = "Must specify a db username." unless defined $DatabaseUsername;
 $ErrorMessage = "Must specify a load balancer root password." unless defined $LoadBalancerPassword;
 $ErrorMessage = "Must specify a load balancer hostname." unless defined $LoadBalancerHostname;
 
@@ -127,11 +128,11 @@ logwrite("Updating server list...");
 # Get server list from the DB.
 my $DB = Net::MySQL->new("hostname" => $DatabaseHostname, "database" => $DatabaseName, "user" => $DatabaseUsername, "password" => $DatabasePassword);
 logdie("Unable to connect to mysql database with $DatabaseHostname, $DatabaseName, $DatabaseUsername, $DatabasePassword.") unless defined $DB;
-my $Result = $DB->query("SELECT * FROM ServerList");
-logdie("Malformed Database Table.") if $DB->is_error();
+my $Result = $DB->query("SELECT * FROM application_ServerList");
+logdie("Malformed Database Table:" . $DB->get_error_message) if $DB->is_error();
 my $Record = $DB->create_record_iterator();
 while (my $Row = $Record->each) {
-	$Servers{$$Row{'hostname'}} = $$Row{'port'};
+	$Servers{$$Row[0]} = $$Row[1];
 }
 
 # Make sure that they're all online, and that tomcat is running.

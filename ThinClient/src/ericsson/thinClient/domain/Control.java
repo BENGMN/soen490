@@ -7,8 +7,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import ericsson.thinClient.technical.AndroidLocation;
+import ericsson.thinClient.technical.AndroidLogging;
 import ericsson.thinClient.technical.AndroidRecorder;
-import ericsson.thinClient.technical.HttpInterface;
+import ericsson.thinClient.technical.AndroidHttp;
 import ericsson.thinClient.technical.AndroidPlayer;
 import ericsson.thinClient.view.ThinClientActivity;
 
@@ -64,22 +65,28 @@ public class Control extends TimerTask implements AndroidPlayer.Listener {
 	
 	private void startPlaying()	{
 		assertTrue(canStartPlaying());
+		AndroidLogging.getInstance().log("Starting playing.");
 		status = EControlStatus.STATUS_PLAYING;
 		try {
 			if (selectedMessage == null)
 				selectedMessage = MessagesCached.getInstance().getNextMessage(selectedMessage);
+			if (selectedMessage == null) {
+				//AndroidLogging.getInstance().error("Unable to get next message.");
+				stopPlaying();
+				return;
+			}
 			AndroidPlayer.getInstance().play(ThinClientActivity.getInstance().openFileInput(selectedMessage.getFile().getAbsolutePath()));
 		}
 		catch (IOException e) {
 			e.printStackTrace();
 			stopPlaying();
-		}
-			
+		}			
 	}
 	
 	private void stopPlaying()
 	{
 		assertTrue(canStopPlaying());
+		AndroidLogging.getInstance().log("Stopping playing.");
 		AndroidPlayer.getInstance().stop();
 		status = EControlStatus.STATUS_PAUSED;
 	}
@@ -96,12 +103,17 @@ public class Control extends TimerTask implements AndroidPlayer.Listener {
 	{
 		assertTrue(canStartRecording());
 		status = EControlStatus.STATUS_RECORDING;
+		AndroidLogging.getInstance().log("Starting recording.");
 		try {
 			AndroidRecorder.getInstance().start();
 			recordingTimer.schedule(this, recordingTime);
 		}
 		catch (IOException e) {
-			e.printStackTrace();
+			AndroidLogging.getInstance().error("Recording exception: " + e);
+			stopRecording();
+		}
+		catch (RuntimeException e) {
+			AndroidLogging.getInstance().error("Recording exception: " + e);
 			stopRecording();
 		}
 	}
@@ -114,6 +126,7 @@ public class Control extends TimerTask implements AndroidPlayer.Listener {
 	
 	public void stopRecording()
 	{
+		AndroidLogging.getInstance().log("Stopping recording.");
 		assertTrue(canStopRecording());
 		try {
 			recordedMessage = AndroidRecorder.getInstance().stop();
@@ -150,23 +163,32 @@ public class Control extends TimerTask implements AndroidPlayer.Listener {
 	public void upvoteSelected() throws IOException
 	{
 		assertTrue(canUpvote());
-		HttpInterface.getInstance().downvoteMessage(selectedMessage.getMid());
+		if (AndroidHttp.getInstance().downvoteMessage(selectedMessage.getMid()))
+			AndroidLogging.getInstance().log("Upvoted message successfully.");
+		else
+			AndroidLogging.getInstance().error("Error upvoting message; wrong status code.");
 	}
 	
 	public void downvoteSelected() throws IOException
 	{
 		assertTrue(canDownvote());
-		HttpInterface.getInstance().upvoteMessage(selectedMessage.getMid());
+		if (AndroidHttp.getInstance().upvoteMessage(selectedMessage.getMid()))
+			AndroidLogging.getInstance().log("Downvoted message successfully.");
+		else
+			AndroidLogging.getInstance().error("Error downvoting message; wrong status code.");
 	}
 	
 	public void uploadRecording() throws UnsupportedEncodingException, IOException
 	{
 		assertTrue(recordedMessage != null);
-		HttpInterface.getInstance().uploadMessage(recordedMessage,
+		if (AndroidHttp.getInstance().uploadMessage(recordedMessage,
 				AndroidLocation.getInstance().getLongitude(),
 				AndroidLocation.getInstance().getLatitude(),
 				AndroidLocation.getInstance().getSpeed(),
-				User.getLocalUser().getEmail());
+				User.getLocalUser().getEmail()))
+			AndroidLogging.getInstance().log("Uploaded message successfully.");
+		else
+			AndroidLogging.getInstance().error("Error uploading message; wrong status code.");
 	}
 	
 	public void discardRecording()
@@ -174,6 +196,7 @@ public class Control extends TimerTask implements AndroidPlayer.Listener {
 		assertTrue(recordedMessage != null);
 		recordedMessage.delete();
 		recordedMessage = null;
+		AndroidLogging.getInstance().log("Discarded recorded message.");
 	}
 
 	public void onStop() {
@@ -193,11 +216,11 @@ public class Control extends TimerTask implements AndroidPlayer.Listener {
 	}
 	
 	public boolean canNext() {
-		return !isRecording() && selectedMessage != null;
+		return !isRecording();
 	}
 	
 	public boolean canPrev() {
-		return !isRecording() && selectedMessage != null;
+		return !isRecording();
 	}
 	
 	public boolean canStopPlaying() {

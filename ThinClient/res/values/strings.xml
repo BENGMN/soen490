@@ -9,5 +9,6 @@
     <string name="next">Next</string>
     <string name="record">Record</string>
     <string name="playpause">Play/Pause</string>
+    <string name="settings">Settings</string>
 
 </resources>
