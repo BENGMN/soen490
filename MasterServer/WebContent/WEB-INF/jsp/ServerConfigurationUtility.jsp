@@ -86,16 +86,6 @@ input.submit {
 					onkeyup='onKeyInvalid(this)' /></td>
 			</tr>
 			<%
-				param = params.get("messageLifeDays");
-			%>
-			<tr>
-				<td><%=param.getParamName()%></td>
-				<td><%=param.getDescription()%></td>
-				<td><input class='text' type='text'
-					name='<%=param.getParamName()%>' value='<%=param.getValue()%>'
-					onkeyup='onKeyInvalid(this)' /></td>
-			</tr>
-			<%
 				param = params.get("advertiserMessageLifeDays");
 			%>
 			<tr>
