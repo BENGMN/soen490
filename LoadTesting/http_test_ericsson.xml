@@ -2,7 +2,7 @@
 <!DOCTYPE tsung SYSTEM "/usr/share/tsung/tsung-1.0.dtd">
 <tsung loglevel="notice" version="1.0">
   <clients><client host="localhost" use_controller_vm="true"/></clients>
-  <servers><server host="localhost" port="8080" type="tcp"></server></servers>
+  <servers><server host="192.168.1.150" port="80" type="tcp"></server></servers>
   <!--<monitoring><monitor host="localhost" type="snmp"></monitor></monitoring>-->
   
   <!-- <load duration="2" unit="minute"> -->
@@ -20,6 +20,9 @@
    </option>
    <option name="file_server" value="getmessageids.csv" id="fileMessageIds"></option>
    <option name="file_server" value="readmessage.csv" id="fileReadMessage"></option>
+   <option name="file_server" value="upvotemessage.csv" id="fileUpvoteMessage"></option>
+   <option name="file_server" value="downvotemessage.csv" id="fileDownvoteMessage"></option>
+   <option mame="file_server" value="postmessage.csv" id="filePostMessage"></option>
   </options>
 
   <!-- start a session for a http user. the probability is the
@@ -62,10 +65,17 @@
 	</setdynvars>
 	<request subst="true">	
 		<http url="/MasterServer/controller?command=downvote" method="POST" contents="bin=%%_data%%"></http>
+	</request>
   </session>
   <session name="PostMessage" probability="4" type="ts_http">
 	<setdynvars sourcetype="file" fileid="filePostMessage" delimiter=";" order="random">
-		<var name="id"/>
-		<var name="
+		<var name="bytes"/>
+	        <var name="longitude"/>
+        	<var name="latitude"/>
+		<var name="speed"/>
+	</setdynvars>
+	<request subst="true">
+		<http url="/MasterServer/controller?command=createmessage" method="POST" contents="bin=%%_bytes%%&amp;longitude=%%_longitude%%&amp;latitude=%%_latitude%%&amp;speed=%%_speed%%"></http>
+	</request>
  </sessions>
 </tsung>
