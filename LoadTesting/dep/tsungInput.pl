@@ -12,7 +12,8 @@ for (my $C = 0; $C < $MaxGetRequests; ++$C) {
 	# Longitude First
 	my $Longitude = rand(360) - 180.0;
 	my $Latitude = rand(180) - 90.0;
-	print $OUTPUTF "$Longitude;$Latitude\n";
+	my $Speed = rand(100);
+	print $OUTPUTF "$Longitude;$Latitude;$Speed\n";
 }
 close($OUTPUTF);
 

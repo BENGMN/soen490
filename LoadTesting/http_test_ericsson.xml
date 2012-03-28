@@ -18,7 +18,8 @@
     <user_agent probability="20">Mozilla/5.0 (Windows; U; Windows NT 5.2; fr-FR; rv:1.7.8) Gecko/20050511 Firefox/1.0.4</user_agent> -->
     <user_agent probability="100">Ericsson Http Client/1.0 (X11; U; Linux i686; en-US; rv:1.0.0) Ericsson/20120127 Ericsson/1.0.0</user_agent>
    </option>
-   <option name="file_server" value="get.csv" id="getFileId"></option>
+   <option name="file_server" value="getmessageids.csv" id="fileMessageIds"></option>
+   <option name="file_server" value="readmessage.csv" id="fileReadMessage"></option>
   </options>
 
   <!-- start a session for a http user. the probability is the
@@ -26,31 +27,45 @@
   probabilities must be 100 -->
 
  <sessions>
-  <session name="getMessages" probability="95" type="ts_http">
-    <setdynvars sourcetype="file" fileid="getFileId" delimiter=";" order="random">
+  <session name="getMessageIDs" probability="40" type="ts_http">
+    <setdynvars sourcetype="file" fileid="fileMessageIds" delimiter=";" order="random">
         <var name="longitude"/>
         <var name="latitude"/>
+	<var name="speed"/>
     </setdynvars>
     <request subst="true"> 
-	<http url="/MasterServer/frontController?command=GetMessages&amp;longitude=%%_longitude%%&amp;latitude=%%_latitude%%" method="GET" version="1.1"></http>
+	<http url="/MasterServer/controller?command=getmessagesids&amp;longitude=%%_longitude%%&amp;latitude=%%_latitude%%&amp;speed=%%_speed%%&amp;sort=random" method="GET" version="1.1"></http>
     </request>
     <!-- <thinktime min="1" max="2" random="true"></thinktime> -->
   </session>
-  <session name="PostMessage" probability="5" type="ts_http">
-    <setdynvars sourcetype="random_string" length="15000">
-        <var name="messageBytes"/>
-    </setdynvars>    
-    <setdynvars sourcetype="file" fileid="getFileId" delimiter=";" order="random">
-        <var name="longitude"/>
-        <var name="latitude"/>
+  <session name="ReadMessage" probability="40" type="ts_http">
+    <setdynvars sourcetype="file" fileid="fileReadMessage" delimiter=";" order="random">
+	<!-- This is a full string of ids, generate from the file. -->
+	<var name="id"/>
     </setdynvars>
-    <setdynvars sourcetype="random_number" start="0" end="50">
-        <var name="speed"/>
-    </setdynvars>    
     <request subst="true"> 
-	<http content_type="multipart/form-data" url="/MasterServer/frontController?command=PutMessages&amp;longitude=%%_longitude%&amp;latitude=%%_latitude%%&amp;speed=%%_speed%%" contents="bin=%%_messageBytes%%" method="POST" version="1.1"></http>
+	<http url="/MasterServer/controller?command=readmessage&amp;responsetype=bin&amp;%%_id%%" contents="bin=%%_messageBytes%%" method="GET" version="1.1"></http>
     </request>
     <!-- <thinktime min="1" max="2" random="true"></thinktime> -->
   </session>
+  <session name="UpvoteMessage" probability="8" type="ts_http">
+	<setdynvars sourcetype="file" fileid="fileUpvoteMessage" delimiter=";" order="random">
+	   <var name="id"/>
+	</setdynvars>
+        <request subst="true">
+		<http url="/MasterServer/controller?command=upvote" method="POST" contents="messageid=%%_id%%"></http>
+	</request>
+  </session>
+  <session name="DownvoteMessage" probability="8" type="ts_http">
+	<setdynvars sourcetype="file" fileid="fileDownvoteMessage" delimiter=";" order="random">
+		<var name="data"/>
+	</setdynvars>
+	<request subst="true">	
+		<http url="/MasterServer/controller?command=downvote" method="POST" contents="bin=%%_data%%"></http>
+  </session>
+  <session name="PostMessage" probability="4" type="ts_http">
+	<setdynvars sourcetype="file" fileid="filePostMessage" delimiter=";" order="random">
+		<var name="id"/>
+		<var name="
  </sessions>
 </tsung>
