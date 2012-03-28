@@ -11,10 +11,11 @@ use File::Temp;
 use LWP::UserAgent;
 use Getopt::Long;
 use HTTP::Request;
+use File::Basename;
 
 my $ApachePath = "/etc/apache2";
 my $ConfigPath = "$ApachePath/mods-available/proxy.conf";
-my $LogPath = "updater.log";
+my $LogPath = dirname($0) . "/updater.log";
 my $ApacheHardRestartCmd = '/etc/init.d/apache2 graceful';
 my $ApacheGracefulRestartCmd = '/etc/init.d/apache2 restart';
 
