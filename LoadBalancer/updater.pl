@@ -173,7 +173,7 @@ my $ConfigContents = "<IfModule mod_proxy.c>
 # Set to one of: Off | On | Full | Block
 #ProxyVia Off
 
-ProxyPass /proxy balancer://mycluster nofailover=On
+ProxyPass /MasterServer balancer://mycluster nofailover=On
 <Proxy balancer://mycluster>
 ";
 
