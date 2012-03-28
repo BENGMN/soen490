@@ -10,6 +10,7 @@
 	<servlet>
 		<servlet-name>MasterServer</servlet-name>
 		<servlet-class>application.FrontController</servlet-class>
+		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>MasterServer</servlet-name>

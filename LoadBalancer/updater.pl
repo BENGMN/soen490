@@ -10,6 +10,7 @@ use Net::SSH::Perl;
 use File::Temp;
 use LWP::UserAgent;
 use Getopt::Long;
+use HTTP::Request;
 
 my $ApachePath = "/etc/apache2";
 my $ConfigPath = "$ApachePath/mods-available/proxy.conf";
@@ -61,7 +62,7 @@ if (defined $ErrorMessage) {
 }
 
 my $UA = LWP::UserAgent->new;
-$UA->timeout(2);
+$UA->timeout(1);
 
 our $SSH = Net::SSH::Perl->new($LoadBalancerHostname);
 $SSH->login('root', $LoadBalancerPassword);
@@ -137,10 +138,15 @@ while (my $Row = $Record->each) {
 
 # Make sure that they're all online, and that tomcat is running.
 foreach my $Server (keys(%Servers)) {
-	my $Response = $UA->get("$Server/frontController?command=PingCommand");
-	next unless $Response->code == 303;
+	logwrite("Checking $Server....");
+	my $Request = HTTP::Request->new(GET => "http://$Server:" . $Servers{$Server} . "/controller?command=ping");
+	my $Response = $UA->request($Request);
+	logwrite("Received response code " . $Response->code . ".") if defined $Response;
+	next if $Response->code == 204;
 	delete $Servers{$Server};
-	logwrite("Server $Server is not responding to ping, not adding to list.");
+	$DB->query("DELETE FROM application_ServerList WHERE hostname='$Server'");
+	logdie("Unable to delete row from database: ". $DB->get_error_message) if $DB->is_error();
+	logwrite("Server $Server is not responding to ping, not adding to list, and deleting from database.");
 }
 # Generate configuration file.
 my $ConfigContents = "<IfModule mod_proxy.c>
