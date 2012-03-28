@@ -40,6 +40,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.apache.http.client.ClientProtocolException;
 
+
 public class DemoGui extends JFrame {
 	
 	private static final int WIDTH = 300;
@@ -111,7 +112,7 @@ public class DemoGui extends JFrame {
 				deleteFiles(directory);			
 				//Retrieve audio files	
 				try {
-					messages = fileTransfer.downloadFiles(inputFields[0].getText(), inputFields[1].getText(), inputFields[2].getText(), "bin", DIRECTORY_PATH, "created_type");
+					messages = fileTransfer.downloadFiles(inputFields[0].getText(), inputFields[1].getText(), inputFields[2].getText(), "bin", DIRECTORY_PATH, "date");
 				} catch (ClientProtocolException e1) {
 					e1.printStackTrace();
 				} catch (IOException e1) {
@@ -193,8 +194,8 @@ public class DemoGui extends JFrame {
 		//default values
 		inputFields[0].setText("-73.679810");
 		inputFields[1].setText("45.546050");
-		inputFields[2].setText("10000000000");
-		inputFields[3].setText("test@test.com");
+		inputFields[2].setText("50");
+		inputFields[3].setText("testGui@test.com");
 		
 		JPanel fileChooserPanel = new JPanel();
 		fileChooserPanel.add(uploadFileButton);

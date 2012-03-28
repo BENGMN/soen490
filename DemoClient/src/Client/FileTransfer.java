@@ -53,18 +53,19 @@ public class FileTransfer {
 		HttpClient httpgetIdClient = new DefaultHttpClient();
 		//first we must get the message Ids
 		HttpGet getIds = new HttpGet("http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=getmessageids&latitude="
-                                     + latitude + "&longitude=" + longitude + "&speed=" + speed + "&responsetype=" + responseType + "&sorttype=" + sort);
+                                     + latitude + "&longitude=" + longitude + "&speed=" + speed + "&responsetype=" + responseType + "&sort=" + sort);
 
 		HttpResponse getMessageIdResponse = httpgetIdClient.execute(getIds);
 		InputStream getMessageIdInputStream = getMessageIdResponse.getEntity().getContent();
 		Unpacker unpacker = (new MessagePack()).createUnpacker(getMessageIdInputStream);
 		int size = unpacker.readInt();
 		
-		// now that we have the message Ids we can retrieve the messages	
+		// now that we have the message ids we can retrieve the messages	
 		Map<String, Message> messages = new HashMap<String, Message>();
 		HttpGet readMessage;
 		HttpResponse readMessageResponse;
 		InputStream inputStream;
+		
 		for(int i = 0; i < size; i++) {
 			String id = unpacker.readString();
 			HttpClient httpgetMessageClient = new DefaultHttpClient();
@@ -76,7 +77,6 @@ public class FileTransfer {
 		}
 		
 		return messages;
-
 	}
 	
 }

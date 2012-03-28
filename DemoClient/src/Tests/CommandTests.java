@@ -44,15 +44,15 @@ public class CommandTests {
 		}
 	}
 	
-	public static String testGetMessageIdsCommand(String latitude, String longitude, String speed, String responseType, String sortType) throws IOException {
+	public static String testGetMessageIdsCommand(String latitude, String longitude, String speed, String responseType, String sortType, String advertiser, String limit) throws IOException {
 		HttpClient httpgetIdClient = new DefaultHttpClient();
 		String uri = "http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=getmessageids&latitude="
-                + latitude + "&longitude=" + longitude + "&speed=" + speed + "&responsetype=" + responseType + "&sorttype=" + sortType;
+                + latitude + "&longitude=" + longitude + "&speed=" + speed + "&responsetype=" + responseType + "&sort=" + sortType + (advertiser != null ?"&advertiser=" + advertiser :"") + (limit != null ?"&limit=" + limit:"");
 		System.out.println(uri);
 		HttpGet httpGet = new HttpGet(uri);
 		HttpResponse response = httpgetIdClient.execute(httpGet);        
         InputStream in = response.getEntity().getContent();
-		
+        
 		if(response.getStatusLine().getStatusCode() == 200) {	
 			BigInteger mid = null;
 			List<BigInteger> ids = null;		
@@ -64,7 +64,7 @@ public class CommandTests {
 				mid = new BigInteger(unpacker.readString());
 				ids.add(mid);
 			}
-			return ids.toString();
+			return "Size: " + ids.size() + " Ids: " + ids.toString();
 		}
 		else {
 	        return response.toString();
@@ -103,8 +103,8 @@ public class CommandTests {
 		HttpClient client = new DefaultHttpClient();
 		String uri = "http://" + HOST_NAME + ":" + HOST_PORT + "/MasterServer/controller?command=readuser&userid=" + userId  + "&responsetype=" + responseType;
 		System.out.println(uri);
-		HttpPost httpPost = new HttpPost(uri);
-		HttpResponse response = client.execute(httpPost);
+		HttpGet httpGet = new HttpGet(uri);
+		HttpResponse response = client.execute(httpGet);
         return response.toString();
 	}
 	
