@@ -27,10 +27,6 @@ cd existing_git_repo
   git remote add origin git@github.com:BENGMN/soen490.git
   git push -u origin master
 
-Setting up the database:
-In the test folder the UserTDGTest can be used to set up your databases for you automatically. 
-Simply run the tests and comment out this line Database.getInstance().dropDatabase(); if you want the databases to persist.
-
 For getting the actual git repository
 
 On windows
@@ -45,9 +41,4 @@ Follow this tutorial:
 Type git remote add origin git@github.com:BENGMN/soen490.git
 Type git pull origin master
 
-/** DATABASE SETUP **/
-Create the User table
-CREATE TABLE User (uid decimal(39) NOT NULL, email varchar(64) NOT NULL, password varchar(256) NOT NULL, type tinyint NOT NULL, version int NOT NULL, CONSTRAINT pk_uid PRIMARY KEY (uid));
 
-Create the Message table
-CREATE TABLE Message (mid decimal(39) NOT NULL, uid decimal(39) NOT NULL, message blob NOT NULL, speed float, latitude double NOT NULL, longitude double NOT NULL, created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, user_rating int NOT NULL, CONSTRAINT pk_mid PRIMARY KEY(mid));
