@@ -22,6 +22,7 @@ my $Verbose = undef;
 my $Quiet = undef;
 my $DisplayHelp = undef;
 my $NoReport = undef;
+my $NoDatabaseGen = undef;
 my $DieAtStart = undef;
 
 my $HelpMessage = "
@@ -30,6 +31,7 @@ Garry's Load Testing Script
 usage: $0 configuration_file [--help] [--verbose|--quiet]
 [--server=localhost] [--port=8080] [--dname=soen490] [--duser==soen490]
 [-dpass=capstone] [--dhost=--server] [--browser=google-chrome] [--noreport]
+[--nodatabasegen]
 
 This is the load testing script, written by Garry. It basically does a
 preliminary check to see if you have all the appropriate programs, and
@@ -53,9 +55,10 @@ tsung's internal tools. It has the following options:
 	--browser	Specifies the browser to use. Default is
 			google-chrome.
 	--noreport	Just runs tsung; doesn't bother with the report
-			generating step.\n";
+			generating step.
+	--nodatabasegen	Don't generate the database.\n";
 GetOptions("help" => \$DisplayHelp, "verbose" => \$Verbose, "quiet" => \$Quiet, "browser=s" => \$Webbrowser, "server=s" => \$ServerHostname,
-"port=i" => \$ServerPort, "dname=s" => \$DatabaseUsername, "dpass=s" => \$DatabasePassword, "dname=s" => \$DatabaseName, "dhost=s" => \$DatabaseHostname, "noreport" => \$NoReport,
+"port=i" => \$ServerPort, "duser=s" => \$DatabaseUsername, "dpass=s" => \$DatabasePassword, "dname=s" => \$DatabaseName, "dhost=s" => \$DatabaseHostname, "noreport" => \$NoReport, "nodatabasegen" => \$NoDatabaseGen,
 '<>' => sub { $DieAtStart = "Can only specify one configuration file.\n" if (defined $ConfigFileName); $ConfigFileName = shift; });
 
 $DieAtStart = "Can't define both quiet and verbose.\n" if defined $Quiet && defined $Verbose;
@@ -87,7 +90,7 @@ if ($^O ne "linux") {
 
 print "Checking installed programs...\n" unless defined $Quiet;
 # We make sure tomcat's up on the server, or that we can connnect to it at least.
-die "Tomcat must be up!" unless defined get("http://$ServerHostname:$ServerPort");
+die "Tomcat must be up!" unless defined get("http://$ServerHostname:$ServerPort/MasterServer/controller?command=ping");
 # Make sure we have various programs installed.
 die "Tsung must be installed.\n" unless run("tsung -v") == 0;
 die "Mysql client must be installed.\n" unless run("mysql --version") == 0;
@@ -100,23 +103,25 @@ die "Cannot find configuration file: $ConfigFileName.\n" unless (-e $ConfigFileN
 
 die "Must have $DatabaseScript.\n" unless (-e $DatabaseScript);
 # Makes absolutely sure you want to run this script.
-print "This script will erase the database on $DatabaseHostname!\nAre you sure you want to continue? [y/n]: ";
-die "Aborting.\n" unless getc eq "y"; <STDIN>;
+unless ($NoDatabaseGen) {
+	print "This script will erase the database on $DatabaseHostname!\nAre you sure you want to continue? [y/n]: ";
+	die "Aborting.\n" unless getc eq "y"; <STDIN>;
+}
 
 # Check to see if we have the right mysql password.
-print "Accessing mysql database; deleting current rows...\n" unless defined $Quiet;
-my @Tables = `mysql -u $DatabaseUsername --password=$DatabasePassword $DatabaseName -e 'SHOW TABLES'`;
+my @Tables = `mysql -u $DatabaseUsername --password=$DatabasePassword $DatabaseName -h $DatabaseHostname -e 'SHOW TABLES'`;
 die "Unable to access our mysql database. Wrong username/password?\n" unless $? == 0;
 # Clear our database.
 die "Mysql database must be set up properly (have User and Message); run a unit test or something." unless grep(/User/, @Tables) && grep(/Message/, @Tables);
-run("mysql -u $DatabaseUsername --password=$DatabasePassword $DatabaseName -h $DatabaseHostname -e 'DELETE FROM User'");
-run("mysql -u $DatabaseUsername --password=$DatabasePassword $DatabaseName -h $DatabaseHostname -e 'DELETE FROM Message'");
 # Run our script to populate our database.
-die "Trouble running database script.\n" unless run("perl $DatabaseScript | mysql -u $DatabaseUsername --password=$DatabasePassword $DatabaseName -h $DatabaseHostname") == 0;
+unless ($NoDatabaseGen) { 
+	print "Generating database...\n" unless defined $Quiet;
+	die "Trouble running database script.\n" unless run("perl $DatabaseScript | mysql -u $DatabaseUsername --password=$DatabasePassword $DatabaseName -h $DatabaseHostname") == 0;
+}
 
 # Generate out tsung file inputs.
 print "Generating tsung inputs...\n" unless defined $Quiet;
-die "Trouble running tsung input script.\n" unless run("perl $TsungInputScript") == 0;
+die "Trouble running tsung input script.\n" unless run("perl $TsungInputScript $DatabaseHostname $DatabasePassword $DatabaseUsername $DatabaseName") == 0;
 
 # Actually run tsung.
 print "Setup complete... running tsung...\n" unless defined $Quiet;

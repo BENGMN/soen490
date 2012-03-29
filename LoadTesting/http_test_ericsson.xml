@@ -7,8 +7,8 @@
   
   <!-- <load duration="2" unit="minute"> -->
   <load unit="second">
-   <arrivalphase phase="1" duration="1" unit="minute">
-     	<users interarrival="0.1" unit="second"></users>
+   <arrivalphase phase="1" duration="10" unit="second">
+     	<users interarrival="1" unit="second"></users>
    </arrivalphase>
   </load>
 
@@ -22,7 +22,7 @@
    <option name="file_server" value="readmessage.csv" id="fileReadMessage"></option>
    <option name="file_server" value="upvotemessage.csv" id="fileUpvoteMessage"></option>
    <option name="file_server" value="downvotemessage.csv" id="fileDownvoteMessage"></option>
-   <option mame="file_server" value="postmessage.csv" id="filePostMessage"></option>
+   <option name="file_server" value="postmessage.csv" id="filePostMessage"></option>
   </options>
 
   <!-- start a session for a http user. the probability is the
@@ -30,28 +30,31 @@
   probabilities must be 100 -->
 
  <sessions>
-  <session name="getMessageIDs" probability="40" type="ts_http">
+<!--
+  <session name="getMessageIDs" probability="100" type="ts_http">
     <setdynvars sourcetype="file" fileid="fileMessageIds" delimiter=";" order="random">
         <var name="longitude"/>
         <var name="latitude"/>
 	<var name="speed"/>
     </setdynvars>
     <request subst="true"> 
-	<http url="/MasterServer/controller?command=getmessagesids&amp;longitude=%%_longitude%%&amp;latitude=%%_latitude%%&amp;speed=%%_speed%%&amp;sort=random" method="GET" version="1.1"></http>
+	<http url="/MasterServer/controller?command=getmessageids&amp;longitude=%%_longitude%%&amp;latitude=%%_latitude%%&amp;speed=%%_speed%%&amp;sort=random" method="GET" version="1.1"></http>
     </request>
-    <!-- <thinktime min="1" max="2" random="true"></thinktime> -->
   </session>
-  <session name="ReadMessage" probability="40" type="ts_http">
+-->
+
+<!--
+  <session name="ReadMessage" probability="100" type="ts_http">
     <setdynvars sourcetype="file" fileid="fileReadMessage" delimiter=";" order="random">
-	<!-- This is a full string of ids, generate from the file. -->
 	<var name="id"/>
     </setdynvars>
     <request subst="true"> 
-	<http url="/MasterServer/controller?command=readmessage&amp;responsetype=bin&amp;%%_id%%" contents="bin=%%_messageBytes%%" method="GET" version="1.1"></http>
+	<http url="/MasterServer/controller?command=readmessage&amp;responsetype=bin&amp;%%_id%%" method="GET" version="1.1"></http>
     </request>
-    <!-- <thinktime min="1" max="2" random="true"></thinktime> -->
   </session>
-  <session name="UpvoteMessage" probability="8" type="ts_http">
+-->
+<!--
+  <session name="UpvoteMessage" probability="100" type="ts_http">
 	<setdynvars sourcetype="file" fileid="fileUpvoteMessage" delimiter=";" order="random">
 	   <var name="id"/>
 	</setdynvars>
@@ -59,23 +62,57 @@
 		<http url="/MasterServer/controller?command=upvote" method="POST" contents="messageid=%%_id%%"></http>
 	</request>
   </session>
-  <session name="DownvoteMessage" probability="8" type="ts_http">
+
+
+
+  <session name="DownvoteMessage" probability="100" type="ts_http">
 	<setdynvars sourcetype="file" fileid="fileDownvoteMessage" delimiter=";" order="random">
-		<var name="data"/>
+		<var name="id"/>
 	</setdynvars>
 	<request subst="true">	
-		<http url="/MasterServer/controller?command=downvote" method="POST" contents="bin=%%_data%%"></http>
+		<http url="/MasterServer/controller?command=downvote" method="POST" contents="messageid=%%_id%%"></http>
 	</request>
   </session>
-  <session name="PostMessage" probability="4" type="ts_http">
+
+-->
+
+  <session name="PostMessage" probability="100" type="ts_http">
 	<setdynvars sourcetype="file" fileid="filePostMessage" delimiter=";" order="random">
 		<var name="bytes"/>
 	        <var name="longitude"/>
         	<var name="latitude"/>
 		<var name="speed"/>
+		<var name="email"/>
 	</setdynvars>
 	<request subst="true">
-		<http url="/MasterServer/controller?command=createmessage" method="POST" contents="bin=%%_bytes%%&amp;longitude=%%_longitude%%&amp;latitude=%%_latitude%%&amp;speed=%%_speed%%"></http>
+		<http url="/MasterServer/controller" contents='Content-Type: multipart/form-data; boundary=AaB03x
+
+--AaB03x
+Content-Disposition: form-data; name="bin"
+
+%%_bytes%%
+--AaB03x
+Content-Disposition: form-data; name="longitude"
+
+%%_longitude%%
+--AaB03x
+Content-Disposition: form-data; name="latitude"
+
+%%_latitude%%
+--AaB03x
+Content-Disposition: form-data; name="speed"
+
+%%_speed%%
+--AaB03x
+Content-Disposition: form-data; name="command"
+
+createmessage
+--AaB03x
+Content-Disposition: form-data; name="email"
+
+%%_email%%
+--AaB03x' method="POST"></http>
 	</request>
+   </session>
  </sessions>
 </tsung>
