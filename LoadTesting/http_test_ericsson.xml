@@ -7,7 +7,7 @@
   
   <!-- <load duration="2" unit="minute"> -->
   <load unit="second">
-   <arrivalphase phase="1" duration="10" unit="second">
+   <arrivalphase phase="1" duration="1" unit="second">
      	<users interarrival="1" unit="second"></users>
    </arrivalphase>
   </load>
@@ -85,33 +85,7 @@
 		<var name="email"/>
 	</setdynvars>
 	<request subst="true">
-		<http url="/MasterServer/controller" contents='Content-Type: multipart/form-data; boundary=AaB03x
-
---AaB03x
-Content-Disposition: form-data; name="bin"
-
-%%_bytes%%
---AaB03x
-Content-Disposition: form-data; name="longitude"
-
-%%_longitude%%
---AaB03x
-Content-Disposition: form-data; name="latitude"
-
-%%_latitude%%
---AaB03x
-Content-Disposition: form-data; name="speed"
-
-%%_speed%%
---AaB03x
-Content-Disposition: form-data; name="command"
-
-createmessage
---AaB03x
-Content-Disposition: form-data; name="email"
-
-%%_email%%
---AaB03x' method="POST"></http>
+		<http url="/MasterServer/controller?command=createmessage" method="POST" content_type="multipart/form-data; boundary=--AaB03x1234" contents='----AaB03x1234&#13;&#10;Content-Disposition: form-data; name="bin"; filename="wat.bin"&#13;&#10;Content-Type: text/plain&#13;&#10;&#13;&#10;%%_bytes%%&#13;&#10;----AaB03x1234&#13;&#10;Content-Disposition: form-data; name="longitude"&#13;&#10;&#13;&#10;%%_longitude%%&#13;&#10;----AaB03x1234&#13;&#10;Content-Disposition: form-data; name="latitude"&#13;&#10;&#13;&#10;%%_latitude%%&#13;&#10;----AaB03x1234&#13;&#10;Content-Disposition: form-data; name="speed"&#13;&#10;&#13;&#10;%%_speed%%&#13;&#10;----AaB03x1234&#13;&#10;Content-Disposition: form-data; name="command"&#13;&#10;&#13;&#10;createmessage&#13;&#10;----AaB03x1234&#13;&#10;Content-Disposition: form-data; name="email"&#13;&#10;&#13;&#10;%%_email%%&#13;&#10;----AaB03x1234--'/>
 	</request>
    </session>
  </sessions>
