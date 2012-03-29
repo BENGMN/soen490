@@ -12,9 +12,9 @@
 
 <body>
 	<div>
-			<a href="${pageContext.request.contextPath}/controller?command=browseusers">Browse Users</a> 
-			<a href="${pageContext.request.contextPath}/createuser.html">Create a User</a>
-		    <a href="${pageContext.request.contextPath}/lookupuser.html">Lookup a User</a>
+			<a href="/MasterServer/controller?command=browseusers">Browse Users</a> 
+			<a href="/MasterServer/createuser.html">Create a User</a>
+		    <a href="/MasterServer/lookupuser.html">Lookup a User</a>
 	</div>
 	<div>
 		<p>Operation Successful </p>		

@@ -63,7 +63,7 @@ input.submit {
 		<div>
 			<% User user = (User)request.getAttribute("user"); %>
 			<form method="POST"
-				action="${pageContext.request.contextPath}/controller?command=updateuser&responsetype=jsp"
+				action="/MasterServer/controller?command=updateuser&responsetype=jsp"
 				name="POST.updateuser">
 				<input id="version" type="hidden" name="version" value="<%=user.getVersion() %>" />
 				<input id="userid" type="hidden" name="userid" value="<%=user.getUid() %>" />
