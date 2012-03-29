@@ -20,8 +20,8 @@ import org.msgpack.MessagePack;
 import org.msgpack.unpacker.Unpacker;
 
 public class CommandTests {
-	private static final String HOST_NAME = "localhost";
-	private static final String HOST_PORT = "8080";
+	private static final String HOST_NAME = "outsider.dyndns.org";
+	private static final String HOST_PORT = "80";
 	
 	public static String testCreateUserCommand(String email, String password, String userType, String responseType) throws ClientProtocolException, IOException {
 		HttpClient httpClient = new DefaultHttpClient();	
