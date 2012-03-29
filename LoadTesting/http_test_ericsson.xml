@@ -7,7 +7,7 @@
   
   <!-- <load duration="2" unit="minute"> -->
   <load unit="second">
-   <arrivalphase phase="1" duration="1" unit="second">
+   <arrivalphase phase="1" duration="1" unit="minute">
      	<users interarrival="1" unit="second"></users>
    </arrivalphase>
   </load>
@@ -30,8 +30,8 @@
   probabilities must be 100 -->
 
  <sessions>
-<!--
-  <session name="getMessageIDs" probability="100" type="ts_http">
+
+  <session name="getMessageIDs" probability="50" type="ts_http">
     <setdynvars sourcetype="file" fileid="fileMessageIds" delimiter=";" order="random">
         <var name="longitude"/>
         <var name="latitude"/>
@@ -41,10 +41,8 @@
 	<http url="/MasterServer/controller?command=getmessageids&amp;longitude=%%_longitude%%&amp;latitude=%%_latitude%%&amp;speed=%%_speed%%&amp;sort=random" method="GET" version="1.1"></http>
     </request>
   </session>
--->
 
-<!--
-  <session name="ReadMessage" probability="100" type="ts_http">
+  <session name="ReadMessage" probability="25" type="ts_http">
     <setdynvars sourcetype="file" fileid="fileReadMessage" delimiter=";" order="random">
 	<var name="id"/>
     </setdynvars>
@@ -52,9 +50,8 @@
 	<http url="/MasterServer/controller?command=readmessage&amp;responsetype=bin&amp;%%_id%%" method="GET" version="1.1"></http>
     </request>
   </session>
--->
-<!--
-  <session name="UpvoteMessage" probability="100" type="ts_http">
+
+  <session name="UpvoteMessage" probability="10" type="ts_http">
 	<setdynvars sourcetype="file" fileid="fileUpvoteMessage" delimiter=";" order="random">
 	   <var name="id"/>
 	</setdynvars>
@@ -65,7 +62,7 @@
 
 
 
-  <session name="DownvoteMessage" probability="100" type="ts_http">
+  <session name="DownvoteMessage" probability="10" type="ts_http">
 	<setdynvars sourcetype="file" fileid="fileDownvoteMessage" delimiter=";" order="random">
 		<var name="id"/>
 	</setdynvars>
@@ -74,9 +71,7 @@
 	</request>
   </session>
 
--->
-
-  <session name="PostMessage" probability="100" type="ts_http">
+  <session name="PostMessage" probability="5" type="ts_http">
 	<setdynvars sourcetype="file" fileid="filePostMessage" delimiter=";" order="random">
 		<var name="bytes"/>
 	        <var name="longitude"/>
