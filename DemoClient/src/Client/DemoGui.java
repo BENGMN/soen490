@@ -126,8 +126,13 @@ public class DemoGui extends JFrame {
 				listOfFiles.setListData(audioFileNames);
 				listScrollPane.validate();
 				listOfFiles.setSelectedIndex(0); // ensures that a file is selected
+				if(listOfFiles.getModel().getSize() == 0) { 
+					fileInfo.setText("No messages found");
+				}
+				else {
 				fileInfo.setText(messages.get((String)listOfFiles.getSelectedValue()).toString()); // show information about the audio file in the text area
 				findFilePath();
+				}
 			}
 		});
 		
@@ -194,8 +199,8 @@ public class DemoGui extends JFrame {
 		//default values
 		inputFields[0].setText("-73.679810");
 		inputFields[1].setText("45.546050");
-		inputFields[2].setText("50");
-		inputFields[3].setText("testGui@test.com");
+		inputFields[2].setText("1");
+		inputFields[3].setText("adamharrison@gmail.com");
 		
 		JPanel fileChooserPanel = new JPanel();
 		fileChooserPanel.add(uploadFileButton);

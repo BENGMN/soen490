@@ -33,8 +33,8 @@ import org.msgpack.MessagePack;
 import org.msgpack.unpacker.Unpacker;
 
 public class FileTransfer {	
-	private static final String HOST_NAME = "localhost";
-	private static final String HOST_PORT = "8080";
+	private static final String HOST_NAME = "outsider.dyndns.org";
+	private static final String HOST_PORT = "80";
 	private static final String TYPE = ".amr";
 
 	public int uploadFile(File file, String latitude, String longitude, String speed, String email) throws IOException {
