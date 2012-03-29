@@ -73,7 +73,7 @@ public class GetMessageIDsCommand extends FrontCommand{
 		if ((sort = request.getParameter("sort")) == null)
 			throw new ParameterException("Missing 'sort' parameter.");
 		
-		if ((isAdvertiser = request.getParameter("advertiser")) == null)
+		if (request.getParameter("advertiser") != null)
 			isAdvertiser = Boolean.toString(Boolean.parseBoolean(isAdvertiser));
 		
 		if ((stringLimit = request.getParameter("limit")) == null)
